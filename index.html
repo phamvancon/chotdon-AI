@@ -532,6 +532,16 @@
       <!-- Modal Scrollable Body -->
       <div id="modal-body-content" class="flex-1 overflow-y-auto p-5 space-y-4">
         
+        <!-- SANDBOX ENVIRONMENT WARNING -->
+        <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-300 space-y-1.5 animate-pulse">
+          <p class="font-bold flex items-center gap-1.5">⚠️ Lưu ý quan trọng khi chạy trong môi trường thử nghiệm:</p>
+          <p class="text-[11px] leading-relaxed text-slate-300">
+            Ứng dụng hiện đang được hiển thị bên trong <strong>Khung bảo mật (Iframe Sandbox)</strong>. 
+            Do chính sách bảo mật của Meta, <strong>Cách 1 (SDK OAuth)</strong> và <strong>Cách 3 (Cookie)</strong> 
+            có thể bị trình duyệt chặn không cho mở popup. Hãy ưu tiên dùng <strong>Cách 2 (Dán Page Token)</strong> hoặc bấm nút <strong>"Mở Preview ở tab mới"</strong> trên thanh công cụ để đồng bộ thực tế!
+          </p>
+        </div>
+
         <!-- PANE A: Linked list pages -->
         <div id="modal-pane-list" class="space-y-2">
           <!-- Dynamically populated in JS -->
@@ -2199,7 +2209,6 @@
         return;
       }
 
-      // Check basic Access Token starting characters structure
       if (!tokenInput.startsWith("EAA")) {
         showToast('Mã token không đúng định dạng chuẩn của Facebook (Token thường bắt đầu bằng "EAA...")');
         return;
@@ -2209,34 +2218,48 @@
       list.classList.add('hidden');
 
       try {
-        // Query /me/accounts using direct HTTP request to Facebook Graph API
-        const response = await fetch(`https://graph.facebook.com/v18.0/me/accounts?fields=id,name,picture{url}&access_token=${tokenInput}`);
-        const data = await response.json();
+        let accounts = [];
+        
+        // Bước A: Thử gọi API lấy danh sách trang (Nếu Token dán vào là USER Access Token)
+        try {
+          const response = await fetch(`https://graph.facebook.com/v18.0/me/accounts?fields=id,name,picture{url}&access_token=${tokenInput}`);
+          const data = await response.json();
+          if (data && data.data && data.data.length > 0) {
+            accounts = data.data;
+          }
+        } catch (e) {
+          console.warn("Không phải User Token, thử phương án dự phòng cho Page Token...");
+        }
+
+        // Bước B (Dự phòng): Nếu accounts rỗng, nghĩa là Token dán vào là PAGE Access Token trực tiếp. 
+        // Ta sẽ gọi API lấy thông tin của chính trang đó thay vì lấy danh sách các trang con.
+        if (accounts.length === 0) {
+          const fallbackRes = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name,picture{url}&access_token=${tokenInput}`);
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData && fallbackData.id) {
+            accounts = [{
+              id: fallbackData.id,
+              name: fallbackData.name,
+              picture: fallbackData.picture
+            }];
+          }
+        }
 
         loader.classList.add('hidden');
 
-        if (data && data.data) {
-          const accounts = data.data;
-          if (accounts.length === 0) {
-            showToast('Access Token hợp lệ nhưng không tìm thấy Fanpage nào được quản lý.');
-            return;
-          }
-          
+        if (accounts.length > 0) {
           showToast(`Đồng bộ thành công! Tìm thấy ${accounts.length} Fanpage.`);
           displayDiscoveredPages(accounts.map(page => ({
             id: page.id,
             name: page.name,
-            image: page.picture?.data?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
+            image: page.picture?.data?.url || page.picture?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
           })));
-        } else if (data.error) {
-          showToast(`Lỗi Token: ${data.error.message}`);
-          console.error("Facebook API error:", data.error);
         } else {
-          showToast('Không nhận dạng được phản hồi từ Meta API.');
+          showToast('Không tìm thấy Fanpage nào. Hãy kiểm tra lại quyền hạn của Token!');
         }
       } catch (err) {
         loader.classList.add('hidden');
-        showToast('Lỗi kết nối đến máy chủ Facebook API!');
+        showToast('Lỗi kết nối hoặc Token của bạn đã hết hạn!');
         console.error(err);
       }
     };
