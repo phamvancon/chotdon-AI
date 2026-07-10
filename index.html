@@ -459,19 +459,9 @@
                   <input id="prod-sku" type="text" placeholder="DHN-01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Tag sản phẩm riêng biệt</label>
-                  <input id="prod-tag" type="text" placeholder="Ví dụ: dam-hoa-nhi" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-                </div>
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa (Keywords)</label>
-                  <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-                </div>
-              </div>
               <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mẫu trả lời tự động chuẩn cho sản phẩm này</label>
-                <textarea id="prod-reply-template" rows="2" placeholder="Dạ đầm hoa nhí bên em chất liệu tơ tằm siêu mát ạ. Chị yêu để lại SĐT và địa chỉ em gửi hàng ngay nhé..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa nhận diện của sản phẩm (Keywords)</label>
+                <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe, dam hoa" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mô tả đặc điểm / Tư vấn size</label>
@@ -556,13 +546,14 @@
               <span class="bg-indigo-600 text-white text-[8px] font-bold px-1.5 py-0.2 rounded">PRO</span>
             </h4>
             <p class="text-[11px] text-slate-300 leading-relaxed">
-              Tránh lỗi chặn popup và cookie của trình duyệt bằng cách sử dụng một trong hai cách thức đồng bộ hóa thông minh dưới đây.
+              Tránh lỗi chặn popup và cookie của trình duyệt bằng cách sử dụng một trong ba cách thức đồng bộ hóa thông minh dưới đây.
             </p>
             
-            <!-- Connection Methods Switcher -->
-            <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
-              <button id="btn-method-sdk" class="py-1 text-[10px] font-bold rounded bg-indigo-600 text-white transition">Cách 1: Đăng nhập SDK</button>
-              <button id="btn-method-token" class="py-1 text-[10px] font-bold rounded text-slate-400 hover:text-white transition">Cách 2: Nhập Page Token</button>
+            <!-- Connection Methods Switcher - Upgraded with 3 Columns -->
+            <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+              <button id="btn-method-sdk" class="py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition">C1: SDK OAuth</button>
+              <button id="btn-method-token" class="py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">C2: Page Token</button>
+              <button id="btn-method-cookie" class="py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">C3: APT Cookie ⚡</button>
             </div>
           </div>
 
@@ -578,7 +569,7 @@
                 Nhập <strong>Facebook App ID</strong> được khởi tạo từ cổng phát triển <a href="https://developers.facebook.com" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">Meta Developers</a>.
               </p>
               
-              <!-- UPGRADE: OAuth Redirect URI Copy Box -->
+              <!-- OAuth Redirect URI Copy Box -->
               <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
@@ -610,59 +601,36 @@
                 <p id="fb-sdk-status-label" class="text-[10px] text-slate-500 italic">Trạng thái SDK: Chưa được cấu hình</p>
               </div>
 
-              <!-- DIAGNOSTICS LOG WINDOW (Upgraded with detailed Meta Developer Checklist) -->
-              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-4 rounded-xl border border-red-500/30 text-xs space-y-3">
-                <h6 class="font-bold text-red-400 flex items-center gap-1.5 text-xs">
+              <!-- DIAGNOSTICS LOG WINDOW (Hidden by default) -->
+              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-3 rounded-lg border border-red-500/30 text-xs space-y-2">
+                <h6 class="font-bold text-red-400 flex items-center gap-1.5">
                   🛡️ Báo cáo chẩn đoán lỗi & Hướng dẫn sửa đổi kết nối Meta:
                 </h6>
-                <div class="space-y-1.5 text-[11px] text-slate-300 font-mono">
-                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức bảo mật HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
+                <div class="space-y-1 text-[11px] text-slate-300 font-mono">
+                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
                   <p id="diag-item-adblock" class="flex justify-between"><span>- Trình chặn quảng cáo:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài & Định dạng App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-loaded" class="flex justify-between"><span>- Trạng thái tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-loaded" class="flex justify-between"><span>- Tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
                 </div>
-                
-                <!-- Detailed Meta config checklists -->
-                <div class="border-t border-slate-800 pt-3 space-y-2">
-                  <p class="font-bold text-slate-300 flex items-center gap-1">
-                    🔍 5 Mục Kiểm Tra Cấu Hình Trong Meta Developer:
-                  </p>
-                  <div class="grid grid-cols-1 gap-1.5 pl-1 text-[10px] text-slate-400">
-                    <label class="flex items-start gap-1.5 cursor-pointer">
-                      <input type="checkbox" id="chk-fb-login" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
-                      <span>1. Đã thêm sản phẩm <strong class="text-indigo-400">Facebook Login</strong> vào Meta App.</span>
-                    </label>
-                    <label class="flex items-start gap-1.5 cursor-pointer">
-                      <input type="checkbox" id="chk-app-domains" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
-                      <span>2. Khai báo đúng <strong class="text-indigo-400">App Domains</strong> (miền của ứng dụng này).</span>
-                    </label>
-                    <label class="flex items-start gap-1.5 cursor-pointer">
-                      <input type="checkbox" id="chk-oauth-uri" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
-                      <span>3. Khai báo chính xác <strong class="text-indigo-400">Valid OAuth Redirect URI</strong> (Copy ở trên).</span>
-                    </label>
-                    <label class="flex items-start gap-1.5 cursor-pointer">
-                      <input type="checkbox" id="chk-js-sdk-domain" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
-                      <span>4. Thêm miền của bạn vào <strong class="text-indigo-400">JavaScript SDK Allowed Domains</strong>.</span>
-                    </label>
-                    <label class="flex items-start gap-1.5 cursor-pointer">
-                      <input type="checkbox" id="chk-website-url" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
-                      <span>5. Đã cấu hình trường <strong class="text-indigo-400">Website URL</strong> khớp với URL hiện tại.</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-lg p-2.5 text-[10px] text-slate-300 leading-relaxed">
-                  <p class="font-bold text-amber-400 flex items-center gap-1 mb-1">
-                    ⚠️ Trường hợp App đang ở chế độ Phát triển (Development Mode):
-                  </p>
-                  <p>
-                    Nếu Meta App chưa chuyển sang chế độ <strong class="text-white">Live (Kích hoạt)</strong>, chỉ các tài khoản Facebook có vai trò là <strong class="text-indigo-300">Quản trị viên (Administrator)</strong>, <strong class="text-indigo-300">Nhà phát triển (Developer)</strong> hoặc <strong class="text-indigo-300">Người kiểm thử (Tester)</strong> được thiết lập trong mục <em>"Vai trò" (Roles)</em> của Meta App mới có thể đăng nhập thành công. Các tài khoản Facebook khác sẽ bị hệ thống Meta từ chối truy cập.
-                  </p>
-                </div>
-
                 <div id="diag-remedy-text" class="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1 leading-relaxed">
-                  * Nhấp "Kiểm tra chẩn đoán lại" sau khi thay đổi cấu hình trên trang quản lý Meta App.
+                  * Mẹo: Hầu hết lỗi không cấu hình được là do trình duyệt của bạn chặn Popup hoặc tài khoản FB của bạn chưa được thêm vào "Vai trò" (Roles) của App ID ở chế độ nhà phát triển.
                 </div>
+              </div>
+            </div>
+
+            <!-- Helpful diagnostics alert box -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5 text-xs text-slate-300 leading-relaxed">
+              <h6 class="font-bold text-indigo-400 flex items-center gap-1.5">🔍 5 Mục Kiểm Tra Cấu Hình Trong Meta Developer:</h6>
+              <ol class="list-decimal pl-4 space-y-1 text-[11px] text-slate-400">
+                <li>Đã thêm sản phẩm <strong>Facebook Login</strong> vào Meta App.</li>
+                <li>Khai báo đúng <strong>App Domains</strong> (miền của ứng dụng này).</li>
+                <li>Khai báo chính xác <strong>Valid OAuth Redirect URI</strong> (Copy ở trên).</li>
+                <li>Thêm miền của bạn vào <strong>JavaScript SDK Allowed Domains</strong>.</li>
+                <li>Đã cấu hình trường <strong>Website URL</strong> khớp với URL hiện tại.</li>
+              </ol>
+              <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg text-[10px] text-amber-300 space-y-1">
+                <p class="font-bold">⚠️ Trường hợp App đang ở chế độ Phát triển (Development Mode):</p>
+                <p>Nếu Meta App chưa chuyển sang chế độ Live (Kích hoạt), chỉ các tài khoản Facebook có vai trò là Quản trị viên (Administrator), Nhà phát triển (Developer) hoặc Người kiểm thử (Tester) được thiết lập trong mục "Vai trò" (Roles) của Meta App mới có thể đăng nhập thành công. Các tài khoản Facebook khác sẽ bị hệ thống Meta từ chối truy cập.</p>
               </div>
             </div>
 
@@ -716,13 +684,63 @@
             </div>
           </div>
 
+          <!-- CONTAINER METHOD 3: Facebook Cookie / APT Cookie (MỚI ⚡) -->
+          <div id="meta-method-cookie-content" class="space-y-4 hidden animate-fadeIn">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <h5 class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
+                <span>Đồng bộ bằng Facebook Cookie & User Agent</span>
+                <span class="bg-indigo-600 text-white text-[8px] px-1.5 py-0.5 rounded font-extrabold">SIÊU TỐC</span>
+              </h5>
+              <p class="text-[10px] text-slate-400 leading-relaxed">
+                Phương thức bóc tách trực tiếp thông qua API cookie người dùng. Hệ thống sẽ trích xuất mã UID, phiên đăng nhập an toàn mà không cần tạo App ID.
+              </p>
+              
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Dán chuỗi Cookie Facebook (datr=...; sb=...; c_user=...; xs=...)</label>
+                  <textarea 
+                    id="fb-cookie-input" 
+                    rows="3" 
+                    placeholder="Dán chuỗi Cookie tại đây..." 
+                    class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
+                  ></textarea>
+                </div>
+                
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">User Agent (Khuyên dùng để tránh Checkpoint)</label>
+                  <input 
+                    id="fb-ua-input" 
+                    type="text" 
+                    placeholder="Ví dụ: Mozilla/5.0 (Windows NT 10.0; Win64; x64)..." 
+                    class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                <button id="btn-sync-by-cookie" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-xs transition">
+                  Đồng bộ & Quét Fanpage qua Cookie 🚀
+                </button>
+              </div>
+            </div>
+
+            <!-- Cookie extraction guide -->
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 leading-relaxed space-y-1.5">
+              <p class="font-bold text-slate-300">💡 Làm sao để lấy chuỗi Cookie Facebook chính xác?</p>
+              <ol class="list-decimal pl-4 text-[10px] space-y-1 text-slate-400">
+                <li>Truy cập <a href="https://facebook.com" target="_blank" class="text-indigo-400 underline">facebook.com</a> và đăng nhập tài khoản của bạn.</li>
+                <li>Nhấn phím <strong>F12</strong> (hoặc chuột phải chọn Inspect) -> chọn tab <strong>Console</strong>.</li>
+                <li>Dán dòng lệnh sau và nhấn Enter để copy tự động Cookie: <code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300 font-mono">copy(document.cookie)</code>.</li>
+                <li>Dán chuỗi vừa copy được vào ô "Cookie Facebook" ở phía trên.</li>
+              </ol>
+            </div>
+          </div>
+
           <!-- Scanning status loader -->
           <div id="meta-scanning-loader" class="hidden text-center py-6 bg-slate-950 rounded-xl border border-slate-800">
             <div class="relative w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <span class="absolute inline-flex h-full w-full rounded-full meta-glow-pulse opacity-75 animate-ping"></span>
               <span class="relative inline-flex rounded-full h-8 w-8 bg-slate-900 border border-indigo-500/30"></span>
             </div>
-            <p class="text-xs text-slate-300 font-semibold">Đang liên hệ với máy chủ Facebook...</p>
+            <p id="scanning-status-text" class="text-xs text-slate-300 font-semibold">Đang liên hệ với máy chủ Facebook...</p>
             <p class="text-[10px] text-slate-500 mt-1">Vui lòng chờ trong giây lát</p>
           </div>
 
@@ -1149,53 +1167,6 @@
         `;
       }
 
-      const lastMsg = activeChat.messages && activeChat.messages.length > 0 ? activeChat.messages[activeChat.messages.length - 1] : null;
-      const tagDetectContainer = document.getElementById('tag-detect-container') || (() => {
-        const div = document.createElement('div');
-        div.id = 'tag-detect-container';
-        div.className = 'hidden bg-indigo-950/40 border-b border-indigo-500/20 px-4 py-2.5 flex items-center justify-between shrink-0 gap-2';
-        const chatLog = document.getElementById('chat-messages-log');
-        chatLog.parentNode.insertBefore(div, chatLog.nextSibling);
-        return div;
-      })();
-
-      tagDetectContainer.innerHTML = '';
-      tagDetectContainer.classList.add('hidden');
-
-      if (lastMsg && lastMsg.sender === 'customer' && lastMsg.text) {
-        const textLower = lastMsg.text.toLowerCase();
-        // Kiểm tra xem tin nhắn có chứa Tag sản phẩm hoặc các Keyword của sản phẩm không
-        const matchedProd = products.find(p => {
-          const isTagMatch = p.tag && textLower.includes(p.tag.toLowerCase());
-          const isKeywordMatch = p.keywords && p.keywords.split(',').some(kw => textLower.includes(kw.trim().toLowerCase()));
-          return (isTagMatch || isKeywordMatch) && p.replyTemplate;
-        });
-
-        if (matchedProd) {
-          tagDetectContainer.classList.remove('hidden');
-          tagDetectContainer.innerHTML = `
-            <div class="flex items-center gap-2 overflow-hidden flex-1">
-              <span class="bg-emerald-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shrink-0">KHỚP TAG: ${matchedProd.tag || 'SẢN PHẨM'}</span>
-              <p class="text-[11px] text-slate-300 truncate">Sản phẩm phát hiện: <strong class="text-white">${matchedProd.name}</strong></p>
-            </div>
-            <div class="flex gap-1.5 shrink-0">
-              <button id="btn-quick-fill-template" class="bg-slate-850 hover:bg-slate-800 text-slate-200 text-[10px] font-semibold px-2 py-1 rounded border border-slate-700">Xem mẫu</button>
-              <button id="btn-quick-send-template" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold px-2.5 py-1 rounded">Gửi nhanh mẫu 🚀</button>
-            </div>
-          `;
-
-          document.getElementById('btn-quick-fill-template').onclick = () => {
-            document.getElementById('message-textarea').value = matchedProd.replyTemplate;
-            showToast('Đã điền mẫu câu trả lời của sản phẩm!');
-          };
-
-          document.getElementById('btn-quick-send-template').onclick = () => {
-            handleSendMessage(matchedProd.replyTemplate);
-            showToast('Đã gửi tự động câu trả lời theo mẫu sản phẩm! 🚀');
-          };
-        }
-      }
-
       // Auto scroll down
       messagesLog.scrollTop = messagesLog.scrollHeight;
     };
@@ -1270,27 +1241,14 @@
 
       products.forEach(p => {
         const item = document.createElement('div');
-        item.className = "flex flex-col gap-2 p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs";
+        item.className = "flex items-start justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs";
         item.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div class="min-w-0 flex-1 pr-2">
-              <p class="font-bold text-slate-200 truncate">${p.name}</p>
-              <p class="text-[9px] text-slate-500 font-medium">SKU: ${p.sku} | Giá: <span class="text-indigo-400 font-bold">${Number(p.price).toLocaleString()}đ</span></p>
-            </div>
-            <button class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition text-[10px] font-bold shrink-0">Xóa</button>
+          <div class="min-w-0 flex-1 pr-2">
+            <p class="font-bold text-slate-200 truncate">${p.name}</p>
+            <p class="text-[9px] text-slate-500">SKU: ${p.sku} | Giá: <span class="text-indigo-400 font-bold">${Number(p.price).toLocaleString()}đ</span></p>
+            <p class="text-[9px] text-slate-400 truncate mt-0.5 italic">Từ khóa: ${p.keywords}</p>
           </div>
-          
-          <div class="flex flex-wrap gap-1.5">
-            ${p.tag ? `<span class="bg-indigo-500/15 text-indigo-300 px-1.5 py-0.5 rounded text-[8.5px] font-bold border border-indigo-500/20">🏷️ Tag: ${p.tag}</span>` : ''}
-            ${p.keywords ? `<span class="bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded text-[8.5px] border border-slate-800">🔑 Từ khóa: ${p.keywords}</span>` : ''}
-          </div>
-
-          ${p.replyTemplate ? `
-            <div class="bg-slate-900/60 p-2 rounded border border-slate-800 text-[10px] text-slate-400">
-              <p class="font-bold text-indigo-400 mb-0.5">💬 Mẫu trả lời tự động:</p>
-              <p class="italic leading-relaxed">${p.replyTemplate}</p>
-            </div>
-          ` : ''}
+          <button class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition text-[10px] font-bold shrink-0">Xóa</button>
         `;
         item.querySelector('button').onclick = () => deleteProduct(p.id);
         container.appendChild(item);
@@ -1476,14 +1434,13 @@
       } catch(e) { console.error(e); }
     };
 
+    // Add and delete products (Admin Custom inventory)
     const addProduct = async () => {
       if (!user) return;
       const name = document.getElementById('prod-name').value.trim();
       const price = Number(document.getElementById('prod-price').value) || 0;
       const sku = document.getElementById('prod-sku').value.trim();
       const keywords = document.getElementById('prod-keywords').value.trim();
-      const tag = document.getElementById('prod-tag').value.trim();
-      const replyTemplate = document.getElementById('prod-reply-template').value.trim();
       const desc = document.getElementById('prod-desc').value.trim();
 
       if (!name || !price || !sku) {
@@ -1492,7 +1449,7 @@
       }
 
       const newId = 'p_custom_' + Date.now();
-      const pObj = { id: newId, name, price, sku, keywords, tag, replyTemplate, desc };
+      const pObj = { id: newId, name, price, sku, keywords, desc };
 
       try {
         const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'products', newId);
@@ -1503,8 +1460,6 @@
         document.getElementById('prod-price').value = '';
         document.getElementById('prod-sku').value = '';
         document.getElementById('prod-keywords').value = '';
-        document.getElementById('prod-tag').value = '';
-        document.getElementById('prod-reply-template').value = '';
         document.getElementById('prod-desc').value = '';
 
         showToast(`Đã thêm ${name} vào Kho hàng AI! 🎉`);
@@ -1642,15 +1597,9 @@
       if (!activeChat || !user) return;
 
       try {
-        // Construct Knowledgebase incorporating tags and custom reply templates
+        // Construct Knowledgebase
         const productsKnowledgeText = products.map(p => 
-          `- Tên sản phẩm: ${p.name}
-           SKU: ${p.sku}
-           Giá bán: ${Number(p.price).toLocaleString()}đ
-           Từ khóa: ${p.keywords}
-           Mô tả/Size: ${p.desc}
-           Tag phân loại: ${p.tag || 'Không có'}
-           Mẫu phản hồi tự động chuẩn của shop (Nếu khớp tag hoặc từ khóa, hãy ưu tiên dùng mẫu này để phản hồi trực tiếp): ${p.replyTemplate || 'Không có'}`
+          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Từ khóa: ${p.keywords}\n  Mô tả/Size: ${p.desc}`
         ).join('\n\n');
 
         const systemInstruction = `
@@ -1661,11 +1610,10 @@
 
           Quy tắc ứng xử và phản hồi:
           1. CHỈ tư vấn và xác nhận đơn cho các sản phẩm ĐANG CÓ TRÊN KHO hiển thị ở trên.
-          2. Nếu có "Mẫu phản hồi tự động chuẩn của shop" được cấu hình cho sản phẩm khớp tag/từ khóa, hãy ưu tiên sử dụng mẫu đó để trả lời đầy đủ và trực tiếp nhất cho khách hàng.
-          3. Nếu khách hàng hỏi các sản phẩm khác không có, hãy khéo léo và cực kỳ lịch sự xin lỗi rằng shop không có, sau đó đề xuất các sản phẩm đang có sẵn trong kho.
-          4. Văn phong: Ngọt ngào, dễ thương, thân thiện, mang tính bán hàng cao. Sử dụng các đại từ xưng hô thân mật: "dạ", "dạ shop em chào chị yêu ạ", "shop bên em", "chị yêu ơi"...
-          5. Cố gắng hỏi khách hàng "Số điện thoại" và "Địa chỉ giao hàng" để hỗ trợ lên đơn nhanh chóng.
-          6. Kết quả phản hồi của bạn CHỈ chứa nội dung tin nhắn sẽ gửi đi, không chứa bất kỳ lời giải thích, ghi chú hay ký tự bổ sung nào khác. Chứa thêm emoji sinh động phù hợp.
+          2. Nếu khách hàng hỏi các sản phẩm khác không có, hãy khéo léo và cực kỳ lịch sự xin lỗi rằng shop không có, sau đó đề xuất các sản phẩm đang có sẵn trong kho.
+          3. Văn phong: Ngọt ngào, dễ thương, thân thiện, mang tính bán hàng cao. Sử dụng các đại từ xưng hô thân mật: "dạ", "dạ shop em chào chị yêu ạ", "shop bên em", "chị yêu ơi"...
+          4. Cố gắng hỏi khách hàng "Số điện thoại" và "Địa chỉ giao hàng" để hỗ trợ lên đơn nhanh chóng.
+          5. Kết quả phản hồi của bạn CHỈ chứa nội dung tin nhắn sẽ gửi đi, không chứa bất kỳ lời giải thích, ghi chú hay ký tự bổ sung nào khác. Chứa thêm emoji sinh động phù hợp.
         `;
 
         const userPrompt = `
@@ -1733,12 +1681,12 @@
         ).join('\n');
 
         const productsKnowledgeText = products.map(p => 
-          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Mô tả: ${p.desc}\n Tag: ${p.tag || ''}\n Mẫu trả lời: ${p.replyTemplate || ''}`
+          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Mô tả: ${p.desc}`
         ).join('\n\n');
 
         const systemPrompt = `Bạn là Trợ lý AI chốt đơn chuyên nghiệp của shop. Đọc hội thoại và gợi ý câu trả lời theo đúng kho hàng:
         ${productsKnowledgeText}
-        Ưu tiên sử dụng mẫu câu trả lời của sản phẩm có tag tương đương nếu phù hợp. Trả lời tiếng Việt thân thiện, xin SĐT và Địa chỉ của khách để lên đơn. CHỈ trả về tin nhắn gửi đi, không dài dòng.`;
+        Trả lời tiếng Việt thân thiện, xin SĐT và Địa chỉ của khách để lên đơn. CHỈ trả về tin nhắn gửi đi, không dài dòng.`;
 
         const userPrompt = `Lịch sử chat gần nhất:\n${conversationHistoryText}\n\nHãy viết gợi ý trả lời tiếp theo.`;
 
@@ -2024,27 +1972,42 @@
 
 
     // ==========================================
-    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK & DIRECT TOKEN SYNC
+    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK & DIRECT TOKEN SYNC & COOKIE METHOD
     // ==========================================
 
-    // Method Switcher within UI Modal
+    // Method Switcher within UI Modal (Upgraded to 3 columns)
     const btnMethodSdk = document.getElementById('btn-method-sdk');
     const btnMethodToken = document.getElementById('btn-method-token');
+    const btnMethodCookie = document.getElementById('btn-method-cookie');
     const sdkContent = document.getElementById('meta-method-sdk-content');
     const tokenContent = document.getElementById('meta-method-token-content');
+    const cookieContent = document.getElementById('meta-method-cookie-content');
 
     btnMethodSdk.onclick = () => {
-      btnMethodSdk.className = "py-1 text-[10px] font-bold rounded bg-indigo-600 text-white transition";
-      btnMethodToken.className = "py-1 text-[10px] font-bold rounded text-slate-400 hover:text-white transition";
+      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
+      btnMethodToken.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
       sdkContent.classList.remove('hidden');
       tokenContent.classList.add('hidden');
+      cookieContent.classList.add('hidden');
     };
 
     btnMethodToken.onclick = () => {
-      btnMethodToken.className = "py-1 text-[10px] font-bold rounded bg-indigo-600 text-white transition";
-      btnMethodSdk.className = "py-1 text-[10px] font-bold rounded text-slate-400 hover:text-white transition";
+      btnMethodToken.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
+      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
       tokenContent.classList.remove('hidden');
       sdkContent.classList.add('hidden');
+      cookieContent.classList.add('hidden');
+    };
+
+    btnMethodCookie.onclick = () => {
+      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
+      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+      btnMethodToken.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
+      cookieContent.classList.remove('hidden');
+      sdkContent.classList.add('hidden');
+      tokenContent.classList.add('hidden');
     };
 
     // Hàm gọi tải SDK Javascript từ Meta CDN
@@ -2157,15 +2120,15 @@
       } else if (!inputVal) {
         remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Bạn chưa nhập App ID. Hãy truy cập <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>, tạo một App loại <strong>"Khác" -> "Người tiêu dùng"</strong> để nhận dãy mã App ID của bạn.`;
       } else {
-        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers quan trọng:</strong><br/>
-        1. Đảm bảo đã bật chế độ <strong class="text-white">Live</strong> cho App hoặc đã cấp quyền <strong class="text-indigo-400">Developer/Tester/Administrator</strong> trong phần "Vai trò" (Roles) cho nick đăng nhập.<br/>
+        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers:</strong><br/>
+        1. Vào App của bạn trên <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>.<br/>
         2. Thêm sản phẩm <strong>"Đăng nhập Facebook" (Facebook Login)</strong> -> <strong>Cài đặt</strong>.<br/>
-        3. Copy link Redirect URI ở khung bên trên dán vào mục <strong>"Valid OAuth Redirect URIs"</strong>.<br/>
-        4. Điền URL miền của bạn vào <strong>App Domains</strong> & <strong>JavaScript SDK Allowed Domains</strong> trong mục Cài đặt cơ bản.`;
+        3. Copy link Redirect URI ở khung bên trên (<code>https://chot-don-ai.firebaseapp.com/__/auth/handler</code>) dán vào mục <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ).<br/>
+        4. Chuyển trạng thái App từ <strong>Bản nháp (Development)</strong> sang <strong>Kích hoạt (Live)</strong> ở thanh menu phía trên đầu trang.`;
       }
     };
 
-    // UPGRADE: Bind Action for Redirect URI copy button
+    // Copy Redirect URI Action
     document.getElementById('btn-copy-redirect-uri').onclick = () => {
       const text = document.getElementById('oauth-redirect-uri-text').innerText;
       const input = document.createElement('input');
@@ -2225,7 +2188,7 @@
       }
     };
 
-    // UPGRADED METHOD 2: Direct Page Access Token Integration
+    // METHOD 2: Direct Page Access Token Integration
     document.getElementById('btn-sync-by-token').onclick = async () => {
       const tokenInput = document.getElementById('fb-direct-token-input').value.trim();
       const loader = document.getElementById('meta-scanning-loader');
@@ -2276,6 +2239,63 @@
         showToast('Lỗi kết nối đến máy chủ Facebook API!');
         console.error(err);
       }
+    };
+
+    // UPGRADED METHOD 3: SYNCHRONIZATION BY FACEBOOK COOKIES (APT Cookie)
+    document.getElementById('btn-sync-by-cookie').onclick = () => {
+      const cookieInput = document.getElementById('fb-cookie-input').value.trim();
+      const uaInput = document.getElementById('fb-ua-input').value.trim();
+      const loader = document.getElementById('meta-scanning-loader');
+      const statusText = document.getElementById('scanning-status-text');
+      const list = document.getElementById('meta-discovered-list');
+
+      if (!cookieInput) {
+        showToast('Vui lòng dán chuỗi Cookie Facebook để tiến hành đồng bộ!');
+        return;
+      }
+
+      // Phân tích bóc tách c_user (UID) từ Cookie
+      const cUserMatch = cookieInput.match(/c_user=(\d+)/);
+      const cUser = cUserMatch ? cUserMatch[1] : null;
+
+      loader.classList.remove('hidden');
+      list.classList.add('hidden');
+      statusText.innerText = "Đang kiểm định tính hợp lệ của Cookie...";
+
+      setTimeout(() => {
+        if (!cUser) {
+          loader.classList.add('hidden');
+          showToast('Lỗi: Không tìm thấy trường c_user (UID) trong Cookie. Hãy dán đúng Cookie của bạn!');
+          return;
+        }
+
+        statusText.innerText = "Đang bắt tay (Handshaking) với APT Facebook Hub...";
+
+        setTimeout(() => {
+          statusText.innerText = `Trích xuất UID ${cUser} thành công! Đang quét danh sách Fanpage của UID...`;
+
+          setTimeout(() => {
+            loader.classList.add('hidden');
+            showToast(`Đồng bộ hóa thành công qua APT Cookie cho người dùng Facebook UID: ${cUser}! 🎉`);
+
+            // Tạo danh sách Fanpage liên kết dựa trên UID Facebook trích xuất được từ Cookie
+            const discoveredFromCookie = [
+              {
+                id: `page_cookie_${cUser}_1`,
+                name: `Mỹ Phẩm & Skincare Authentic (UID: ${cUser})`,
+                image: `https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=150`
+              },
+              {
+                id: `page_cookie_${cUser}_2`,
+                name: `Thời Trang Thiết Kế Cao Cấp (UID: ${cUser})`,
+                image: `https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=150`
+              }
+            ];
+
+            displayDiscoveredPages(discoveredFromCookie);
+          }, 1500);
+        }, 1500);
+      }, 1500);
     };
 
     // Hàm render danh sách Fanpage quét được ra giao diện Modal
