@@ -559,10 +559,32 @@
           <!-- CONTAINER METHOD 1: FB JS SDK -->
           <div id="meta-method-sdk-content" class="space-y-4">
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <h5 class="text-xs font-semibold text-slate-200">Cấu hình API Facebook Client App</h5>
+              <div class="flex items-center justify-between">
+                <h5 class="text-xs font-semibold text-slate-200">Cấu hình API Facebook Client App</h5>
+                <!-- Diagnostics trigger -->
+                <button id="btn-run-diagnostics" class="text-[10px] text-indigo-400 hover:underline">🔍 Chẩn đoán lỗi App ID</button>
+              </div>
               <p class="text-[10px] text-slate-400 leading-relaxed">
                 Nhập <strong>Facebook App ID</strong> được khởi tạo từ cổng phát triển <a href="https://developers.facebook.com" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">Meta Developers</a>.
               </p>
+              
+              <!-- UPGRADE: OAuth Redirect URI Copy Box -->
+              <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+                    OAuth Redirect URI (Cần khai báo trên Meta)
+                  </span>
+                  <button id="btn-copy-redirect-uri" class="text-[9px] bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-2 py-0.5 rounded transition">
+                    Copy 📋
+                  </button>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-[11px] font-mono text-slate-200 break-all select-all select-none" id="oauth-redirect-uri-text">https://chot-don-ai.firebaseapp.com/__/auth/handler</div>
+                <p class="text-[9px] text-slate-500 leading-relaxed">
+                  * Hãy sao chép link trên và dán chính xác vào trường <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ) trong phần cài đặt Đăng nhập Facebook (Facebook Login) của Meta App.
+                </p>
+              </div>
+
               <div class="space-y-2">
                 <div class="flex gap-2">
                   <input 
@@ -576,6 +598,22 @@
                   </button>
                 </div>
                 <p id="fb-sdk-status-label" class="text-[10px] text-slate-500 italic">Trạng thái SDK: Chưa được cấu hình</p>
+              </div>
+
+              <!-- DIAGNOSTICS LOG WINDOW (Hidden by default) -->
+              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-3 rounded-lg border border-red-500/30 text-xs space-y-2">
+                <h6 class="font-bold text-red-400 flex items-center gap-1.5">
+                  🛡️ Báo cáo kiểm tra kết nối Meta:
+                </h6>
+                <div class="space-y-1 text-[11px] text-slate-300 font-mono">
+                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-adblock" class="flex justify-between"><span>- Trình chặn quảng cáo:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-loaded" class="flex justify-between"><span>- Tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
+                </div>
+                <div id="diag-remedy-text" class="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1 leading-relaxed">
+                  * Mẹo: Hầu hết lỗi không cấu hình được là do trình duyệt của bạn chặn Popup hoặc tài khoản FB của bạn chưa được thêm vào "Vai trò" (Roles) của App ID ở chế độ nhà phát triển.
+                </div>
               </div>
             </div>
 
@@ -595,15 +633,15 @@
           <!-- CONTAINER METHOD 2: DIRECT PAGE TOKEN -->
           <div id="meta-method-token-content" class="space-y-4 hidden animate-fadeIn">
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <h5 class="text-xs font-semibold text-slate-200">Đồng bộ bằng Page Access Token (Mượt mà, Bỏ qua lỗi popup)</h5>
+              <h5 class="text-xs font-semibold text-slate-200">Đồng bộ bằng Page Access Token (Mượt mà, Bỏ qua lỗi App ID)</h5>
               <p class="text-[10px] text-slate-400 leading-relaxed">
-                Nhập trực tiếp mã <strong>Page Access Token</strong> hoặc <strong>User Access Token</strong> được sinh ra từ mục API Graph Explorer để đồng bộ hoá ngay lập tức mà không cần cửa sổ popup.
+                Nếu bạn không muốn tự tạo App ID phức tạp, cách tốt nhất là sử dụng mã <strong>Access Token</strong> (sinh ra từ cổng API Explorer) để đồng bộ trực tiếp mượt mà mà không sợ lỗi chặn popup.
               </p>
               <div class="space-y-3">
                 <textarea 
                   id="fb-direct-token-input" 
                   rows="3" 
-                  placeholder="Dán mã EAAC... của bạn vào đây" 
+                  placeholder="Dán mã Token (Thường bắt đầu bằng EAAC...)" 
                   class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
                 ></textarea>
                 <button id="btn-sync-by-token" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded text-xs transition">
@@ -616,14 +654,14 @@
             <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
               <details class="group">
                 <summary class="text-xs font-bold text-slate-300 cursor-pointer flex justify-between items-center outline-none select-none">
-                  <span>💡 Hướng dẫn lấy Page Access Token?</span>
+                  <span>💡 Hướng dẫn lấy Page Access Token nhanh nhất?</span>
                   <span class="transition-transform duration-200 group-open:rotate-180 text-[10px]">▼</span>
                 </summary>
                 <div class="text-[10px] text-slate-400 mt-2 space-y-1.5 leading-relaxed pl-1 border-l border-indigo-500/40">
-                  <p>1. Truy cập <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-indigo-400 underline">Meta Graph API Explorer</a>.</p>
-                  <p>2. Chọn ứng dụng (App) của bạn và cấp các quyền <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_messaging</code>.</p>
-                  <p>3. Chọn tài khoản cá nhân, click **Generate Access Token**.</p>
-                  <p>4. Copy mã token dài này dán vào ô bên trên để đồng bộ trực tiếp mượt mà 100%.</p>
+                  <p>1. Truy cập trang <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-indigo-400 underline">Meta Graph API Explorer</a>.</p>
+                  <p>2. Tại cột bên phải, chọn <strong>Meta App</strong> mặc định hoặc App của riêng bạn.</p>
+                  <p>3. Trong ô quyền (Permissions), nhấn thêm <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_messaging</code>.</p>
+                  <p>4. Chọn Token đại diện là Fanpage của bạn, nhấp **Generate Access Token** và copy chuỗi mã dài dán lên ô trên.</p>
                 </div>
               </details>
             </div>
@@ -647,6 +685,14 @@
 
         <!-- PANE C: Manual integration form -->
         <div id="modal-pane-manual" class="hidden space-y-4">
+          <!-- PRO-TIP: Guide how to get page ID without Meta SDK -->
+          <div class="bg-indigo-950/10 border border-indigo-500/20 p-3 rounded-lg text-xs space-y-1.5">
+            <p class="font-semibold text-indigo-300">💡 Hướng dẫn lấy ID Fanpage thực tế cực nhanh:</p>
+            <p class="text-[10px] text-slate-400 leading-relaxed">
+              Bạn không cần tài khoản Meta Developer! Hãy copy đường link Fanpage của bạn (Ví dụ: <code>facebook.com/shopcuaban</code>), dán vào trang web <a href="https://id.atpsoftware.vn/" target="_blank" class="text-indigo-400 underline">id.atpsoftware.vn</a> để lấy dãy số ID Trang gồm 15 chữ số nhanh chóng và dán vào ô dưới đây.
+            </p>
+          </div>
+
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tên hiển thị Fanpage</label>
             <input id="manual-page-name" type="text" placeholder="Ví dụ: Shop Giày Xuất Khẩu" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
@@ -1771,6 +1817,8 @@
         renderPagesManagerList();
       } else {
         modal.classList.add('hidden');
+        // Hide diagnostics on close
+        document.getElementById('diagnostics-log-box').classList.add('hidden');
       }
     };
 
@@ -1888,18 +1936,25 @@
       if (oldScript) oldScript.remove();
 
       window.fbAsyncInit = function() {
-        FB.init({
-          appId      : appIdValue,
-          cookie     : true,                     
-          xfbml      : true,                     
-          version    : 'v18.0'           
-        });
-        
-        isFbSdkLoaded = true;
-        document.getElementById('fb-sdk-status-label').innerHTML = `
-          <span class="text-emerald-400 font-semibold">● Facebook SDK Sẵn sàng (App ID: ${appIdValue})</span>
-        `;
-        showToast('Khởi tạo Facebook SDK của Meta thành công!');
+        try {
+          FB.init({
+            appId      : appIdValue,
+            cookie     : true,                     
+            xfbml      : true,                     
+            version    : 'v18.0'           
+          });
+          
+          isFbSdkLoaded = true;
+          document.getElementById('fb-sdk-status-label').innerHTML = `
+            <span class="text-emerald-400 font-semibold">● Facebook SDK Sẵn sàng (App ID: ${appIdValue})</span>
+          `;
+          showToast('Khởi tạo Facebook SDK của Meta thành công!');
+        } catch (err) {
+          console.error("FB.init error: ", err);
+          document.getElementById('fb-sdk-status-label').innerHTML = `
+            <span class="text-red-400 font-semibold">● Lỗi cấu hình SDK Facebook</span>
+          `;
+        }
       };
 
       (function(d, s, id){
@@ -1918,6 +1973,13 @@
         showToast('Vui lòng điền Facebook App ID của bạn!');
         return;
       }
+      
+      // Basic Validation of App ID format
+      if (!/^\d+$/.test(appIdInputVal)) {
+        showToast('Facebook App ID bắt buộc phải là một chuỗi chữ số nguyên!');
+        return;
+      }
+
       facebookAppId = appIdInputVal;
       localStorage.setItem('chotdon_fb_app_id', appIdInputVal);
       runMetaFacebookSDKLoader(appIdInputVal);
@@ -1929,6 +1991,73 @@
       runMetaFacebookSDKLoader(facebookAppId);
     }
 
+    // RUN METADATA SYSTEM DIAGNOSTICS & PROVIDE TROUBLESHOOTING HELP
+    document.getElementById('btn-run-diagnostics').onclick = () => {
+      const logBox = document.getElementById('diagnostics-log-box');
+      logBox.classList.remove('hidden');
+
+      const diagHttps = document.getElementById('diag-item-https');
+      const diagAdblock = document.getElementById('diag-item-adblock');
+      const diagAppid = document.getElementById('diag-item-appid');
+      const diagLoaded = document.getElementById('diag-item-loaded');
+
+      // 1. Check HTTPS
+      const isHttps = window.location.protocol === 'https:';
+      diagHttps.innerHTML = `<span>- Giao thức HTTPS:</span> <span class="${isHttps ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isHttps ? 'Hợp lệ (HTTPS)' : 'Không đạt (Cần chạy link HTTPS)'}</span>`;
+
+      // 2. Check Adblocker by verifying if social network script element might be blocked
+      const testImg = new Image();
+      testImg.src = 'https://www.facebook.com/tr/'; // Facebook pixel endpoint
+      testImg.onload = () => {
+        diagAdblock.innerHTML = `<span>- Trình chặn quảng cáo:</span> <span class="text-emerald-400 font-bold">Không phát hiện</span>`;
+      };
+      testImg.onerror = () => {
+        diagAdblock.innerHTML = `<span>- Trình chặn quảng cáo:</span> <span class="text-amber-400 font-bold">Có thể đang bật (Hãy tạm tắt)</span>`;
+      };
+
+      // 3. Check entered App ID length/format
+      const inputVal = document.getElementById('fb-app-id-input').value.trim();
+      if (!inputVal) {
+        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-red-400 font-bold">Trống</span>`;
+      } else if (!/^\d+$/.test(inputVal)) {
+        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-red-400 font-bold">Sai định dạng (Không phải là số)</span>`;
+      } else {
+        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-emerald-400 font-bold">Hợp lệ (${inputVal.length} kí tự)</span>`;
+      }
+
+      // 4. Check loaded SDK
+      const isSdkPresent = typeof window.FB !== 'undefined';
+      diagLoaded.innerHTML = `<span>- Tệp SDK Meta:</span> <span class="${isSdkPresent ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isSdkPresent ? 'Đã liên kết thành công' : 'Chưa tải được'}</span>`;
+
+      // Diagnostic Remedy Recommendation text
+      const remedyText = document.getElementById('diag-remedy-text');
+      if (!isHttps) {
+        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Meta SDK bắt buộc ứng dụng phải chạy trên giao thức <code>https://</code> bảo mật. Vui lòng đổi đường dẫn trình duyệt của bạn sang https:// để tiếp tục cấu hình SDK.`;
+      } else if (!isSdkPresent) {
+        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> File SDK của Facebook không thể tải về trình duyệt của bạn. Hãy thử tắt các tiện ích chặn quảng cáo (AdBlock, uBlock, Brave Shield) rồi nhấn "Khởi tạo SDK" lại nhé.`;
+      } else if (!inputVal) {
+        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Bạn chưa nhập App ID. Hãy truy cập <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>, tạo một App loại <strong>"Khác" -> "Người tiêu dùng"</strong> để nhận dãy mã App ID của bạn.`;
+      } else {
+        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers:</strong><br/>
+        1. Vào App của bạn trên <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>.<br/>
+        2. Thêm sản phẩm <strong>"Đăng nhập Facebook" (Facebook Login)</strong> -> <strong>Cài đặt</strong>.<br/>
+        3. Copy link Redirect URI ở khung bên trên (<code>https://chot-don-ai.firebaseapp.com/__/auth/handler</code>) dán vào mục <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ).<br/>
+        4. Chuyển trạng thái App từ <strong>Bản nháp (Development)</strong> sang <strong>Kích hoạt (Live)</strong> ở thanh menu phía trên đầu trang.`;
+      }
+    };
+
+    // UPGRADE: Bind Action for Redirect URI copy button
+    document.getElementById('btn-copy-redirect-uri').onclick = () => {
+      const text = document.getElementById('oauth-redirect-uri-text').innerText;
+      const input = document.createElement('input');
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showToast('Đã copy OAuth Redirect URI thành công! 📋');
+    };
+
     // Nút kích hoạt đồng bộ đăng nhập qua Meta API
     document.getElementById('btn-meta-oauth-scan').onclick = () => {
       const loader = document.getElementById('meta-scanning-loader');
@@ -1938,36 +2067,42 @@
       list.classList.add('hidden');
 
       if (facebookAppId && isFbSdkLoaded) {
-        FB.login(function(response) {
-          loader.classList.add('hidden');
-          if (response.authResponse) {
-            showToast('Kết nối tài khoản Facebook thành công! Đang lấy danh sách Fanpage...');
-            
-            FB.api('/me/accounts', { fields: 'id,name,picture{url},access_token' }, function(apiResponse) {
-              if (apiResponse && !apiResponse.error) {
-                const accounts = apiResponse.data || [];
-                if (accounts.length === 0) {
-                  showToast('Tài khoản Meta này không có quyền quản lý trang Fanpage nào.');
-                  return;
+        try {
+          FB.login(function(response) {
+            loader.classList.add('hidden');
+            if (response.authResponse) {
+              showToast('Kết nối tài khoản Facebook thành công! Đang lấy danh sách Fanpage...');
+              
+              FB.api('/me/accounts', { fields: 'id,name,picture{url},access_token' }, function(apiResponse) {
+                if (apiResponse && !apiResponse.error) {
+                  const accounts = apiResponse.data || [];
+                  if (accounts.length === 0) {
+                    showToast('Tài khoản Meta này không có quyền quản lý trang Fanpage nào.');
+                    return;
+                  }
+                  displayDiscoveredPages(accounts.map(page => ({
+                    id: page.id,
+                    name: page.name,
+                    image: page.picture?.data?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
+                  })));
+                } else {
+                  showToast('Lỗi API Facebook khi tải danh sách trang.');
+                  console.error("Meta Graph API Error:", apiResponse.error);
                 }
-                displayDiscoveredPages(accounts.map(page => ({
-                  id: page.id,
-                  name: page.name,
-                  image: page.picture?.data?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
-                })));
-              } else {
-                showToast('Lỗi API Facebook khi tải danh sách trang.');
-                console.error("Meta Graph API Error:", apiResponse.error);
-              }
-            });
-          } else {
-            showToast('Đăng nhập bị hủy hoặc tài khoản chưa cấp quyền đầy đủ.');
-          }
-        }, { scope: 'pages_show_list,pages_read_engagement,pages_manage_metadata,public_profile' });
+              });
+            } else {
+              showToast('Đăng nhập bị hủy hoặc tài khoản chưa cấp quyền đầy đủ.');
+            }
+          }, { scope: 'pages_show_list,pages_read_engagement,pages_manage_metadata,public_profile' });
+        } catch (sdkError) {
+          loader.classList.add('hidden');
+          showToast('Trình duyệt chặn mở popup của Facebook SDK. Hãy bật quyền cho phép Popup hoặc sử dụng Cách 2!');
+          console.error(sdkError);
+        }
 
       } else {
         loader.classList.add('hidden');
-        showToast('Vui lòng nhập Facebook App ID và nhấp "Khởi tạo SDK" trước!');
+        showToast('Vui lòng nhập Facebook App ID và nhấp "Khởi tạo SDK" trước hoặc chuyển sang Cách 2 nhập Page Token!');
       }
     };
 
@@ -1979,6 +2114,12 @@
 
       if (!tokenInput) {
         showToast('Vui lòng dán mã Access Token vào ô nhập!');
+        return;
+      }
+
+      // Check basic Access Token starting characters structure
+      if (!tokenInput.startsWith("EAA")) {
+        showToast('Mã token không đúng định dạng chuẩn của Facebook (Token thường bắt đầu bằng "EAA...")');
         return;
       }
 
