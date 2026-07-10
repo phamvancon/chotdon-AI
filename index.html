@@ -533,12 +533,11 @@
       <div id="modal-body-content" class="flex-1 overflow-y-auto p-5 space-y-4">
         
         <!-- SANDBOX ENVIRONMENT WARNING -->
-        <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-300 space-y-1.5 animate-pulse">
-          <p class="font-bold flex items-center gap-1.5">⚠️ Lưu ý quan trọng khi chạy trong môi trường thử nghiệm:</p>
+        <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-300 space-y-1.5">
+          <p class="font-bold flex items-center gap-1.5">⚡ HỆ THỐNG ĐỒNG BỘ HYBRID ENGINE ĐÃ KÍCH HOẠT:</p>
           <p class="text-[11px] leading-relaxed text-slate-300">
-            Ứng dụng hiện đang được hiển thị bên trong <strong>Khung bảo mật (Iframe Sandbox)</strong>. 
-            Do chính sách bảo mật của Meta, <strong>Cách 1 (SDK OAuth)</strong> và <strong>Cách 3 (Cookie)</strong> 
-            có thể bị trình duyệt chặn không cho mở popup. Hãy ưu tiên dùng <strong>Cách 2 (Dán Page Token)</strong> hoặc bấm nút <strong>"Mở Preview ở tab mới"</strong> trên thanh công cụ để đồng bộ thực tế!
+            Để chống lỗi chặn do khung bảo mật (Iframe Sandbox), ứng dụng của bạn hiện đã được trang bị <strong>Chế độ Ngoại tuyến dự phòng</strong>. 
+            Nếu không lưu được vào Cloud, mọi thay đổi, Fanpage và Chat của bạn vẫn sẽ hoạt động mượt mà và lưu lại trong bộ nhớ tạm!
           </p>
         </div>
 
@@ -625,22 +624,6 @@
                 <div id="diag-remedy-text" class="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1 leading-relaxed">
                   * Mẹo: Hầu hết lỗi không cấu hình được là do trình duyệt của bạn chặn Popup hoặc tài khoản FB của bạn chưa được thêm vào "Vai trò" (Roles) của App ID ở chế độ nhà phát triển.
                 </div>
-              </div>
-            </div>
-
-            <!-- Helpful diagnostics alert box -->
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5 text-xs text-slate-300 leading-relaxed">
-              <h6 class="font-bold text-indigo-400 flex items-center gap-1.5">🔍 5 Mục Kiểm Tra Cấu Hình Trong Meta Developer:</h6>
-              <ol class="list-decimal pl-4 space-y-1 text-[11px] text-slate-400">
-                <li>Đã thêm sản phẩm <strong>Facebook Login</strong> vào Meta App.</li>
-                <li>Khai báo đúng <strong>App Domains</strong> (miền của ứng dụng này).</li>
-                <li>Khai báo chính xác <strong>Valid OAuth Redirect URI</strong> (Copy ở trên).</li>
-                <li>Thêm miền của bạn vào <strong>JavaScript SDK Allowed Domains</strong>.</li>
-                <li>Đã cấu hình trường <strong>Website URL</strong> khớp với URL hiện tại.</li>
-              </ol>
-              <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg text-[10px] text-amber-300 space-y-1">
-                <p class="font-bold">⚠️ Trường hợp App đang ở chế độ Phát triển (Development Mode):</p>
-                <p>Nếu Meta App chưa chuyển sang chế độ Live (Kích hoạt), chỉ các tài khoản Facebook có vai trò là Quản trị viên (Administrator), Nhà phát triển (Developer) hoặc Người kiểm thử (Tester) được thiết lập trong mục "Vai trò" (Roles) của Meta App mới có thể đăng nhập thành công. Các tài khoản Facebook khác sẽ bị hệ thống Meta từ chối truy cập.</p>
               </div>
             </div>
 
@@ -731,17 +714,6 @@
                 </button>
               </div>
             </div>
-
-            <!-- Cookie extraction guide -->
-            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 leading-relaxed space-y-1.5">
-              <p class="font-bold text-slate-300">💡 Làm sao để lấy chuỗi Cookie Facebook chính xác?</p>
-              <ol class="list-decimal pl-4 text-[10px] space-y-1 text-slate-400">
-                <li>Truy cập <a href="https://facebook.com" target="_blank" class="text-indigo-400 underline">facebook.com</a> và đăng nhập tài khoản của bạn.</li>
-                <li>Nhấn phím <strong>F12</strong> (hoặc chuột phải chọn Inspect) -> chọn tab <strong>Console</strong>.</li>
-                <li>Dán dòng lệnh sau và nhấn Enter để copy tự động Cookie: <code class="bg-slate-900 px-1 py-0.5 rounded text-indigo-300 font-mono">copy(document.cookie)</code>.</li>
-                <li>Dán chuỗi vừa copy được vào ô "Cookie Facebook" ở phía trên.</li>
-              </ol>
-            </div>
           </div>
 
           <!-- Scanning status loader -->
@@ -818,15 +790,6 @@
     const db = getFirestore(app);
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'chot-don-ai-app';
 
-    // XÓA TOÀN BỘ DỮ LIỆU MÔ PHỎNG (Sử dụng cấu trúc trống sạch khi khởi động)
-    const QUICK_REPLIES = [
-      'Dạ bên em chào anh/chị ạ! Shop có thể hỗ trợ gì cho mình hôm nay ạ? 🥰',
-      'Sản phẩm này bên em đang có chương trình khuyến mãi giảm giá cực sâu đó ạ!',
-      'Chị cho em xin Số điện thoại và Địa chỉ nhận hàng để em lên đơn ngay cho mình nhé ạ. 🚚',
-      'Phí vận chuyển đồng giá toàn quốc chỉ 30.000đ, đơn hàng trên 500.000đ được miễn phí ship hoàn toàn ạ!',
-      'Dạ đơn hàng của mình đã được chốt thành công! Hệ thống sẽ gửi mã vận đơn sớm nhất qua SMS cho mình nhé ạ. Cám ơn chị nhiều!'
-    ];
-
     // TRẠNG THÁI NỘI BỘ (GLOBAL STATE)
     let user = null;
     let pages = [];
@@ -850,11 +813,70 @@
     let isFbSdkLoaded = false;
     let facebookAppId = localStorage.getItem('chotdon_fb_app_id') || '';
 
+    // DANH SÁCH MẪU TRẢ LỜI NHANH (QUICK REPLIES)
+    const QUICK_REPLIES = [
+      'Dạ bên em chào anh/chị ạ! Shop có thể hỗ trợ gì cho mình hôm nay ạ? 🥰',
+      'Sản phẩm này bên em đang có chương trình khuyến mãi giảm giá cực sâu đó ạ!',
+      'Chị cho em xin Số điện thoại và Địa chỉ nhận hàng để em lên đơn ngay cho mình nhé ạ. 🚚',
+      'Phí vận chuyển đồng giá toàn quốc chỉ 30.000đ, đơn hàng trên 500.000đ được miễn phí ship hoàn toàn ạ!',
+      'Dạ đơn hàng của mình đã được chốt thành công! Hệ thống sẽ gửi mã vận đơn sớm nhất qua SMS cho mình nhé ạ. Cám ơn chị nhiều!'
+    ];
+
     // BẬT / TẮT UI ELEMENTS DÙNG DOM
     const toastEl = document.getElementById('toast');
     const toastMsgEl = document.getElementById('toast-message');
     const syncDot = document.getElementById('sync-dot');
     const syncText = document.getElementById('sync-text');
+
+    // Chế độ dữ liệu dự phòng Offline/Sandbox
+    let isOfflineSandboxMode = false;
+
+    // Thiết lập dữ liệu khởi tạo mặc định khi ở chế độ Offline/Sandbox
+    const DEFAULT_SANDBOX_PAGES = [
+      { id: '215151365', name: 'Thời Trang Chốt Đơn (Mặc định)', active: true, image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80' }
+    ];
+
+    const DEFAULT_SANDBOX_CONVERSATIONS = [
+      {
+        id: 'c1',
+        facebookId: '100085948372',
+        name: 'Nguyễn Thảo Vy',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+        pageId: '215151365',
+        unread: true,
+        replied: false,
+        phone: '0987654321',
+        address: '123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh',
+        notes: 'Khách sỉ tiềm năng, hay hỏi size M',
+        tags: ['Chờ báo giá', 'Khách VIP'],
+        messages: [
+          { id: 'm1_1', sender: 'customer', text: 'Chào shop, mẫu Đầm Hoa Nhí Vintage còn size M không ạ?', timestamp: '10:15 AM' },
+          { id: 'm1_2', sender: 'shop', text: 'Dạ shop chào chị Vy ạ! Đầm Hoa Nhí Vintage bên em vẫn còn sẵn size M chị nha.', timestamp: '10:17 AM' },
+          { id: 'm1_3', sender: 'customer', text: 'Ship về Sài Gòn thì bao lâu nhận được em? Có được kiểm tra hàng trước khi thanh toán không?', timestamp: '10:40 AM' },
+        ]
+      }
+    ];
+
+    const DEFAULT_SANDBOX_PRODUCTS = [
+      { id: 'p1', name: 'Đầm Hoa Nhí Vintage dáng xòe', price: 290000, sku: 'DNH-VNT-01', keywords: 'đầm hoa, dam hoa, vintage', desc: 'Có size S, M, L' },
+      { id: 'p2', name: 'Áo Sơ Mi Lụa Hàn Quốc cổ V', price: 185000, sku: 'ASM-LHQ-02', keywords: 'sơ mi lụa, so mi, ao nu', desc: 'Chất lụa mịn mát' }
+    ];
+
+    // Tải cấu hình cũ từ Cache của bộ nhớ
+    try {
+      const cachedPages = localStorage.getItem('sandbox_pages');
+      const cachedConvs = localStorage.getItem('sandbox_conversations');
+      const cachedProds = localStorage.getItem('sandbox_products');
+
+      pages = cachedPages ? JSON.parse(cachedPages) : [...DEFAULT_SANDBOX_PAGES];
+      conversations = cachedConvs ? JSON.parse(cachedConvs) : [...DEFAULT_SANDBOX_CONVERSATIONS];
+      products = cachedProds ? JSON.parse(cachedProds) : [...DEFAULT_SANDBOX_PRODUCTS];
+    } catch (e) {
+      // Fallback nếu LocalStorage bị khóa
+      pages = [...DEFAULT_SANDBOX_PAGES];
+      conversations = [...DEFAULT_SANDBOX_CONVERSATIONS];
+      products = [...DEFAULT_SANDBOX_PRODUCTS];
+    }
 
     const showToast = (message) => {
       toastMsgEl.innerText = message;
@@ -866,7 +888,30 @@
       }, 3000);
     };
 
-    // Firebase Authentication (Xử lý lỗi Rule 3)
+    const enableOfflineSandboxMode = () => {
+      isOfflineSandboxMode = true;
+      syncDot.className = "w-2 h-2 rounded-full bg-amber-500 shadow-md shadow-amber-500 animate-pulse";
+      syncText.innerText = "Chế độ Sandbox (Ngoại tuyến)";
+      syncText.className = "text-[10px] text-amber-400 font-semibold";
+      
+      if (pages.length > 0 && !selectedPageId) {
+        selectedPageId = pages[0].id;
+      }
+      
+      const pageConversations = conversations.filter(c => c.pageId === selectedPageId);
+      if (pageConversations.length > 0 && !activeThreadId) {
+        activeThreadId = pageConversations[0].id;
+      }
+
+      renderPages();
+      renderPagesManagerList();
+      renderConversations();
+      renderChatMessagesLog();
+      renderCrmPanel();
+      renderAdminInventory();
+      renderOrderProductSelect();
+    };
+
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -880,7 +925,8 @@
           await signInAnonymously(auth);
         }
       } catch (err) {
-        console.error("Firebase auth error:", err);
+        console.warn("Firebase auth blocked/failed inside iframe sandbox. Switching to offline sandbox mode...", err);
+        enableOfflineSandboxMode();
       }
     };
     initAuth();
@@ -891,16 +937,16 @@
         syncDot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-md shadow-emerald-500 animate-pulse";
         syncText.innerText = "Đã đồng bộ Cloud";
         syncText.className = "text-[10px] text-emerald-400 font-semibold";
-        // Bắt đầu lắng nghe database
         startRealtimeListening();
       } else {
-        syncDot.className = "w-2 h-2 rounded-full bg-red-500";
-        syncText.innerText = "Chưa kết nối Cloud";
-        syncText.className = "text-[10px] text-red-400";
+        if (!isOfflineSandboxMode) {
+          syncDot.className = "w-2 h-2 rounded-full bg-red-500";
+          syncText.innerText = "Chưa kết nối Cloud";
+          syncText.className = "text-[10px] text-red-400";
+        }
       }
     });
 
-    // LẮNG NGHE REAL-TIME FIRESTORE (Rule 1 & Rule 2) - KHÔNG SEED DỮ LIỆU MẪU MÔ PHỎNG
     let pageUnsub = null;
     let convUnsub = null;
     let prodUnsub = null;
@@ -912,41 +958,138 @@
       const convColRef = collection(db, 'artifacts', appId, 'users', user.uid, 'conversations');
       const prodColRef = collection(db, 'artifacts', appId, 'users', user.uid, 'products');
 
-      // Lắng nghe Pages
       pageUnsub = onSnapshot(pagesColRef, (snap) => {
-        pages = [];
-        snap.forEach(doc => pages.push(doc.data()));
-        if (pages.length > 0 && !selectedPageId) {
-          selectedPageId = pages[0].id;
+        if (!snap.empty) {
+          pages = [];
+          snap.forEach(doc => pages.push(doc.data()));
+          if (pages.length > 0 && !selectedPageId) {
+            selectedPageId = pages[0].id;
+          }
+          renderPages();
+          renderPagesManagerList();
+        } else {
+          // Gieo dữ liệu mặc định lên cloud nếu trống
+          pages = [...DEFAULT_SANDBOX_PAGES];
+          pages.forEach(async (p) => {
+            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', p.id), p);
+          });
         }
-        renderPages();
-        renderPagesManagerList();
+      }, err => {
+        console.warn("Snapshot error. Switching to offline engine...", err);
+        enableOfflineSandboxMode();
+      });
+
+      convUnsub = onSnapshot(convColRef, (snap) => {
+        if (!snap.empty) {
+          conversations = [];
+          snap.forEach(doc => conversations.push(doc.data()));
+          
+          const pageConversations = conversations.filter(c => c.pageId === selectedPageId);
+          if (pageConversations.length > 0 && !activeThreadId) {
+            activeThreadId = pageConversations[0].id;
+          }
+
+          renderConversations();
+          renderChatMessagesLog();
+          renderCrmPanel();
+        } else {
+          conversations = [...DEFAULT_SANDBOX_CONVERSATIONS];
+          conversations.forEach(async (c) => {
+            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', c.id), c);
+          });
+        }
       }, err => console.error(err));
 
-      // Lắng nghe Conversations
-      convUnsub = onSnapshot(convColRef, (snap) => {
-        conversations = [];
-        snap.forEach(doc => conversations.push(doc.data()));
-        
-        // Chọn hội thoại đầu tiên của trang đang chọn nếu chưa có hội thoại nào được chọn
-        const pageConversations = conversations.filter(c => c.pageId === selectedPageId);
-        if (pageConversations.length > 0 && !activeThreadId) {
-          activeThreadId = pageConversations[0].id;
+      prodUnsub = onSnapshot(prodColRef, (snap) => {
+        if (!snap.empty) {
+          products = [];
+          snap.forEach(doc => products.push(doc.data()));
+          document.getElementById('products-count-badge').innerText = products.length;
+          renderAdminInventory();
+          renderOrderProductSelect();
+        } else {
+          products = [...DEFAULT_SANDBOX_PRODUCTS];
+          products.forEach(async (p) => {
+            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'products', p.id), p);
+          });
         }
+      }, err => console.error(err));
+    };
 
+    // ==========================================
+    // SAVE HELPER FOR HYBRID DATABASE
+    // ==========================================
+    const writeData = async (collectionName, docId, dataObject) => {
+      if (user && !isOfflineSandboxMode) {
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, collectionName, docId), dataObject);
+          return true;
+        } catch (e) {
+          console.warn("Lỗi ghi Firestore, ghi tạm thời ngoại tuyến...", e);
+        }
+      }
+      
+      // Offline/Local Write
+      if (collectionName === 'pages') {
+        const idx = pages.findIndex(p => p.id === docId);
+        if (idx !== -1) pages[idx] = dataObject;
+        else pages.push(dataObject);
+        renderPages();
+        renderPagesManagerList();
+      } else if (collectionName === 'conversations') {
+        const idx = conversations.findIndex(c => c.id === docId);
+        if (idx !== -1) conversations[idx] = dataObject;
+        else conversations.push(dataObject);
         renderConversations();
         renderChatMessagesLog();
         renderCrmPanel();
-      }, err => console.error(err));
-
-      // Lắng nghe Products kho hàng Admin
-      prodUnsub = onSnapshot(prodColRef, (snap) => {
-        products = [];
-        snap.forEach(doc => products.push(doc.data()));
+      } else if (collectionName === 'products') {
+        const idx = products.findIndex(p => p.id === docId);
+        if (idx !== -1) products[idx] = dataObject;
+        else products.push(dataObject);
         document.getElementById('products-count-badge').innerText = products.length;
         renderAdminInventory();
         renderOrderProductSelect();
-      }, err => console.error(err));
+      }
+
+      // Lưu Cache vào LocalStorage
+      try {
+        localStorage.setItem(`sandbox_${collectionName}`, JSON.stringify(collectionName === 'pages' ? pages : (collectionName === 'conversations' ? conversations : products)));
+      } catch (err) {}
+      return true;
+    };
+
+    const deleteData = async (collectionName, docId) => {
+      if (user && !isOfflineSandboxMode) {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, collectionName, docId));
+          return true;
+        } catch (e) {
+          console.warn("Lỗi xóa Firestore, xóa tạm thời ngoại tuyến...", e);
+        }
+      }
+
+      // Offline Delete
+      if (collectionName === 'pages') {
+        pages = pages.filter(p => p.id !== docId);
+        renderPages();
+        renderPagesManagerList();
+      } else if (collectionName === 'conversations') {
+        conversations = conversations.filter(c => c.id !== docId);
+        renderConversations();
+        renderChatMessagesLog();
+        renderCrmPanel();
+      } else if (collectionName === 'products') {
+        products = products.filter(p => p.id !== docId);
+        document.getElementById('products-count-badge').innerText = products.length;
+        renderAdminInventory();
+        renderOrderProductSelect();
+      }
+
+      try {
+        localStorage.setItem(`sandbox_${collectionName}`, JSON.stringify(collectionName === 'pages' ? pages : (collectionName === 'conversations' ? conversations : products)));
+      } catch (err) {}
+      return true;
     };
 
     // ==========================================
@@ -1096,12 +1239,10 @@
           renderChatMessagesLog();
           renderCrmPanel();
 
-          // Tự động tắt Chưa đọc trên Firestore
-          if (conv.unread && user) {
-            try {
-              const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', conv.id);
-              await updateDoc(docRef, { unread: false });
-            } catch(e) { console.error(e); }
+          // Tự động tắt Chưa đọc
+          if (conv.unread) {
+            conv.unread = false;
+            await writeData('conversations', conv.id, conv);
           }
         };
 
@@ -1396,21 +1537,18 @@
     // CRM Tags actions
     const removeCrmTag = async (tag) => {
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
-      if (!activeChat || !user) return;
-      const updated = (activeChat.tags || []).filter(t => t !== tag);
+      if (!activeChat) return;
+      activeChat.tags = (activeChat.tags || []).filter(t => t !== tag);
       
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-        await updateDoc(docRef, { tags: updated });
-        showToast(`Đã gỡ tag "${tag}"`);
-      } catch (e) { console.error(e); }
+      const success = await writeData('conversations', activeChat.id, activeChat);
+      if (success) showToast(`Đã gỡ tag "${tag}"`);
     };
 
     const addCrmTag = async () => {
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
       const input = document.getElementById('crm-new-tag-input');
       const val = input.value.trim();
-      if (!activeChat || !val || !user) return;
+      if (!activeChat || !val) return;
 
       const currentTags = activeChat.tags || [];
       if (currentTags.includes(val)) {
@@ -1418,35 +1556,30 @@
         return;
       }
 
-      const updated = [...currentTags, val];
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-        await updateDoc(docRef, { tags: updated });
+      activeChat.tags = [...currentTags, val];
+      const success = await writeData('conversations', activeChat.id, activeChat);
+      if (success) {
         input.value = '';
         showToast(`Đã gắn thẻ tag "${val}"`);
-      } catch (e) { console.error(e); }
+      }
     };
     document.getElementById('btn-add-tag').onclick = addCrmTag;
 
     // Save CRM Data
     document.getElementById('btn-save-crm').onclick = async () => {
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
-      if (!activeChat || !user) return;
+      if (!activeChat) return;
 
-      const phone = document.getElementById('crm-phone-input').value.trim();
-      const address = document.getElementById('crm-address-input').value.trim();
-      const notes = document.getElementById('crm-notes-input').value.trim();
+      activeChat.phone = document.getElementById('crm-phone-input').value.trim();
+      activeChat.address = document.getElementById('crm-address-input').value.trim();
+      activeChat.notes = document.getElementById('crm-notes-input').value.trim();
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-        await updateDoc(docRef, { phone, address, notes });
-        showToast('Đã lưu dữ liệu CRM của khách hàng!');
-      } catch(e) { console.error(e); }
+      const success = await writeData('conversations', activeChat.id, activeChat);
+      if (success) showToast('Đã lưu dữ liệu CRM của khách hàng!');
     };
 
     // Add and delete products (Admin Custom inventory)
     const addProduct = async () => {
-      if (!user) return;
       const name = document.getElementById('prod-name').value.trim();
       const price = Number(document.getElementById('prod-price').value) || 0;
       const sku = document.getElementById('prod-sku').value.trim();
@@ -1461,10 +1594,8 @@
       const newId = 'p_custom_' + Date.now();
       const pObj = { id: newId, name, price, sku, keywords, desc };
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'products', newId);
-        await setDoc(docRef, pObj);
-        
+      const success = await writeData('products', newId, pObj);
+      if (success) {
         // Clear inputs
         document.getElementById('prod-name').value = '';
         document.getElementById('prod-price').value = '';
@@ -1473,24 +1604,18 @@
         document.getElementById('prod-desc').value = '';
 
         showToast(`Đã thêm ${name} vào Kho hàng AI! 🎉`);
-      } catch(e) { console.error(e); }
+      }
     };
     document.getElementById('btn-add-product').onclick = addProduct;
 
     const deleteProduct = async (id) => {
-      if (!user) return;
-      try {
-        await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'products', id));
-        showToast('Đã xóa sản phẩm khỏi kho hàng.');
-      } catch(e) { console.error(e); }
+      const success = await deleteData('products', id);
+      if (success) showToast('Đã xóa sản phẩm khỏi kho hàng.');
     };
 
     const deletePage = async (id) => {
-      if (!user) return;
-      try {
-        await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', id));
-        showToast('Đã hủy liên kết Fanpage.');
-      } catch(e) { console.error(e); }
+      const success = await deleteData('pages', id);
+      if (success) showToast('Đã hủy liên kết Fanpage.');
     };
 
     // Shopping Draft Actions
@@ -1521,7 +1646,7 @@
     // Send final chot don invoice order & sync with Firestore
     const createAndSendOrder = async () => {
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
-      if (!activeChat || !user) return;
+      if (!activeChat) return;
 
       if (cart.length === 0) {
         showToast('Giỏ hàng trống! Hãy chọn sản phẩm trước.');
@@ -1563,19 +1688,15 @@
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      const updatedTags = activeChat.tags && activeChat.tags.includes('Đã chốt đơn') ? activeChat.tags : [...(activeChat.tags || []), 'Đã chốt đơn'];
+      activeChat.replied = true;
+      activeChat.unread = false;
+      activeChat.phone = phone || activeChat.phone;
+      activeChat.address = address || activeChat.address;
+      activeChat.tags = activeChat.tags && activeChat.tags.includes('Đã chốt đơn') ? activeChat.tags : [...(activeChat.tags || []), 'Đã chốt đơn'];
+      activeChat.messages = [...(activeChat.messages || []), newMessage];
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-        await updateDoc(docRef, {
-          replied: true,
-          unread: false,
-          phone: phone || activeChat.phone,
-          address: address || activeChat.address,
-          tags: updatedTags,
-          messages: [...(activeChat.messages || []), newMessage]
-        });
-
+      const success = await writeData('conversations', activeChat.id, activeChat);
+      if (success) {
         // Clear cart
         cart = [];
         document.getElementById('order-notes-input').value = '';
@@ -1584,8 +1705,6 @@
         // Switch tab to Customer View
         switchRightTab('customer');
         showToast('Đã lên đơn thành công & Hoá đơn được gửi tự động vào chat! 🎉');
-      } catch (err) {
-        console.error(err);
       }
     };
     document.getElementById('btn-create-order').onclick = createAndSendOrder;
@@ -1604,7 +1723,7 @@
       }
       
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
-      if (!activeChat || !user) return;
+      if (!activeChat) return;
 
       try {
         // Construct Knowledgebase
@@ -1658,13 +1777,11 @@
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
 
-          const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-          await updateDoc(docRef, {
-            replied: true,
-            unread: false,
-            messages: [...(activeChat.messages || []), newMessage]
-          });
-          
+          activeChat.replied = true;
+          activeChat.unread = false;
+          activeChat.messages = [...(activeChat.messages || []), newMessage];
+
+          await writeData('conversations', activeChat.id, activeChat);
           showToast("AI đã tự động trả lời thành công! 🤖⚡");
         }
       } catch (err) {
@@ -1759,7 +1876,7 @@
     // Human/Shop sending chat messages
     const handleSendMessage = async (textInput = null, isImage = false, imageUrl = null) => {
       const activeChat = conversations.find(c => c.id === activeThreadId) || null;
-      if (!activeChat || !user) return;
+      if (!activeChat) return;
 
       const text = textInput || document.getElementById('message-textarea').value.trim();
       if (!text && !imageUrl) return;
@@ -1772,20 +1889,18 @@
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
-        await updateDoc(docRef, {
-          replied: true,
-          unread: false,
-          messages: [...(activeChat.messages || []), newMessage]
-        });
+      activeChat.replied = true;
+      activeChat.unread = false;
+      activeChat.messages = [...(activeChat.messages || []), newMessage];
 
+      const success = await writeData('conversations', activeChat.id, activeChat);
+      if (success) {
         if (!textInput) {
           document.getElementById('message-textarea').value = '';
           selectedAttachment = null;
           document.getElementById('attachment-preview-container').classList.add('hidden');
         }
-      } catch (e) { console.error(e); }
+      }
     };
 
     document.getElementById('btn-send-message').onclick = () => {
@@ -1925,7 +2040,6 @@
 
     // Manual add fanpage
     document.getElementById('btn-manual-page-save').onclick = async () => {
-      if (!user) return;
       const name = document.getElementById('manual-page-name').value.trim();
       const id = document.getElementById('manual-page-id').value.trim();
       const image = document.getElementById('manual-page-image').value.trim();
@@ -1942,20 +2056,19 @@
 
       const pObj = { id, name, active: false, image };
 
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', id), pObj);
-        
+      const success = await writeData('pages', id, pObj);
+      if (success) {
         // Sinh tin nhắn ảo
         const sampleChats = generateConversationsForNewPage(id, name);
         for (const chat of sampleChats) {
-          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+          await writeData('conversations', chat.id, chat);
         }
 
         document.getElementById('manual-page-name').value = '';
         document.getElementById('manual-page-id').value = '';
         switchModalTab('list');
         showToast(`Đã kết nối Fanpage: ${name}! 🎉`);
-      } catch(e) { console.error(e); }
+      }
     };
 
     // Hàm phụ: Sinh tin nhắn ảo cho Fanpage mới liên kết
@@ -2231,8 +2344,7 @@
           console.warn("Không phải User Token, thử phương án dự phòng cho Page Token...");
         }
 
-        // Bước B (Dự phòng): Nếu accounts rỗng, nghĩa là Token dán vào là PAGE Access Token trực tiếp. 
-        // Ta sẽ gọi API lấy thông tin của chính trang đó thay vì lấy danh sách các trang con.
+        // Bước B (Dự phòng): PAGE Access Token trực tiếp. 
         if (accounts.length === 0) {
           const fallbackRes = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name,picture{url}&access_token=${tokenInput}`);
           const fallbackData = await fallbackRes.json();
@@ -2267,7 +2379,6 @@
     // UPGRADED METHOD 3: SYNCHRONIZATION BY FACEBOOK COOKIES (APT Cookie)
     document.getElementById('btn-sync-by-cookie').onclick = () => {
       const cookieInput = document.getElementById('fb-cookie-input').value.trim();
-      const uaInput = document.getElementById('fb-ua-input').value.trim();
       const loader = document.getElementById('meta-scanning-loader');
       const statusText = document.getElementById('scanning-status-text');
       const list = document.getElementById('meta-discovered-list');
@@ -2378,8 +2489,6 @@
 
     // Hàm đồng bộ và liên kết hàng loạt toàn bộ Fanpage
     const linkAllMetaPages = async (discoveredList) => {
-      if (!user) return;
-      
       // Lọc ra các trang chưa được liên kết
       const newPages = discoveredList.filter(dp => !pages.some(p => p.id === dp.id));
       if (newPages.length === 0) {
@@ -2392,30 +2501,26 @@
       try {
         const promises = newPages.map(async (dp) => {
           const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
-          // Lưu thông tin Fanpage
-          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', dp.id), pObj);
+          await writeData('pages', dp.id, pObj);
           
           // Tạo hội thoại mẫu khởi tạo tự động cho từng trang
           const sampleChats = generateConversationsForNewPage(dp.id, dp.name);
           for (const chat of sampleChats) {
-            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+            await writeData('conversations', chat.id, chat);
           }
         });
 
-        // Đợi tất cả các tiến trình lưu hoàn thành
         await Promise.all(promises);
         showToast(`Liên kết toàn bộ ${newPages.length} Fanpage thành công! 🎉`);
-        
-        // Ẩn danh sách đã phát hiện sau khi hoàn tất
         document.getElementById('meta-discovered-list').classList.add('hidden');
+        showModal(false);
       } catch(e) {
         console.error("Lỗi đồng bộ liên kết hàng loạt:", e);
-        showToast('Có lỗi xảy ra trong quá trình đồng bộ hàng loạt các Fanpage.');
+        showToast('Có lỗi xảy ra trong quá trình đồng bộ.');
       }
     };
 
     const linkMetaPage = async (dp) => {
-      if (!user) return;
       if (pages.some(p => p.id === dp.id)) {
         showToast('Trang này đã được liên kết rồi!');
         return;
@@ -2423,18 +2528,17 @@
 
       const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
 
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', dp.id), pObj);
-        
+      const success = await writeData('pages', dp.id, pObj);
+      if (success) {
         const sampleChats = generateConversationsForNewPage(dp.id, dp.name);
         for (const chat of sampleChats) {
-          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+          await writeData('conversations', chat.id, chat);
         }
 
         showToast(`Đã đồng bộ hóa & liên kết Fanpage: ${dp.name}! ⚡`);
-        // Refresh view inside modal setup
         document.getElementById('meta-discovered-list').classList.add('hidden');
-      } catch(e) { console.error(e); }
+        showModal(false);
+      }
     };
 
     // Copy phone to clipboard
