@@ -459,9 +459,19 @@
                   <input id="prod-sku" type="text" placeholder="DHN-01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
                 </div>
               </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Tag sản phẩm riêng biệt</label>
+                  <input id="prod-tag" type="text" placeholder="Ví dụ: dam-hoa-nhi" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa (Keywords)</label>
+                  <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+              </div>
               <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa nhận diện của sản phẩm (Keywords)</label>
-                <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe, dam hoa" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mẫu trả lời tự động chuẩn cho sản phẩm này</label>
+                <textarea id="prod-reply-template" rows="2" placeholder="Dạ đầm hoa nhí bên em chất liệu tơ tằm siêu mát ạ. Chị yêu để lại SĐT và địa chỉ em gửi hàng ngay nhé..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mô tả đặc điểm / Tư vấn size</label>
@@ -1100,6 +1110,53 @@
         `;
       }
 
+      const lastMsg = activeChat.messages && activeChat.messages.length > 0 ? activeChat.messages[activeChat.messages.length - 1] : null;
+      const tagDetectContainer = document.getElementById('tag-detect-container') || (() => {
+        const div = document.createElement('div');
+        div.id = 'tag-detect-container';
+        div.className = 'hidden bg-indigo-950/40 border-b border-indigo-500/20 px-4 py-2.5 flex items-center justify-between shrink-0 gap-2';
+        const chatLog = document.getElementById('chat-messages-log');
+        chatLog.parentNode.insertBefore(div, chatLog.nextSibling);
+        return div;
+      })();
+
+      tagDetectContainer.innerHTML = '';
+      tagDetectContainer.classList.add('hidden');
+
+      if (lastMsg && lastMsg.sender === 'customer' && lastMsg.text) {
+        const textLower = lastMsg.text.toLowerCase();
+        // Kiểm tra xem tin nhắn có chứa Tag sản phẩm hoặc các Keyword của sản phẩm không
+        const matchedProd = products.find(p => {
+          const isTagMatch = p.tag && textLower.includes(p.tag.toLowerCase());
+          const isKeywordMatch = p.keywords && p.keywords.split(',').some(kw => textLower.includes(kw.trim().toLowerCase()));
+          return (isTagMatch || isKeywordMatch) && p.replyTemplate;
+        });
+
+        if (matchedProd) {
+          tagDetectContainer.classList.remove('hidden');
+          tagDetectContainer.innerHTML = `
+            <div class="flex items-center gap-2 overflow-hidden flex-1">
+              <span class="bg-emerald-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shrink-0">KHỚP TAG: ${matchedProd.tag || 'SẢN PHẨM'}</span>
+              <p class="text-[11px] text-slate-300 truncate">Sản phẩm phát hiện: <strong class="text-white">${matchedProd.name}</strong></p>
+            </div>
+            <div class="flex gap-1.5 shrink-0">
+              <button id="btn-quick-fill-template" class="bg-slate-850 hover:bg-slate-800 text-slate-200 text-[10px] font-semibold px-2 py-1 rounded border border-slate-700">Xem mẫu</button>
+              <button id="btn-quick-send-template" class="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold px-2.5 py-1 rounded">Gửi nhanh mẫu 🚀</button>
+            </div>
+          `;
+
+          document.getElementById('btn-quick-fill-template').onclick = () => {
+            document.getElementById('message-textarea').value = matchedProd.replyTemplate;
+            showToast('Đã điền mẫu câu trả lời của sản phẩm!');
+          };
+
+          document.getElementById('btn-quick-send-template').onclick = () => {
+            handleSendMessage(matchedProd.replyTemplate);
+            showToast('Đã gửi tự động câu trả lời theo mẫu sản phẩm! 🚀');
+          };
+        }
+      }
+
       // Auto scroll down
       messagesLog.scrollTop = messagesLog.scrollHeight;
     };
@@ -1174,14 +1231,27 @@
 
       products.forEach(p => {
         const item = document.createElement('div');
-        item.className = "flex items-start justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs";
+        item.className = "flex flex-col gap-2 p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs";
         item.innerHTML = `
-          <div class="min-w-0 flex-1 pr-2">
-            <p class="font-bold text-slate-200 truncate">${p.name}</p>
-            <p class="text-[9px] text-slate-500">SKU: ${p.sku} | Giá: <span class="text-indigo-400 font-bold">${Number(p.price).toLocaleString()}đ</span></p>
-            <p class="text-[9px] text-slate-400 truncate mt-0.5 italic">Từ khóa: ${p.keywords}</p>
+          <div class="flex items-start justify-between">
+            <div class="min-w-0 flex-1 pr-2">
+              <p class="font-bold text-slate-200 truncate">${p.name}</p>
+              <p class="text-[9px] text-slate-500 font-medium">SKU: ${p.sku} | Giá: <span class="text-indigo-400 font-bold">${Number(p.price).toLocaleString()}đ</span></p>
+            </div>
+            <button class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition text-[10px] font-bold shrink-0">Xóa</button>
           </div>
-          <button class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition text-[10px] font-bold shrink-0">Xóa</button>
+          
+          <div class="flex flex-wrap gap-1.5">
+            ${p.tag ? `<span class="bg-indigo-500/15 text-indigo-300 px-1.5 py-0.5 rounded text-[8.5px] font-bold border border-indigo-500/20">🏷️ Tag: ${p.tag}</span>` : ''}
+            ${p.keywords ? `<span class="bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded text-[8.5px] border border-slate-800">🔑 Từ khóa: ${p.keywords}</span>` : ''}
+          </div>
+
+          ${p.replyTemplate ? `
+            <div class="bg-slate-900/60 p-2 rounded border border-slate-800 text-[10px] text-slate-400">
+              <p class="font-bold text-indigo-400 mb-0.5">💬 Mẫu trả lời tự động:</p>
+              <p class="italic leading-relaxed">${p.replyTemplate}</p>
+            </div>
+          ` : ''}
         `;
         item.querySelector('button').onclick = () => deleteProduct(p.id);
         container.appendChild(item);
@@ -1367,13 +1437,14 @@
       } catch(e) { console.error(e); }
     };
 
-    // Add and delete products (Admin Custom inventory)
     const addProduct = async () => {
       if (!user) return;
       const name = document.getElementById('prod-name').value.trim();
       const price = Number(document.getElementById('prod-price').value) || 0;
       const sku = document.getElementById('prod-sku').value.trim();
       const keywords = document.getElementById('prod-keywords').value.trim();
+      const tag = document.getElementById('prod-tag').value.trim();
+      const replyTemplate = document.getElementById('prod-reply-template').value.trim();
       const desc = document.getElementById('prod-desc').value.trim();
 
       if (!name || !price || !sku) {
@@ -1382,7 +1453,7 @@
       }
 
       const newId = 'p_custom_' + Date.now();
-      const pObj = { id: newId, name, price, sku, keywords, desc };
+      const pObj = { id: newId, name, price, sku, keywords, tag, replyTemplate, desc };
 
       try {
         const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'products', newId);
@@ -1393,6 +1464,8 @@
         document.getElementById('prod-price').value = '';
         document.getElementById('prod-sku').value = '';
         document.getElementById('prod-keywords').value = '';
+        document.getElementById('prod-tag').value = '';
+        document.getElementById('prod-reply-template').value = '';
         document.getElementById('prod-desc').value = '';
 
         showToast(`Đã thêm ${name} vào Kho hàng AI! 🎉`);
@@ -1530,9 +1603,15 @@
       if (!activeChat || !user) return;
 
       try {
-        // Construct Knowledgebase
+        // Construct Knowledgebase incorporating tags and custom reply templates
         const productsKnowledgeText = products.map(p => 
-          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Từ khóa: ${p.keywords}\n  Mô tả/Size: ${p.desc}`
+          `- Tên sản phẩm: ${p.name}
+           SKU: ${p.sku}
+           Giá bán: ${Number(p.price).toLocaleString()}đ
+           Từ khóa: ${p.keywords}
+           Mô tả/Size: ${p.desc}
+           Tag phân loại: ${p.tag || 'Không có'}
+           Mẫu phản hồi tự động chuẩn của shop (Nếu khớp tag hoặc từ khóa, hãy ưu tiên dùng mẫu này để phản hồi trực tiếp): ${p.replyTemplate || 'Không có'}`
         ).join('\n\n');
 
         const systemInstruction = `
@@ -1543,10 +1622,11 @@
 
           Quy tắc ứng xử và phản hồi:
           1. CHỈ tư vấn và xác nhận đơn cho các sản phẩm ĐANG CÓ TRÊN KHO hiển thị ở trên.
-          2. Nếu khách hàng hỏi các sản phẩm khác không có, hãy khéo léo và cực kỳ lịch sự xin lỗi rằng shop không có, sau đó đề xuất các sản phẩm đang có sẵn trong kho.
-          3. Văn phong: Ngọt ngào, dễ thương, thân thiện, mang tính bán hàng cao. Sử dụng các đại từ xưng hô thân mật: "dạ", "dạ shop em chào chị yêu ạ", "shop bên em", "chị yêu ơi"...
-          4. Cố gắng hỏi khách hàng "Số điện thoại" và "Địa chỉ giao hàng" để hỗ trợ lên đơn nhanh chóng.
-          5. Kết quả phản hồi của bạn CHỈ chứa nội dung tin nhắn sẽ gửi đi, không chứa bất kỳ lời giải thích, ghi chú hay ký tự bổ sung nào khác. Chứa thêm emoji sinh động phù hợp.
+          2. Nếu có "Mẫu phản hồi tự động chuẩn của shop" được cấu hình cho sản phẩm khớp tag/từ khóa, hãy ưu tiên sử dụng mẫu đó để trả lời đầy đủ và trực tiếp nhất cho khách hàng.
+          3. Nếu khách hàng hỏi các sản phẩm khác không có, hãy khéo léo và cực kỳ lịch sự xin lỗi rằng shop không có, sau đó đề xuất các sản phẩm đang có sẵn trong kho.
+          4. Văn phong: Ngọt ngào, dễ thương, thân thiện, mang tính bán hàng cao. Sử dụng các đại từ xưng hô thân mật: "dạ", "dạ shop em chào chị yêu ạ", "shop bên em", "chị yêu ơi"...
+          5. Cố gắng hỏi khách hàng "Số điện thoại" và "Địa chỉ giao hàng" để hỗ trợ lên đơn nhanh chóng.
+          6. Kết quả phản hồi của bạn CHỈ chứa nội dung tin nhắn sẽ gửi đi, không chứa bất kỳ lời giải thích, ghi chú hay ký tự bổ sung nào khác. Chứa thêm emoji sinh động phù hợp.
         `;
 
         const userPrompt = `
@@ -1614,12 +1694,12 @@
         ).join('\n');
 
         const productsKnowledgeText = products.map(p => 
-          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Mô tả: ${p.desc}`
+          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Mô tả: ${p.desc}\n Tag: ${p.tag || ''}\n Mẫu trả lời: ${p.replyTemplate || ''}`
         ).join('\n\n');
 
         const systemPrompt = `Bạn là Trợ lý AI chốt đơn chuyên nghiệp của shop. Đọc hội thoại và gợi ý câu trả lời theo đúng kho hàng:
         ${productsKnowledgeText}
-        Trả lời tiếng Việt thân thiện, xin SĐT và Địa chỉ của khách để lên đơn. CHỈ trả về tin nhắn gửi đi, không dài dòng.`;
+        Ưu tiên sử dụng mẫu câu trả lời của sản phẩm có tag tương đương nếu phù hợp. Trả lời tiếng Việt thân thiện, xin SĐT và Địa chỉ của khách để lên đơn. CHỈ trả về tin nhắn gửi đi, không dài dòng.`;
 
         const userPrompt = `Lịch sử chat gần nhất:\n${conversationHistoryText}\n\nHãy viết gợi ý trả lời tiếp theo.`;
 
