@@ -565,16 +565,40 @@
 
         <!-- PANE B: Meta OAuth simulator -->
         <div id="modal-pane-meta" class="hidden space-y-4">
+          <!-- HƯỚNG DẪN CẤU HÌNH & NHẬP APP ID THẬT -->
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Tích hợp API Meta Facebook SDK</h4>
+            <p class="text-[11px] text-slate-300 leading-relaxed">
+              Để đồng bộ hóa Fanpage thực từ tài khoản Meta của bạn, hãy nhập <strong>Facebook App ID</strong>. 
+              Bạn có thể tạo App ID tại <a href="https://developers.facebook.com" target="_blank" class="text-indigo-400 hover:underline">Facebook Developers</a>.
+            </p>
+            <div class="space-y-2">
+              <div class="flex gap-2">
+                <input 
+                  id="fb-app-id-input" 
+                  type="text" 
+                  placeholder="Nhập Facebook App ID (Ví dụ: 884729115729...)" 
+                  class="flex-1 bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                />
+                <button id="btn-init-fb-sdk" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded transition">
+                  Khởi tạo SDK
+                </button>
+              </div>
+              <p id="fb-sdk-status-label" class="text-[10px] text-slate-500 italic">Trạng thái SDK: Chưa được tải (Nhập App ID để tải SDK thực)</p>
+            </div>
+          </div>
+
           <div class="p-4 rounded-xl bg-indigo-950/10 border border-indigo-500/20 text-center space-y-3">
             <p class="text-xs text-indigo-200 leading-relaxed">
-              Sử dụng API Meta để quét tất cả các Fanpage mà bạn sở hữu quyền Admin/Quản lý một cách bảo mật chỉ với tài khoản Facebook của bạn.
+              Bấm nút bên dưới để tiến hành mở hộp thoại Đăng nhập Facebook bảo mật từ Meta. Hệ thống sẽ yêu cầu quyền đọc danh sách trang quản lý của bạn.
             </p>
-            <button id="btn-meta-oauth-scan" class="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition">
-              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <button id="btn-meta-oauth-scan" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition">
+              <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
                 <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
               </svg>
-              Quét Fanpage qua Facebook Account
+              <span>Đăng nhập đồng bộ Fanpage</span>
             </button>
+            <p class="text-[9px] text-slate-500 italic">* Nếu chưa có App ID, hệ thống sẽ tự động khởi động trình mô phỏng tài khoản mẫu.</p>
           </div>
           <!-- Scanning status loader -->
           <div id="meta-scanning-loader" class="hidden text-center py-4">
@@ -582,7 +606,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p class="text-xs text-slate-400">Đang đăng nhập Meta & quét tài khoản...</p>
+            <p class="text-xs text-slate-400">Đang quét liên kết từ máy chủ Facebook...</p>
           </div>
           <!-- Discovered Pages List from Meta -->
           <div id="meta-discovered-list" class="space-y-2 hidden">
@@ -719,6 +743,10 @@
     let autoReplyEnabled = localStorage.getItem('chotdon_auto_reply') === 'true';
     let isAiLoading = false;
     let selectedAttachment = null; // Gửi ảnh giả lập
+
+    // Biến lưu trữ trạng thái Facebook SDK
+    let isFbSdkLoaded = false;
+    let facebookAppId = localStorage.getItem('chotdon_fb_app_id') || '';
 
     // BẬT / TẮT UI ELEMENTS DÙNG DOM
     const toastEl = document.getElementById('toast');
@@ -1602,7 +1630,7 @@
         oscillator.connect(gainNode);
         gainNode.connect(audioCtx.destination);
         oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
+        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // d5 note
         gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
         oscillator.start();
         oscillator.stop(audioCtx.currentTime + 0.15);
@@ -1857,8 +1885,86 @@
       } catch(e) { console.error(e); }
     };
 
-    // Simulated Meta API Auth scanner
-    let discoveredPages = [];
+    // Hàm phụ: Sinh tin nhắn ảo cho Fanpage mới liên kết
+    const generateConversationsForNewPage = (pId, pName) => {
+      return [
+        {
+          id: `c_new_${Date.now()}_1`,
+          facebookId: `fb_${Date.now()}_1`,
+          name: `Khách hàng mới từ ${pName}`,
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+          pageId: pId,
+          unread: true,
+          replied: false,
+          phone: '0982223334',
+          address: 'Hẻm 456 CMT8, Quận 3, TP. Hồ Chí Minh',
+          notes: `Khách mới kết nối trang ${pName}`,
+          tags: ['Khách mới'],
+          messages: [
+            { id: `m_new_1`, sender: 'customer', text: `Dạ shop ơi, em muốn tư vấn sản phẩm mới từ trang ${pName} với ạ!`, timestamp: 'Vừa xong' }
+          ]
+        }
+      ];
+    };
+
+
+    // ==========================================
+    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK
+    // ==========================================
+
+    // Hàm gọi tải SDK Javascript từ Meta CDN
+    const runMetaFacebookSDKLoader = (appIdValue) => {
+      if (!appIdValue) return;
+
+      // Dọn dẹp SDK cũ nếu có để tránh xung đột
+      const oldScript = document.getElementById('facebook-jssdk');
+      if (oldScript) oldScript.remove();
+
+      // Cài đặt callback khởi tạo SDK từ window
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : appIdValue,
+          cookie     : true,                     
+          xfbml      : true,                     
+          version    : 'v18.0'           
+        });
+        
+        isFbSdkLoaded = true;
+        document.getElementById('fb-sdk-status-label').innerHTML = `
+          <span class="text-emerald-400 font-semibold">● Facebook SDK Sẵn sàng (App ID: ${appIdValue})</span>
+        `;
+        showToast('Khởi tạo Facebook SDK của Meta thành công!');
+      };
+
+      // Tải tệp SDK bất đồng bộ từ CDN chính thức
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/vi_VN/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    };
+
+    // Bind hành động nút Khởi tạo SDK thủ công
+    document.getElementById('btn-init-fb-sdk').onclick = () => {
+      const appIdInputVal = document.getElementById('fb-app-id-input').value.trim();
+      if (!appIdInputVal) {
+        showToast('Vui lòng điền Facebook App ID của bạn!');
+        return;
+      }
+      facebookAppId = appIdInputVal;
+      localStorage.setItem('chotdon_fb_app_id', appIdInputVal);
+      runMetaFacebookSDKLoader(appIdInputVal);
+    };
+
+    // Khi khởi động ứng dụng, nạp lại App ID cũ nếu có trong LocalStorage
+    if (facebookAppId) {
+      document.getElementById('fb-app-id-input').value = facebookAppId;
+      runMetaFacebookSDKLoader(facebookAppId);
+    }
+
+    // Nút kích hoạt đồng bộ đăng nhập qua Meta API
     document.getElementById('btn-meta-oauth-scan').onclick = () => {
       const loader = document.getElementById('meta-scanning-loader');
       const list = document.getElementById('meta-discovered-list');
@@ -1866,40 +1972,85 @@
       loader.classList.remove('hidden');
       list.classList.add('hidden');
 
-      setTimeout(() => {
+      // TH_1: Người dùng đã cấu hình Facebook App ID thật và SDK đã tải xong
+      if (facebookAppId && isFbSdkLoaded) {
         loader.classList.add('hidden');
-        list.classList.remove('hidden');
-
-        discoveredPages = [
-          { id: '222444666', name: 'Đồ Lam Đi Chùa & Quà Tặng Phong Thủy', image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=80' },
-          { id: '777333111', name: 'Váy Đầm Thiết Kế - Luxury Boutique', image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=80' },
-          { id: '555111999', name: 'Thế Giới Giày Sneaker & Phụ Kiện', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=80' }
-        ];
-
-        list.innerHTML = `<label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đã phát hiện (${discoveredPages.length})</label>`;
-        const divBox = document.createElement('div');
-        divBox.className = "divide-y divide-slate-800 bg-slate-950 rounded-lg overflow-hidden border border-slate-800";
         
-        discoveredPages.forEach(dp => {
-          const row = document.createElement('div');
-          row.className = "flex items-center justify-between p-3 hover:bg-slate-900/60 transition text-xs";
-          row.innerHTML = `
-            <div class="flex items-center gap-3">
-              <img src="${dp.image}" class="w-8 h-8 rounded-lg object-cover" />
-              <div>
-                <p class="font-bold text-white">${dp.name}</p>
-                <p class="text-[10px] text-slate-500">Page ID: ${dp.id}</p>
-              </div>
-            </div>
-            <button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold text-xs transition">Liên kết</button>
-          `;
-          row.querySelector('button').onclick = () => linkMetaPage(dp);
-          divBox.appendChild(row);
-        });
+        // Gọi mở popup Đăng nhập Facebook OAuth thực tế từ Meta
+        FB.login(function(response) {
+          if (response.authResponse) {
+            showToast('Kết nối tài khoản Facebook thành công! Đang lấy danh sách Fanpage...');
+            
+            // Gọi Facebook Graph API để lấy các trang người dùng đang làm quản trị viên
+            FB.api('/me/accounts', { fields: 'id,name,picture{url},access_token' }, function(apiResponse) {
+              if (apiResponse && !apiResponse.error) {
+                const accounts = apiResponse.data || [];
+                if (accounts.length === 0) {
+                  showToast('Tài khoản Meta này không có quyền quản lý trang Fanpage nào.');
+                  return;
+                }
+                
+                // Hiển thị danh sách Fanpage thực tế được quét thành công lên popup
+                displayDiscoveredPages(accounts.map(page => ({
+                  id: page.id,
+                  name: page.name,
+                  image: page.picture?.data?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
+                })));
+              } else {
+                showToast('Lỗi API Facebook khi tải danh sách trang.');
+                console.error("Meta Graph API Error:", apiResponse.error);
+              }
+            });
+          } else {
+            showToast('Đăng nhập bị hủy hoặc tài khoản chưa cấp quyền đầy đủ.');
+          }
+        }, { scope: 'pages_show_list,pages_read_engagement,pages_manage_metadata,public_profile' });
 
-        list.appendChild(divBox);
-        showToast('Kết nối tài khoản Meta thành công!');
-      }, 1800);
+      } else {
+        // TH_2: Chế độ giả lập thông minh (Fallback nếu không điền App ID)
+        setTimeout(() => {
+          loader.classList.add('hidden');
+          list.classList.remove('hidden');
+
+          const mockData = [
+            { id: '222444666', name: 'Đồ Lam Đi Chùa & Quà Tặng Phong Thủy', image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=80' },
+            { id: '777333111', name: 'Váy Đầm Thiết Kế - Luxury Boutique', image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=80' },
+            { id: '555111999', name: 'Thế Giới Giày Sneaker & Phụ Kiện', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=80' }
+          ];
+
+          displayDiscoveredPages(mockData);
+          showToast('Mở trình giả lập kết nối tài khoản Facebook mẫu thành công!');
+        }, 1200);
+      }
+    };
+
+    // Hàm render danh sách Fanpage quét được ra giao diện Modal
+    const displayDiscoveredPages = (discoveredList) => {
+      const listContainer = document.getElementById('meta-discovered-list');
+      listContainer.classList.remove('hidden');
+      listContainer.innerHTML = `<label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đã phát hiện (${discoveredList.length})</label>`;
+      
+      const divBox = document.createElement('div');
+      divBox.className = "divide-y divide-slate-800 bg-slate-950 rounded-lg overflow-hidden border border-slate-800";
+      
+      discoveredList.forEach(dp => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between p-3 hover:bg-slate-900/60 transition text-xs";
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="${dp.image}" class="w-8 h-8 rounded-lg object-cover" />
+            <div>
+              <p class="font-bold text-white">${dp.name}</p>
+              <p class="text-[10px] text-slate-500">Page ID: ${dp.id}</p>
+            </div>
+          </div>
+          <button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold text-xs transition">Liên kết</button>
+        `;
+        row.querySelector('button').onclick = () => linkMetaPage(dp);
+        divBox.appendChild(row);
+      });
+
+      listContainer.appendChild(divBox);
     };
 
     const linkMetaPage = async (dp) => {
@@ -1919,10 +2070,9 @@
           await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
         }
 
-        showToast(`Đã đồng bộ hóa trang: ${dp.name}! ⚡`);
-        // Filter out of discovered list
-        discoveredPages = discoveredPages.filter(p => p.id !== dp.id);
-        document.getElementById('btn-meta-oauth-scan').click(); // refresh list
+        showToast(`Đã đồng bộ hóa & liên kết Fanpage: ${dp.name}! ⚡`);
+        // Refresh view inside modal setup
+        document.getElementById('meta-discovered-list').classList.add('hidden');
       } catch(e) { console.error(e); }
     };
 
