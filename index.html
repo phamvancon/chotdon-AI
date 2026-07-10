@@ -610,19 +610,58 @@
                 <p id="fb-sdk-status-label" class="text-[10px] text-slate-500 italic">Trạng thái SDK: Chưa được cấu hình</p>
               </div>
 
-              <!-- DIAGNOSTICS LOG WINDOW (Hidden by default) -->
-              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-3 rounded-lg border border-red-500/30 text-xs space-y-2">
-                <h6 class="font-bold text-red-400 flex items-center gap-1.5">
-                  🛡️ Báo cáo kiểm tra kết nối Meta:
+              <!-- DIAGNOSTICS LOG WINDOW (Upgraded with detailed Meta Developer Checklist) -->
+              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-4 rounded-xl border border-red-500/30 text-xs space-y-3">
+                <h6 class="font-bold text-red-400 flex items-center gap-1.5 text-xs">
+                  🛡️ Báo cáo chẩn đoán lỗi & Hướng dẫn sửa đổi kết nối Meta:
                 </h6>
-                <div class="space-y-1 text-[11px] text-slate-300 font-mono">
-                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
+                <div class="space-y-1.5 text-[11px] text-slate-300 font-mono">
+                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức bảo mật HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
                   <p id="diag-item-adblock" class="flex justify-between"><span>- Trình chặn quảng cáo:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-loaded" class="flex justify-between"><span>- Tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài & Định dạng App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
+                  <p id="diag-item-loaded" class="flex justify-between"><span>- Trạng thái tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
                 </div>
+                
+                <!-- Detailed Meta config checklists -->
+                <div class="border-t border-slate-800 pt-3 space-y-2">
+                  <p class="font-bold text-slate-300 flex items-center gap-1">
+                    🔍 5 Mục Kiểm Tra Cấu Hình Trong Meta Developer:
+                  </p>
+                  <div class="grid grid-cols-1 gap-1.5 pl-1 text-[10px] text-slate-400">
+                    <label class="flex items-start gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="chk-fb-login" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
+                      <span>1. Đã thêm sản phẩm <strong class="text-indigo-400">Facebook Login</strong> vào Meta App.</span>
+                    </label>
+                    <label class="flex items-start gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="chk-app-domains" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
+                      <span>2. Khai báo đúng <strong class="text-indigo-400">App Domains</strong> (miền của ứng dụng này).</span>
+                    </label>
+                    <label class="flex items-start gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="chk-oauth-uri" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
+                      <span>3. Khai báo chính xác <strong class="text-indigo-400">Valid OAuth Redirect URI</strong> (Copy ở trên).</span>
+                    </label>
+                    <label class="flex items-start gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="chk-js-sdk-domain" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
+                      <span>4. Thêm miền của bạn vào <strong class="text-indigo-400">JavaScript SDK Allowed Domains</strong>.</span>
+                    </label>
+                    <label class="flex items-start gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="chk-website-url" class="mt-0.5 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 focus:ring-offset-0" checked>
+                      <span>5. Đã cấu hình trường <strong class="text-indigo-400">Website URL</strong> khớp với URL hiện tại.</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-lg p-2.5 text-[10px] text-slate-300 leading-relaxed">
+                  <p class="font-bold text-amber-400 flex items-center gap-1 mb-1">
+                    ⚠️ Trường hợp App đang ở chế độ Phát triển (Development Mode):
+                  </p>
+                  <p>
+                    Nếu Meta App chưa chuyển sang chế độ <strong class="text-white">Live (Kích hoạt)</strong>, chỉ các tài khoản Facebook có vai trò là <strong class="text-indigo-300">Quản trị viên (Administrator)</strong>, <strong class="text-indigo-300">Nhà phát triển (Developer)</strong> hoặc <strong class="text-indigo-300">Người kiểm thử (Tester)</strong> được thiết lập trong mục <em>"Vai trò" (Roles)</em> của Meta App mới có thể đăng nhập thành công. Các tài khoản Facebook khác sẽ bị hệ thống Meta từ chối truy cập.
+                  </p>
+                </div>
+
                 <div id="diag-remedy-text" class="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1 leading-relaxed">
-                  * Mẹo: Hầu hết lỗi không cấu hình được là do trình duyệt của bạn chặn Popup hoặc tài khoản FB của bạn chưa được thêm vào "Vai trò" (Roles) của App ID ở chế độ nhà phát triển.
+                  * Nhấp "Kiểm tra chẩn đoán lại" sau khi thay đổi cấu hình trên trang quản lý Meta App.
                 </div>
               </div>
             </div>
@@ -2118,11 +2157,11 @@
       } else if (!inputVal) {
         remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Bạn chưa nhập App ID. Hãy truy cập <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>, tạo một App loại <strong>"Khác" -> "Người tiêu dùng"</strong> để nhận dãy mã App ID của bạn.`;
       } else {
-        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers:</strong><br/>
-        1. Vào App của bạn trên <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>.<br/>
+        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers quan trọng:</strong><br/>
+        1. Đảm bảo đã bật chế độ <strong class="text-white">Live</strong> cho App hoặc đã cấp quyền <strong class="text-indigo-400">Developer/Tester/Administrator</strong> trong phần "Vai trò" (Roles) cho nick đăng nhập.<br/>
         2. Thêm sản phẩm <strong>"Đăng nhập Facebook" (Facebook Login)</strong> -> <strong>Cài đặt</strong>.<br/>
-        3. Copy link Redirect URI ở khung bên trên (<code>https://chot-don-ai.firebaseapp.com/__/auth/handler</code>) dán vào mục <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ).<br/>
-        4. Chuyển trạng thái App từ <strong>Bản nháp (Development)</strong> sang <strong>Kích hoạt (Live)</strong> ở thanh menu phía trên đầu trang.`;
+        3. Copy link Redirect URI ở khung bên trên dán vào mục <strong>"Valid OAuth Redirect URIs"</strong>.<br/>
+        4. Điền URL miền của bạn vào <strong>App Domains</strong> & <strong>JavaScript SDK Allowed Domains</strong> trong mục Cài đặt cơ bản.`;
       }
     };
 
