@@ -2325,12 +2325,24 @@
     const displayDiscoveredPages = (discoveredList) => {
       const listContainer = document.getElementById('meta-discovered-list');
       listContainer.classList.remove('hidden');
-      listContainer.innerHTML = `<label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Trang phát hiện được (${discoveredList.length})</label>`;
+      
+      // Thêm nút "Liên kết tất cả các trang" nếu có từ 2 trang trở lên
+      listContainer.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Trang phát hiện được (${discoveredList.length})</label>
+          ${discoveredList.length > 1 ? `
+            <button id="btn-link-all-pages" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded transition flex items-center gap-1 shadow-lg shadow-emerald-950/20">
+              ⚡ Liên kết tất cả các trang (${discoveredList.length})
+            </button>
+          ` : ''}
+        </div>
+      `;
       
       const divBox = document.createElement('div');
       divBox.className = "divide-y divide-slate-800 bg-slate-950 rounded-xl overflow-hidden border border-slate-800";
       
       discoveredList.forEach(dp => {
+        const isLinked = pages.some(p => p.id === dp.id);
         const row = document.createElement('div');
         row.className = "flex items-center justify-between p-3 hover:bg-slate-900/60 transition text-xs";
         row.innerHTML = `
@@ -2341,13 +2353,65 @@
               <p class="text-[10px] text-slate-500">Page ID: ${dp.id}</p>
             </div>
           </div>
-          <button class="px-3.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold text-[11px] transition">Liên kết</button>
+          ${isLinked ? `
+            <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">Đã kết nối</span>
+          ` : `
+            <button class="btn-link-single px-3.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold text-[11px] transition">Liên kết</button>
+          `}
         `;
-        row.querySelector('button').onclick = () => linkMetaPage(dp);
+        
+        const btnSingle = row.querySelector('.btn-link-single');
+        if (btnSingle) {
+          btnSingle.onclick = () => linkMetaPage(dp);
+        }
         divBox.appendChild(row);
       });
 
       listContainer.appendChild(divBox);
+
+      // Gán sự kiện cho nút liên kết tất cả các trang
+      const btnLinkAll = document.getElementById('btn-link-all-pages');
+      if (btnLinkAll) {
+        btnLinkAll.onclick = () => linkAllMetaPages(discoveredList);
+      }
+    };
+
+    // Hàm đồng bộ và liên kết hàng loạt toàn bộ Fanpage
+    const linkAllMetaPages = async (discoveredList) => {
+      if (!user) return;
+      
+      // Lọc ra các trang chưa được liên kết
+      const newPages = discoveredList.filter(dp => !pages.some(p => p.id === dp.id));
+      if (newPages.length === 0) {
+        showToast('Tất cả các Fanpage này đều đã được liên kết rồi!');
+        return;
+      }
+
+      showToast(`Đang kết nối hàng loạt ${newPages.length} Fanpage... ⏳`);
+
+      try {
+        const promises = newPages.map(async (dp) => {
+          const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
+          // Lưu thông tin Fanpage
+          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', dp.id), pObj);
+          
+          // Tạo hội thoại mẫu khởi tạo tự động cho từng trang
+          const sampleChats = generateConversationsForNewPage(dp.id, dp.name);
+          for (const chat of sampleChats) {
+            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+          }
+        });
+
+        // Đợi tất cả các tiến trình lưu hoàn thành
+        await Promise.all(promises);
+        showToast(`Liên kết toàn bộ ${newPages.length} Fanpage thành công! 🎉`);
+        
+        // Ẩn danh sách đã phát hiện sau khi hoàn tất
+        document.getElementById('meta-discovered-list').classList.add('hidden');
+      } catch(e) {
+        console.error("Lỗi đồng bộ liên kết hàng loạt:", e);
+        showToast('Có lỗi xảy ra trong quá trình đồng bộ hàng loạt các Fanpage.');
+      }
     };
 
     const linkMetaPage = async (dp) => {
