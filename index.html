@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chốt Đơn AI - Trình quản lý tin nhắn Facebook Fanpage</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbar for sleeker UI */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e5;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 h-screen overflow-hidden flex flex-col">
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed top-4 right-4 z-50 bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-indigo-400 transition-all duration-300 transform translate-x-96 opacity-0">
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" strokeLinejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span id="toast-message" class="font-medium text-sm">Thông báo hệ thống</span>
+  </div>
+
+  <!-- TOP HEADER -->
+  <header class="flex items-center justify-between px-6 py-4 bg-slate-950 border-b border-slate-800 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          Chốt Đơn AI - Omni Inbox Pro
+        </h1>
+        <p class="text-xs text-slate-400">Trình quản lý Fanpage & AI Chatbot tự động trả lời theo kho hàng</p>
+      </div>
+    </div>
+
+    <!-- Sync status & Configuration controls -->
+    <div class="flex items-center gap-3">
+      <!-- Database Sync Status Indicator -->
+      <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <span id="sync-text" class="text-[10px] text-slate-400">Đang khởi tạo kết nối...</span>
+      </div>
+
+      <!-- Quick AI Config Button -->
+      <button id="btn-toggle-ai-config" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 transition">
+        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Cài đặt AI</span>
+      </button>
+
+      <!-- Admin User Badge -->
+      <div class="flex items-center gap-2 pl-3 border-l border-slate-800">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Admin" class="w-8 h-8 rounded-full border border-indigo-500" />
+        <div class="hidden sm:block text-left">
+          <p class="text-xs font-semibold text-slate-200">Admin Quản lý</p>
+          <p class="text-[10px] text-slate-400">UID: 215151365</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- GEMINI API CONFIG DRAWER -->
+  <div id="ai-config-drawer" class="hidden bg-slate-950 border-b border-indigo-900/40 p-4 transition-all duration-300">
+    <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-end gap-3">
+      <div class="flex-1 w-full">
+        <label class="block text-xs font-semibold text-indigo-400 mb-1.5">Google Gemini API Key (Dùng để kích hoạt tính năng tự động trả lời)</label>
+        <input 
+          id="gemini-api-key"
+          type="password"
+          placeholder="Nhập Gemini API Key của bạn (ví dụ: AIzaSy...)"
+          class="w-full bg-slate-900 border border-indigo-900/60 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+        />
+      </div>
+      <div class="flex gap-2 w-full sm:w-auto">
+        <button id="btn-save-ai-config" class="flex-1 sm:flex-none px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-xs rounded-lg font-semibold text-white transition">
+          Lưu cấu hình
+        </button>
+        <button id="btn-close-ai-config" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg transition">
+          Đóng
+        </button>
+      </div>
+    </div>
+    <p class="text-[10px] text-slate-400 text-center mt-2">
+      * Bạn cần điền API Key để Trợ lý AI có thể phân tích và sinh câu trả lời theo đúng kho hàng tùy chỉnh bạn cấu hình.
+    </p>
+  </div>
+
+  <!-- MAIN CONTAINER (THREE COLUMN LAYOUT) -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- COLUMN 1: PAGE SWITCHER & CHAT CONVERSATIONS LIST -->
+    <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-r border-slate-800 shrink-0">
+      
+      <!-- Fanpage Connection Selector -->
+      <div class="p-3 border-b border-slate-800">
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đang kết nối Facebook Pages</label>
+          <button id="btn-manage-pages" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 bg-indigo-600/10 border border-indigo-500/20 px-2 py-0.5 rounded">
+            ⚙️ Quản lý
+          </button>
+        </div>
+        <!-- Scrollable Page List -->
+        <div id="pages-list" class="space-y-1.5 max-h-[150px] overflow-y-auto pr-0.5">
+          <!-- Dynamically Rendered Pages -->
+        </div>
+      </div>
+
+      <!-- Search & Multi-filter tools -->
+      <div class="p-3 space-y-3 bg-slate-950/60 shrink-0">
+        <!-- Search bar -->
+        <div class="relative">
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Tìm tên khách hàng hoặc SĐT..."
+            class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+          />
+          <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="flex flex-wrap gap-1 border-b border-slate-800/60 pb-2">
+          <button data-filter="all" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-indigo-600 text-white font-medium transition">
+            Tất cả
+          </button>
+          <button data-filter="unread" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 relative transition">
+            Chưa đọc
+          </button>
+          <button data-filter="unreplied" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
+            Chưa trả lời
+          </button>
+          <button data-filter="hasPhone" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
+            Có SĐT
+          </button>
+        </div>
+
+        <!-- Dropdown Filter Tag -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px] text-slate-400 font-bold uppercase shrink-0">Lọc tag:</span>
+          <select id="tag-filter-select" class="bg-slate-900 text-slate-300 border border-slate-800 text-[11px] rounded px-2 py-1 w-full focus:outline-none focus:border-indigo-500">
+            <option value="all">-- Tất cả thẻ tag --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Conversations Scroll List -->
+      <div id="conversations-list" class="flex-1 overflow-y-auto divide-y divide-slate-900/60">
+        <!-- Dynamically Rendered Conversations -->
+      </div>
+    </section>
+
+    <!-- COLUMN 2: ACTIVE CHAT LOG & CUSTOMER SIMULATOR -->
+    <section class="flex-1 flex flex-col bg-slate-900">
+      
+      <!-- Active Conversation Profile Header -->
+      <div class="px-5 py-3 bg-slate-950 border-b border-slate-800/80 flex items-center justify-between shrink-0">
+        <div id="active-chat-header-profile" class="flex items-center gap-3">
+          <!-- Rendered Profile Info -->
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="quick-btn-thanks" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
+            Cảm ơn 👍
+          </button>
+          <button id="quick-btn-copy" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
+            Copy SĐT
+          </button>
+        </div>
+      </div>
+
+      <!-- CUSTOMER SIMULATOR WIDGET (Thử nghiệm phản xạ AI Bot) -->
+      <div class="bg-slate-950/60 border-b border-slate-800/80 p-3 shrink-0">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block w-2.5 h-2.5 bg-sky-500 rounded-full animate-ping"></span>
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Khung giả lập khách hàng nhắn tin</span>
+          </div>
+          <span class="text-[10px] text-slate-500">(Dùng để test tốc độ tự động trả lời của AI)</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mb-2">
+          <button class="sim-pill text-[10px] px-2 py-1 bg-slate-900 hover:bg-indigo-950/40 text-slate-300 border border-slate-800 rounded transition" data-msg="Shop ơi mẫu đầm hoa nhí còn không? Giá bao nhiêu thế?">
+            👗 Hỏi đầm hoa nhí
+          </button>
+          <button class="sim-pill text-[10px] px-2 py-1 bg-slate-900 hover:bg-indigo-950/40 text-slate-300 border border-slate-800 rounded transition" data-msg="Có mẫu áo sơ mi lụa nào đẹp tư vấn cho mình với nha.">
+            👔 Hỏi áo sơ mi lụa
+          </button>
+          <button class="sim-pill text-[10px] px-2 py-1 bg-slate-900 hover:bg-indigo-950/40 text-slate-300 border border-slate-800 rounded transition" data-msg="Mình muốn đặt mua 1 chiếc Quần jean baggy size L, ship về Hải Phòng.">
+            👖 Hỏi đặt quần jean
+          </button>
+          <button class="sim-pill text-[10px] px-2 py-1 bg-slate-900 hover:bg-indigo-950/40 text-slate-300 border border-slate-800 rounded transition" data-msg="Shop có bán cái tủ lạnh hay mỹ phẩm Hàn Quốc nào không?">
+            ❌ Hỏi sản phẩm không có sẵn
+          </button>
+        </div>
+        <!-- Live manual customer simulation input -->
+        <div class="flex gap-2">
+          <input 
+            id="simulator-custom-input"
+            type="text" 
+            placeholder="Viết tin nhắn giả lập của khách tại đây..." 
+            class="flex-1 bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-300 focus:outline-none"
+          />
+          <button id="btn-simulate-send" class="px-3 py-1 bg-sky-600 hover:bg-sky-500 text-xs font-semibold text-white rounded transition">
+            Gửi giả lập 🚀
+          </button>
+        </div>
+      </div>
+
+      <!-- AI ASSISTANT SUGGESTION BAR -->
+      <div id="ai-suggestion-bar" class="bg-indigo-950/20 border-b border-indigo-900/30 p-3 shrink-0 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="bg-indigo-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded tracking-wide animate-pulse">
+              AI CHỐT ĐƠN
+            </span>
+            <p class="text-[11px] text-indigo-200">Gợi ý trả lời thủ công (Nếu bạn tắt chế độ tự động trả lời)</p>
+          </div>
+          <button id="btn-trigger-ai" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded font-semibold transition">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Gợi ý trả lời</span>
+          </button>
+        </div>
+        <div id="ai-suggestion-output-container" class="hidden bg-slate-950/80 border border-indigo-500/30 p-2.5 rounded-lg flex items-start gap-2.5">
+          <div class="bg-indigo-600/30 p-1 rounded">💡</div>
+          <div class="flex-1">
+            <p id="ai-suggestion-text" class="text-xs text-slate-200 leading-relaxed italic"></p>
+            <div class="flex justify-end gap-2 mt-2">
+              <button id="btn-use-ai-suggestion" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold uppercase">Dùng mẫu này</button>
+              <button id="btn-send-ai-suggestion" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-semibold uppercase">Gửi ngay 🚀</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Messages Window Log -->
+      <div id="chat-messages-log" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- Messages Dynamically Appended -->
+      </div>
+
+      <!-- Shortcut keyboard replies -->
+      <div class="px-4 py-2 bg-slate-950/40 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto whitespace-nowrap shrink-0">
+        <span class="text-[10px] text-slate-500 font-bold tracking-wide shrink-0">Trả lời nhanh:</span>
+        <div id="quick-replies-shortcuts" class="flex gap-2">
+          <!-- Rendered Quick Replies Buttons -->
+        </div>
+      </div>
+
+      <!-- Shop Text Input Form -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
+        <div id="attachment-preview-container" class="hidden mb-2">
+          <div class="relative inline-block bg-slate-800 p-1.5 rounded-lg border border-indigo-500/40">
+            <img id="attachment-preview-img" src="" alt="Sample Attachment" class="h-10 w-10 object-cover rounded" />
+            <button id="btn-remove-attachment" class="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full p-0.5 text-white hover:bg-red-600">
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-end gap-2">
+          <div class="flex items-center gap-1 shrink-0 pb-1">
+            <button id="btn-attach-image" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition" title="Đính kèm ảnh mẫu sản phẩm">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </button>
+            <button id="btn-emoji-heart" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">🥰</button>
+            <button id="btn-emoji-like" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">👍</button>
+          </div>
+
+          <div class="flex-1">
+            <textarea
+              id="message-textarea"
+              rows="1"
+              placeholder="Nhập tin nhắn phản hồi cho khách hàng..."
+              class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none max-h-24"
+            ></textarea>
+          </div>
+
+          <button id="btn-send-message" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white font-semibold transition shrink-0 pb-2.5">
+            <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: CUSTOMER CRM & PRODUCT ADMIN INVENTORY -->
+    <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-l border-slate-800 shrink-0">
+      
+      <!-- Right Side Tabs Switcher -->
+      <div class="flex border-b border-slate-800 shrink-0">
+        <button id="tab-btn-customer" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400 bg-indigo-950/10">
+          👤 Khách hàng
+        </button>
+        <button id="tab-btn-order" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+          🛍️ Tạo đơn hàng
+        </button>
+        <button id="tab-btn-admin-ai" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+          ⚙️ Kho & AI Bot
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div id="tab-content-container" class="flex-1 overflow-y-auto">
+        
+        <!-- SUB-TAB 1: CUSTOMER METADATA CRM -->
+        <div id="pane-customer" class="p-4 space-y-4">
+          <!-- Profile Badge -->
+          <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/80 text-center">
+            <img id="crm-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-indigo-500 mb-2" />
+            <h4 id="crm-name" class="text-sm font-bold text-white">-</h4>
+            <p id="crm-uid" class="text-[10px] text-slate-400">UID: -</p>
+          </div>
+
+          <!-- Fields -->
+          <div class="space-y-3.5">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Số điện thoại</label>
+              <input id="crm-phone-input" type="text" placeholder="Nhập số điện thoại chốt đơn..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Địa chỉ giao hàng</label>
+              <textarea id="crm-address-input" rows="2" placeholder="Nhập địa chỉ nhận hàng chi tiết..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ghi chú nội bộ</label>
+              <textarea id="crm-notes-input" rows="2" placeholder="Ghi chú về khách hàng..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+            </div>
+
+            <!-- Tags Section -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Phân loại thẻ Tag</label>
+              <div id="crm-tags-list" class="flex flex-wrap gap-1.5 mb-2">
+                <!-- Rendered Tags -->
+              </div>
+              <div class="flex gap-1.5">
+                <input id="crm-new-tag-input" type="text" placeholder="Thêm tag mới..." class="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                <button id="btn-add-tag" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1 rounded font-bold transition">+</button>
+              </div>
+            </div>
+
+            <button id="btn-save-crm" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded-lg transition mt-4">
+              Lưu thông tin CRM khách hàng
+            </button>
+          </div>
+
+          <!-- Order History -->
+          <div class="pt-4 border-t border-slate-800/80">
+            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Lịch sử giao dịch</h4>
+            <div id="crm-history-box" class="space-y-2">
+              <!-- Dynamically generated status -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 2: ORDER GENERATION TOOL -->
+        <div id="pane-order" class="hidden p-4 space-y-4">
+          <!-- Catalog Select List -->
+          <div>
+            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Chọn sản phẩm từ kho hàng</h4>
+            <div id="order-product-select-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              <!-- Rendered items from products catalog -->
+            </div>
+          </div>
+
+          <!-- Current Cart draft list -->
+          <div class="border-t border-slate-800/80 pt-4">
+            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm đã chọn</h4>
+            <div id="order-cart-items-list" class="space-y-2">
+              <!-- Cart items -->
+            </div>
+          </div>
+
+          <!-- Extra details -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-2.5">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Phí vận chuyển (đ)</label>
+                <input id="order-shipping-input" type="number" value="30000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giảm giá/Chiết khấu (đ)</label>
+                <input id="order-discount-input" type="number" value="0" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Ghi chú vận đơn</label>
+              <input id="order-notes-input" type="text" placeholder="Giao giờ hành chính, cho đồng kiểm..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white placeholder-slate-600" />
+            </div>
+          </div>
+
+          <!-- Calculations block -->
+          <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 space-y-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Tạm tính:</span>
+              <span id="order-subtotal" class="text-slate-200">0đ</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Phí giao hàng:</span>
+              <span id="order-shipping-fee" class="text-slate-200">+30.000đ</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Giảm trừ:</span>
+              <span id="order-discount-fee" class="text-emerald-400">-0đ</span>
+            </div>
+            <div class="flex justify-between text-xs font-bold pt-1.5 border-t border-slate-800/60 text-white">
+              <span>Tổng hóa đơn:</span>
+              <span id="order-total" class="text-indigo-400 text-sm">0đ</span>
+            </div>
+          </div>
+
+          <button id="btn-create-order" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-lg transition shadow-lg">
+            Chốt đơn & Gửi hoá đơn vào chat 🛒
+          </button>
+        </div>
+
+        <!-- SUB-TAB 3: KHO SẢN PHẨM & TỰ ĐỘNG PHẢN HỒI AI BOT (ADMIN PRO) -->
+        <div id="pane-admin-ai" class="hidden p-4 space-y-4">
+          
+          <!-- AI Auto-Reply configuration -->
+          <div class="p-3.5 bg-indigo-950/10 border border-indigo-500/20 rounded-xl space-y-3">
+            <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Hệ thống Auto-Reply AI</span>
+              <span class="px-2 py-0.5 text-[8px] bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded font-bold animate-pulse">ADMIN PRO</span>
+            </h4>
+            <p class="text-[10px] text-slate-300 leading-relaxed">
+              Khi được bật, bot sẽ liên tục đọc tin nhắn mới nhất của khách hàng và tự động phân tích phản hồi dựa theo kho sản phẩm bên dưới.
+            </p>
+            <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-xs font-semibold text-slate-200">Bật AI Tự động trả lời</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input id="toggle-auto-reply" type="checkbox" class="sr-only peer" />
+                <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Product inventory controller (Add new custom product) -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-3">
+            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Thêm Sản phẩm vào Kho hàng AI</h4>
+            <div class="space-y-2.5">
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Tên sản phẩm</label>
+                <input id="prod-name" type="text" placeholder="Ví dụ: Đầm Hoa Nhí dáng xòe" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giá tiền (đ)</label>
+                  <input id="prod-price" type="number" placeholder="Ví dụ: 290000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mã SKU</label>
+                  <input id="prod-sku" type="text" placeholder="DHN-01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa nhận diện của sản phẩm (Keywords)</label>
+                <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe, dam hoa" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mô tả đặc điểm / Tư vấn size</label>
+                <textarea id="prod-desc" rows="2" placeholder="Chất liệu lụa Hàn, có size S, M, L cho người từ 45-65kg..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+              </div>
+              <button id="btn-add-product" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded transition">
+                Cập nhật Kho hàng AI 📦
+              </button>
+            </div>
+          </div>
+
+          <!-- Product list overview with delete option -->
+          <div class="border-t border-slate-800/80 pt-4 space-y-2">
+            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm trong Kho ({products.length})</h4>
+            <div id="admin-inventory-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <!-- Dynamically rendered admin products list -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Footer stats inside right panel -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 text-center shrink-0">
+        <p class="text-[10px] text-slate-400">
+          Đồng bộ hóa thực tế hai chiều bởi <span class="text-indigo-400 font-semibold">ChotDon.ai Hub</span>
+        </p>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- PAGE MANAGER MODAL OVERLAY -->
+  <div id="page-manager-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span class="p-1 bg-indigo-600 rounded">
+              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </span>
+            Quản lý và Liên kết Fanpage
+          </h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Kết nối và phân loại luồng tin nhắn đa kênh</p>
+        </div>
+        <button id="btn-close-page-modal" class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
+      </div>
+
+      <!-- Modal Tab Switcher -->
+      <div class="flex border-b border-slate-800 bg-slate-950/30">
+        <button id="modal-tab-list" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400">
+          Trang đã liên kết
+        </button>
+        <button id="modal-tab-meta" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+          Đăng nhập Meta Sync ⚡
+        </button>
+        <button id="modal-tab-manual" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+          Nhập tay ID Trang
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Body -->
+      <div id="modal-body-content" class="flex-1 overflow-y-auto p-5 space-y-4">
+        
+        <!-- PANE A: Linked list pages -->
+        <div id="modal-pane-list" class="space-y-2">
+          <!-- Dynamically populated in JS -->
+        </div>
+
+        <!-- PANE B: Meta OAuth simulator -->
+        <div id="modal-pane-meta" class="hidden space-y-4">
+          <div class="p-4 rounded-xl bg-indigo-950/10 border border-indigo-500/20 text-center space-y-3">
+            <p class="text-xs text-indigo-200 leading-relaxed">
+              Sử dụng API Meta để quét tất cả các Fanpage mà bạn sở hữu quyền Admin/Quản lý một cách bảo mật chỉ với tài khoản Facebook của bạn.
+            </p>
+            <button id="btn-meta-oauth-scan" class="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+              </svg>
+              Quét Fanpage qua Facebook Account
+            </button>
+          </div>
+          <!-- Scanning status loader -->
+          <div id="meta-scanning-loader" class="hidden text-center py-4">
+            <svg class="animate-spin h-6 w-6 text-indigo-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-xs text-slate-400">Đang đăng nhập Meta & quét tài khoản...</p>
+          </div>
+          <!-- Discovered Pages List from Meta -->
+          <div id="meta-discovered-list" class="space-y-2 hidden">
+            <!-- Rendered discovered list -->
+          </div>
+        </div>
+
+        <!-- PANE C: Manual integration form -->
+        <div id="modal-pane-manual" class="hidden space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tên hiển thị Fanpage</label>
+            <input id="manual-page-name" type="text" placeholder="Ví dụ: Shop Giày Xuất Khẩu" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Facebook Page ID (UID)</label>
+            <input id="manual-page-id" type="text" placeholder="Ví dụ: 888444222111" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình ảnh đại diện (Đường dẫn Url)</label>
+            <input id="manual-page-image" type="text" value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
+          </div>
+          <button id="btn-manual-page-save" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition">Thêm & Liên kết ngay</button>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
+        <button id="btn-modal-close-footer" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg transition text-slate-300">Đóng</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FIREBASE MODULES LOAD & LOGIC IMPLEMENTATION -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Cấu hình Firebase đồng bộ
+    const firebaseConfig = {
+      apiKey: "AIzaSyDKEthdliUvobleVbL55O3-bu1v85o_O6c",
+      authDomain: "chot-don-ai.firebaseapp.com",
+      projectId: "chot-don-ai",
+      storageBucket: "chot-don-ai.firebasestorage.app",
+      messagingSenderId: "414344772860",
+      appId: "1:414344772860:web:6c85244221438365cdeb79",
+      measurementId: "G-E2300T871S"
+    };
+
+    // Khởi tạo Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'chot-don-ai-app';
+
+    // Dữ liệu mẫu khởi tạo lúc ban đầu (Seed data)
+    const MOCK_PAGES = [
+      { id: '215151365', name: 'Thời Trang Chốt Đơn (Mặc định)', active: true, image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80' },
+      { id: '999888777', name: 'Gia Dụng Thông Minh AI', active: false, image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=80' },
+      { id: '111222333', name: 'Mỹ Phẩm Xách Tay Korea', active: false, image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=80' }
+    ];
+
+    const INITIAL_CONVERSATIONS = [
+      {
+        id: 'c1',
+        facebookId: '100085948372',
+        name: 'Nguyễn Thảo Vy',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+        pageId: '215151365',
+        unread: true,
+        replied: false,
+        phone: '0987654321',
+        address: '123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh',
+        notes: 'Khách sỉ tiềm năng, hay hỏi size M',
+        tags: ['Chờ báo giá', 'Khách VIP'],
+        messages: [
+          { id: 'm1_1', sender: 'customer', text: 'Chào shop, mẫu Đầm Hoa Nhí Vintage còn size M không ạ?', timestamp: '10:15 AM' },
+          { id: 'm1_2', sender: 'shop', text: 'Dạ shop chào chị Vy ạ! Đầm Hoa Nhí Vintage bên em vẫn còn sẵn size M chị nha.', timestamp: '10:17 AM' },
+          { id: 'm1_3', sender: 'customer', text: 'Ship về Sài Gòn thì bao lâu nhận được em? Có được kiểm tra hàng trước khi thanh toán không?', timestamp: '10:40 AM' },
+        ]
+      },
+      {
+        id: 'c2',
+        facebookId: '100072948271',
+        name: 'Trần Minh Hoàng',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        pageId: '215151365',
+        unread: false,
+        replied: true,
+        phone: '0912345678',
+        address: '456 Trần Hưng Đạo, Quận Hải Châu, Đà Nẵng',
+        notes: 'Thích giao hàng giờ hành chính',
+        tags: ['Đã chốt đơn'],
+        messages: [
+          { id: 'm2_1', sender: 'customer', text: 'Tư vấn cho mình quần jean baggy cạp cao nha.', timestamp: 'Hôm qua' },
+          { id: 'm2_2', sender: 'shop', text: 'Dạ anh Hoàng cho em xin chiều cao và cân nặng để em tư vấn size vừa vặn nhất cho mình nhé ạ.', timestamp: 'Hôm qua' },
+          { id: 'm2_3', sender: 'customer', text: 'Mình nặng 68kg, cao 1m72 nha shop', timestamp: 'Hôm qua' },
+          { id: 'm2_4', sender: 'shop', text: 'Dạ với cấu hình này anh mặc size L là siêu đẹp luôn ạ! Anh chốt mẫu baggy xanh đậm hay đen ạ?', timestamp: 'Hôm qua' },
+        ]
+      }
+    ];
+
+    const DEFAULT_PRODUCTS = [
+      { id: 'p1', name: 'Đầm Hoa Nhí Vintage dáng xòe', price: 290000, sku: 'DNH-VNT-01', keywords: 'đầm hoa nhí, dam hoa, váy xòe, vintage', desc: 'Sợi lụa tuyết siêu mát, form xòe sang trọng tôn dáng. Có size S, M, L từ 45-63kg.' },
+      { id: 'p2', name: 'Áo Sơ Mi Lụa Hàn Quốc cổ V', price: 185000, sku: 'ASM-LHQ-02', keywords: 'áo sơ mi, ao so mi, áo lụa, áo hàn quốc', desc: 'Chất lụa Hàn Quốc cao cấp, mềm mịn không nhăn. Thích hợp đi làm, dạo phố.' },
+      { id: 'p3', name: 'Quần Jean Baggy Cạp Cao', price: 250000, sku: 'QJB-CCHQ-03', keywords: 'quần jean baggy, quan jean, cạp cao, jean rộng', desc: 'Chất bò denim dày dặn không phai màu, che khuyết điểm chân đùi hoàn hảo. Đủ size 26 đến 30.' }
+    ];
+
+    const QUICK_REPLIES = [
+      'Dạ bên em chào anh/chị ạ! Shop có thể hỗ trợ gì cho mình hôm nay ạ? 🥰',
+      'Sản phẩm này bên em đang có chương trình khuyến mãi giảm giá cực sâu đó ạ!',
+      'Chị cho em xin Số điện thoại và Địa chỉ nhận hàng để em lên đơn ngay cho mình nhé ạ. 🚚',
+      'Phí vận chuyển đồng giá toàn quốc chỉ 30.000đ, đơn hàng trên 500.000đ được miễn phí ship hoàn toàn ạ!',
+      'Dạ đơn hàng của mình đã được chốt thành công! Hệ thống sẽ gửi mã vận đơn sớm nhất qua SMS cho mình nhé ạ. Cám ơn chị nhiều!'
+    ];
+
+    // TRẠNG THÁI NỘI BỘ (GLOBAL STATE)
+    let user = null;
+    let pages = [];
+    let conversations = [];
+    let products = [];
+    let cart = []; // Mảng chứa sản phẩm nháp chốt đơn { product, quantity }
+    
+    let selectedPageId = '215151365';
+    let activeThreadId = 'c1';
+    let activeFilter = 'all';
+    let selectedTagFilter = 'all';
+    let searchQuery = '';
+    
+    let activeRightTab = 'customer'; // customer | order | admin-ai
+    let apiKey = localStorage.getItem('chotdon_gemini_key') || '';
+    let autoReplyEnabled = localStorage.getItem('chotdon_auto_reply') === 'true';
+    let isAiLoading = false;
+    let selectedAttachment = null; // Gửi ảnh giả lập
+
+    // BẬT / TẮT UI ELEMENTS DÙNG DOM
+    const toastEl = document.getElementById('toast');
+    const toastMsgEl = document.getElementById('toast-message');
+    const syncDot = document.getElementById('sync-dot');
+    const syncText = document.getElementById('sync-text');
+
+    const showToast = (message) => {
+      toastMsgEl.innerText = message;
+      toastEl.classList.remove('translate-x-96', 'opacity-0');
+      toastEl.classList.add('translate-x-0', 'opacity-100');
+      setTimeout(() => {
+        toastEl.classList.add('translate-x-96', 'opacity-0');
+        toastEl.classList.remove('translate-x-0', 'opacity-100');
+      }, 3000);
+    };
+
+    // Firebase Authentication & Failbacks (Xử lý lỗi Rule 3)
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          try {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } catch (tokenErr) {
+            console.warn("Token không khớp, tự động chuyển qua đăng nhập ẩn danh:", tokenErr);
+            await signInAnonymously(auth);
+          }
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Firebase auth error:", err);
+      }
+    };
+    initAuth();
+
+    onAuthStateChanged(auth, (usr) => {
+      if (usr) {
+        user = usr;
+        syncDot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-md shadow-emerald-500 animate-pulse";
+        syncText.innerText = "Đã đồng bộ Cloud";
+        syncText.className = "text-[10px] text-emerald-400 font-semibold";
+        // Bắt đầu lắng nghe database
+        startRealtimeListening();
+      } else {
+        syncDot.className = "w-2 h-2 rounded-full bg-red-500";
+        syncText.innerText = "Chưa kết nối Cloud";
+        syncText.className = "text-[10px] text-red-400";
+      }
+    });
+
+    // LẮNG NGHE REAL-TIME FIRESTORE (Rule 1 & Rule 2)
+    let pageUnsub = null;
+    let convUnsub = null;
+    let prodUnsub = null;
+
+    const startRealtimeListening = () => {
+      if (!user) return;
+
+      const pagesColRef = collection(db, 'artifacts', appId, 'users', user.uid, 'pages');
+      const convColRef = collection(db, 'artifacts', appId, 'users', user.uid, 'conversations');
+      const prodColRef = collection(db, 'artifacts', appId, 'users', user.uid, 'products');
+
+      // Seed data khởi tạo khi Firestore trống
+      const seedDatabase = async () => {
+        for (const p of MOCK_PAGES) {
+          await setDoc(doc(pagesColRef, p.id), p);
+        }
+        for (const c of INITIAL_CONVERSATIONS) {
+          await setDoc(doc(convColRef, c.id), c);
+        }
+        for (const pr of DEFAULT_PRODUCTS) {
+          await setDoc(doc(prodColRef, pr.id), pr);
+        }
+      };
+
+      // Lắng nghe Pages
+      pageUnsub = onSnapshot(pagesColRef, async (snap) => {
+        if (snap.empty) {
+          await seedDatabase();
+        } else {
+          pages = [];
+          snap.forEach(doc => pages.push(doc.data()));
+          renderPages();
+          renderPagesManagerList();
+        }
+      }, err => console.error(err));
+
+      // Lắng nghe Conversations
+      convUnsub = onSnapshot(convColRef, (snap) => {
+        if (!snap.empty) {
+          conversations = [];
+          snap.forEach(doc => conversations.push(doc.data()));
+          renderConversations();
+          renderChatMessagesLog();
+          renderCrmPanel();
+        }
+      }, err => console.error(err));
+
+      // Lắng nghe Products kho hàng Admin
+      prodUnsub = onSnapshot(prodColRef, (snap) => {
+        products = [];
+        snap.forEach(doc => products.push(doc.data()));
+        renderAdminInventory();
+        renderOrderProductSelect();
+      }, err => console.error(err));
+    };
+
+    // ==========================================
+    // RENDER FUNCTIONS (HỆ THỐNG PHÁT THẢO DOM GIAO DIỆN)
+    // ==========================================
+
+    // 1. Render Connection Page Swiper
+    const renderPages = () => {
+      const container = document.getElementById('pages-list');
+      container.innerHTML = '';
+      pages.forEach(p => {
+        const isSelected = selectedPageId === p.id;
+        const btn = document.createElement('button');
+        btn.className = `w-full flex items-center justify-between p-2 rounded-lg text-left transition ${
+          isSelected 
+            ? 'bg-indigo-600/20 border border-indigo-500/40 text-white' 
+            : 'bg-slate-900/60 hover:bg-slate-900 text-slate-400 border border-transparent'
+        }`;
+        btn.innerHTML = `
+          <div class="flex items-center gap-2 overflow-hidden">
+            <img src="${p.image}" class="w-7 h-7 rounded-lg object-cover flex-shrink-0" />
+            <div class="overflow-hidden min-w-0">
+              <p class="text-xs font-semibold truncate">${p.name}</p>
+              <p class="text-[9px] text-slate-500">ID: ${p.id}</p>
+            </div>
+          </div>
+          ${isSelected ? '<span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse flex-shrink-0 ml-1"></span>' : ''}
+        `;
+        btn.onclick = () => {
+          selectedPageId = p.id;
+          const firstChat = conversations.find(c => c.pageId === p.id);
+          if (firstChat) activeThreadId = firstChat.id;
+          renderPages();
+          renderConversations();
+          renderChatMessagesLog();
+          renderCrmPanel();
+        };
+        container.appendChild(btn);
+      });
+    };
+
+    // 2. Render Chat Conversations
+    const renderConversations = () => {
+      const container = document.getElementById('conversations-list');
+      container.innerHTML = '';
+
+      // In-Memory Filtering (Tuân thủ Rule 2)
+      const filtered = conversations
+        .filter(c => c.pageId === selectedPageId)
+        .filter(c => {
+          if (!searchQuery.trim()) return true;
+          const q = searchQuery.toLowerCase();
+          return c.name.toLowerCase().includes(q) || (c.phone && c.phone.includes(q));
+        })
+        .filter(c => {
+          if (selectedTagFilter === 'all') return true;
+          return c.tags && c.tags.includes(selectedTagFilter);
+        })
+        .filter(c => {
+          if (activeFilter === 'unread') return c.unread;
+          if (activeFilter === 'unreplied') return !c.replied;
+          if (activeFilter === 'hasPhone') return c.phone && c.phone.trim() !== '';
+          return true;
+        });
+
+      // Update Tag Filter Options
+      const allUniqueTags = Array.from(new Set(conversations.flatMap(c => c.tags || [])));
+      const selectTag = document.getElementById('tag-filter-select');
+      const currentSelected = selectTag.value;
+      selectTag.innerHTML = '<option value="all">-- Tất cả thẻ tag --</option>';
+      allUniqueTags.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.innerText = t;
+        selectTag.appendChild(opt);
+      });
+      selectTag.value = currentSelected;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-slate-500">
+            <p class="text-xs">Không tìm thấy hội thoại phù hợp</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(conv => {
+        const lastMsg = conv.messages && conv.messages.length > 0 ? conv.messages[conv.messages.length - 1] : null;
+        const isActive = conv.id === activeThreadId;
+
+        const btn = document.createElement('button');
+        btn.className = `w-full flex items-start gap-3 p-3.5 text-left transition ${
+          isActive ? 'bg-indigo-950/40 border-l-4 border-indigo-500' : 'hover:bg-slate-900/40'
+        }`;
+
+        let tagsHTML = '';
+        if (conv.tags && conv.tags.length > 0) {
+          tagsHTML = `<div class="flex flex-wrap gap-1 mt-1">` + conv.tags.map(t => {
+            const style = t === 'Đã chốt đơn' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
+                          t === 'Chờ báo giá' ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
+                          'bg-indigo-500/15 text-indigo-400 border-indigo-500/30';
+            return `<span class="text-[9px] px-1.5 py-0.2 rounded font-medium border ${style}">${t}</span>`;
+          }).join('') + `</div>`;
+        }
+
+        btn.innerHTML = `
+          <div class="relative shrink-0">
+            <img src="${conv.avatar}" class="w-11 h-11 rounded-full object-cover border border-slate-700" />
+            ${conv.unread ? '<span class="absolute bottom-0 right-0 w-3 h-3 bg-indigo-500 border-2 border-slate-950 rounded-full"></span>' : ''}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-0.5">
+              <h4 class="text-xs font-semibold text-slate-200 truncate">${conv.name}</h4>
+              <span class="text-[9px] text-slate-500 shrink-0">${lastMsg ? lastMsg.timestamp : ''}</span>
+            </div>
+            <p class="text-[11px] truncate ${conv.unread ? 'font-semibold text-slate-200' : 'text-slate-400'}">
+              ${lastMsg ? (lastMsg.sender === 'shop' ? 'Bạn: ' + (lastMsg.text || '📷 Gửi ảnh') : (lastMsg.text || '📷 Đã gửi ảnh')) : 'Chưa có tin nhắn'}
+            </p>
+            ${tagsHTML}
+          </div>
+        `;
+
+        btn.onclick = async () => {
+          activeThreadId = conv.id;
+          renderConversations();
+          renderChatMessagesLog();
+          renderCrmPanel();
+
+          // Tự động tắt Chưa đọc trên Firestore
+          if (conv.unread && user) {
+            try {
+              const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', conv.id);
+              await updateDoc(docRef, { unread: false });
+            } catch(e) { console.error(e); }
+          }
+        };
+
+        container.appendChild(btn);
+      });
+    };
+
+    // 3. Render Chat Area Logs
+    const renderChatMessagesLog = () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      const headerProfile = document.getElementById('active-chat-header-profile');
+      const messagesLog = document.getElementById('chat-messages-log');
+
+      if (!activeChat) {
+        headerProfile.innerHTML = '';
+        messagesLog.innerHTML = '<div class="text-slate-500 text-xs text-center py-10">Chưa chọn cuộc hội thoại</div>';
+        return;
+      }
+
+      // Render header
+      headerProfile.innerHTML = `
+        <img src="${activeChat.avatar}" class="w-10 h-10 rounded-full object-cover border border-slate-700" />
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xs font-bold text-white">${activeChat.name}</h3>
+            <a href="https://facebook.com/${activeChat.facebookId}" target="_blank" class="text-slate-500 hover:text-indigo-400 transition">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" /></svg>
+            </a>
+          </div>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+            <span class="text-[9px] text-slate-400">Trực tuyến từ Messenger</span>
+          </div>
+        </div>
+      `;
+
+      // Render messages
+      messagesLog.innerHTML = '';
+      if (activeChat.messages) {
+        activeChat.messages.forEach(m => {
+          const isShop = m.sender === 'shop';
+          const msgDiv = document.createElement('div');
+          msgDiv.className = `flex ${isShop ? 'justify-end' : 'justify-start'}`;
+
+          let messageContent = '';
+          if (m.text) {
+            messageContent += `<div class="whitespace-pre-line">${m.text}</div>`;
+          }
+          if (m.image) {
+            messageContent += `<div class="mt-1.5"><img src="${m.image}" class="max-w-xs max-h-48 rounded-lg object-cover" /></div>`;
+          }
+
+          msgDiv.innerHTML = `
+            <div class="flex items-end gap-2 max-w-[75%] ${isShop ? 'flex-row-reverse' : 'flex-row'}">
+              ${!isShop ? `<img src="${activeChat.avatar}" class="w-6 h-6 rounded-full object-cover shrink-0" />` : ''}
+              <div class="flex flex-col">
+                <div class="px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${
+                  isShop 
+                    ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-950/20' 
+                    : 'bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700/50'
+                }">
+                  ${messageContent}
+                </div>
+                <span class="text-[8px] mt-1 text-slate-500 ${isShop ? 'text-right' : 'text-left'}">${m.timestamp}</span>
+              </div>
+            </div>
+          `;
+          messagesLog.appendChild(msgDiv);
+        });
+      }
+
+      // Auto scroll down
+      messagesLog.scrollTop = messagesLog.scrollHeight;
+    };
+
+    // 4. Render CRM Customer Info Right Pane
+    const renderCrmPanel = () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat) return;
+
+      document.getElementById('crm-avatar').src = activeChat.avatar;
+      document.getElementById('crm-name').innerText = activeChat.name;
+      document.getElementById('crm-uid').innerText = 'UID: ' + activeChat.facebookId;
+
+      document.getElementById('crm-phone-input').value = activeChat.phone || '';
+      document.getElementById('crm-address-input').value = activeChat.address || '';
+      document.getElementById('crm-notes-input').value = activeChat.notes || '';
+
+      // Tags List
+      const tagsContainer = document.getElementById('crm-tags-list');
+      tagsContainer.innerHTML = '';
+      if (activeChat.tags) {
+        activeChat.tags.forEach(t => {
+          const span = document.createElement('span');
+          span.className = "inline-flex items-center gap-1 text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full";
+          span.innerHTML = `
+            <span>${t}</span>
+            <button class="text-red-400 hover:text-red-300 font-bold ml-1 text-xs">&times;</button>
+          `;
+          span.querySelector('button').onclick = () => removeCrmTag(t);
+          tagsContainer.appendChild(span);
+        });
+      }
+
+      // Order history summary status
+      const historyBox = document.getElementById('crm-history-box');
+      if (activeChat.tags && activeChat.tags.includes('Đã chốt đơn')) {
+        historyBox.innerHTML = `
+          <div class="bg-slate-900/30 p-3 rounded-lg border border-indigo-950/40 text-left">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-semibold text-slate-200">Đơn hàng #CD-9485</span>
+              <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.2 rounded font-medium border border-emerald-500/20">Thành công</span>
+            </div>
+            <p class="text-[9px] text-slate-500">Mới tạo | Thanh toán: COD</p>
+          </div>
+        `;
+      } else {
+        historyBox.innerHTML = `
+          <p class="text-xs text-slate-500 italic text-center py-2">Khách hàng chưa có đơn hàng nào.</p>
+        `;
+      }
+    };
+
+    // 5. Render Admin Custom Products Catalog List
+    const renderAdminInventory = () => {
+      const container = document.getElementById('admin-inventory-list');
+      container.innerHTML = '';
+
+      if (products.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-3">Kho hàng chưa có sản phẩm nào. Hãy tạo mới!</p>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const item = document.createElement('div');
+        item.className = "flex items-start justify-between p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-xs";
+        item.innerHTML = `
+          <div class="min-w-0 flex-1 pr-2">
+            <p class="font-bold text-slate-200 truncate">${p.name}</p>
+            <p class="text-[9px] text-slate-500">SKU: ${p.sku} | Giá: <span class="text-indigo-400 font-bold">${Number(p.price).toLocaleString()}đ</span></p>
+            <p class="text-[9px] text-slate-400 truncate mt-0.5 italic">Từ khóa: ${p.keywords}</p>
+          </div>
+          <button class="p-1 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded transition text-[10px] font-bold shrink-0">Xóa</button>
+        `;
+        item.querySelector('button').onclick = () => deleteProduct(p.id);
+        container.appendChild(item);
+      });
+    };
+
+    // 6. Render Product selection list inside the Cart creator tab
+    const renderOrderProductSelect = () => {
+      const container = document.getElementById('order-product-select-list');
+      container.innerHTML = '';
+
+      if (products.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-3">Không có sản phẩm trong kho.</p>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = "w-full flex items-center justify-between p-2 rounded bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 text-left text-xs transition";
+        btn.innerHTML = `
+          <div class="overflow-hidden pr-2">
+            <p class="font-bold text-slate-200 truncate">${p.name}</p>
+            <p class="text-[9px] text-slate-500">SKU: ${p.sku}</p>
+          </div>
+          <span class="font-semibold text-indigo-400 shrink-0">${Number(p.price).toLocaleString()}đ</span>
+        `;
+        btn.onclick = () => addToCart(p);
+        container.appendChild(btn);
+      });
+    };
+
+    // 7. Render current Shopping Draft Cart inside the order panel
+    const renderCartItems = () => {
+      const container = document.getElementById('order-cart-items-list');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900/30 p-4 rounded text-center border border-dashed border-slate-800">
+            <p class="text-xs text-slate-500 italic">Vui lòng nhấp chọn sản phẩm ở trên để thêm vào giỏ.</p>
+          </div>
+        `;
+        updateOrderReceiptCalculations();
+        return;
+      }
+
+      cart.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "flex items-center justify-between bg-slate-900/60 p-2 rounded border border-slate-800";
+        itemDiv.innerHTML = `
+          <div class="max-w-[180px]">
+            <p class="text-xs font-semibold text-slate-200 truncate">${item.product.name}</p>
+            <p class="text-[10px] text-slate-500">${(item.product.price * item.quantity).toLocaleString()}đ</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button class="btn-dec-qty w-5 h-5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold flex items-center justify-center">-</button>
+            <span class="text-xs text-white font-medium w-4 text-center">${item.quantity}</span>
+            <button class="btn-inc-qty w-5 h-5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold flex items-center justify-center">+</button>
+          </div>
+        `;
+        
+        itemDiv.querySelector('.btn-dec-qty').onclick = () => updateCartQty(item.product.id, item.quantity - 1);
+        itemDiv.querySelector('.btn-inc-qty').onclick = () => updateCartQty(item.product.id, item.quantity + 1);
+
+        container.appendChild(itemDiv);
+      });
+
+      updateOrderReceiptCalculations();
+    };
+
+    // Update Cart totals calculation view
+    const updateOrderReceiptCalculations = () => {
+      const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      const shipping = Number(document.getElementById('order-shipping-input').value) || 0;
+      const discount = Number(document.getElementById('order-discount-input').value) || 0;
+      const total = Math.max(0, subtotal + shipping - discount);
+
+      document.getElementById('order-subtotal').innerText = subtotal.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('order-shipping-fee').innerText = '+' + shipping.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('order-discount-fee').innerText = '-' + discount.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('order-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+    };
+
+    // 8. Render Page lists manager inside connected modal list
+    const renderPagesManagerList = () => {
+      const listContainer = document.getElementById('modal-pane-list');
+      listContainer.innerHTML = '';
+
+      pages.forEach(p => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs";
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="${p.image}" class="w-8 h-8 rounded-lg object-cover" />
+            <div>
+              <p class="font-bold text-white flex items-center gap-1.5">
+                ${p.name}
+                ${p.id === '215151365' ? '<span class="text-[8px] bg-indigo-600/30 text-indigo-400 border border-indigo-500/20 px-1.5 py-0.2 rounded font-normal">Mặc định</span>' : ''}
+              </p>
+              <p class="text-[10px] text-slate-500">ID: ${p.id}</p>
+            </div>
+          </div>
+          ${p.id !== '215151365' ? `<button class="text-red-400 hover:text-red-300 font-semibold">Hủy kết nối</button>` : `<span class="text-slate-500 italic text-[10px]">Đang hoạt động</span>`}
+        `;
+        if (p.id !== '215151365') {
+          item.querySelector('button').onclick = () => deletePage(p.id);
+        }
+        listContainer.appendChild(item);
+      });
+    };
+
+    // Render Quick Keyboard replies shortcuts
+    const renderQuickRepliesShortcuts = () => {
+      const container = document.getElementById('quick-replies-shortcuts');
+      container.innerHTML = '';
+      QUICK_REPLIES.forEach((qr) => {
+        const btn = document.createElement('button');
+        btn.className = "text-xs px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-800 truncate max-w-[180px] transition";
+        btn.innerText = qr;
+        btn.title = qr;
+        btn.onclick = () => {
+          document.getElementById('message-textarea').value = qr;
+        };
+        container.appendChild(btn);
+      });
+    };
+    renderQuickRepliesShortcuts();
+
+    // ==========================================
+    // DATA ACTIONS & DATABASE MANIPULATIONS
+    // ==========================================
+
+    // CRM Tags actions
+    const removeCrmTag = async (tag) => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user) return;
+      const updated = (activeChat.tags || []).filter(t => t !== tag);
+      
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, { tags: updated });
+        showToast(`Đã gỡ tag "${tag}"`);
+      } catch (e) { console.error(e); }
+    };
+
+    const addCrmTag = async () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      const input = document.getElementById('crm-new-tag-input');
+      const val = input.value.trim();
+      if (!activeChat || !val || !user) return;
+
+      const currentTags = activeChat.tags || [];
+      if (currentTags.includes(val)) {
+        showToast('Tag này đã tồn tại!');
+        return;
+      }
+
+      const updated = [...currentTags, val];
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, { tags: updated });
+        input.value = '';
+        showToast(`Đã gắn thẻ tag "${val}"`);
+      } catch (e) { console.error(e); }
+    };
+    document.getElementById('btn-add-tag').onclick = addCrmTag;
+
+    // Save CRM Data
+    document.getElementById('btn-save-crm').onclick = async () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user) return;
+
+      const phone = document.getElementById('crm-phone-input').value.trim();
+      const address = document.getElementById('crm-address-input').value.trim();
+      const notes = document.getElementById('crm-notes-input').value.trim();
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, { phone, address, notes });
+        showToast('Đã lưu dữ liệu CRM của khách hàng!');
+      } catch(e) { console.error(e); }
+    };
+
+    // Add and delete products (Admin Custom inventory)
+    const addProduct = async () => {
+      if (!user) return;
+      const name = document.getElementById('prod-name').value.trim();
+      const price = Number(document.getElementById('prod-price').value) || 0;
+      const sku = document.getElementById('prod-sku').value.trim();
+      const keywords = document.getElementById('prod-keywords').value.trim();
+      const desc = document.getElementById('prod-desc').value.trim();
+
+      if (!name || !price || !sku) {
+        showToast('Vui lòng nhập đầy đủ thông tin sản phẩm bắt buộc!');
+        return;
+      }
+
+      const newId = 'p_custom_' + Date.now();
+      const pObj = { id: newId, name, price, sku, keywords, desc };
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'products', newId);
+        await setDoc(docRef, pObj);
+        
+        // Clear inputs
+        document.getElementById('prod-name').value = '';
+        document.getElementById('prod-price').value = '';
+        document.getElementById('prod-sku').value = '';
+        document.getElementById('prod-keywords').value = '';
+        document.getElementById('prod-desc').value = '';
+
+        showToast(`Đã thêm ${name} vào Kho hàng AI! 🎉`);
+      } catch(e) { console.error(e); }
+    };
+    document.getElementById('btn-add-product').onclick = addProduct;
+
+    const deleteProduct = async (id) => {
+      if (!user) return;
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'products', id));
+        showToast('Đã xóa sản phẩm khỏi kho hàng.');
+      } catch(e) { console.error(e); }
+    };
+
+    // Shopping Draft Actions
+    const addToCart = (product) => {
+      const existing = cart.find(item => item.product.id === product.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ product, quantity: 1 });
+      }
+      renderCartItems();
+      showToast(`Đã chọn thêm: ${product.name}`);
+    };
+
+    const updateCartQty = (id, qty) => {
+      if (qty <= 0) {
+        cart = cart.filter(item => item.product.id !== id);
+      } else {
+        const item = cart.find(i => i.product.id === id);
+        if (item) item.quantity = qty;
+      }
+      renderCartItems();
+    };
+
+    document.getElementById('order-shipping-input').oninput = updateOrderReceiptCalculations;
+    document.getElementById('order-discount-input').oninput = updateOrderReceiptCalculations;
+
+    // Send final chot don invoice order & sync with Firestore
+    const createAndSendOrder = async () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user) return;
+
+      if (cart.length === 0) {
+        showToast('Giỏ hàng trống! Hãy chọn sản phẩm trước.');
+        return;
+      }
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      const shipping = Number(document.getElementById('order-shipping-input').value) || 0;
+      const discount = Number(document.getElementById('order-discount-input').value) || 0;
+      const total = Math.max(0, subtotal + shipping - discount);
+      const note = document.getElementById('order-notes-input').value.trim();
+
+      const phone = document.getElementById('crm-phone-input').value.trim();
+      const address = document.getElementById('crm-address-input').value.trim();
+
+      let invoiceText = `✨ HÓA ĐƠN ĐƠN HÀNG MỚI - CHỐT ĐƠN AI ✨\n`;
+      invoiceText += `-----------------------------\n`;
+      invoiceText += `👤 Khách hàng: ${activeChat.name}\n`;
+      if (phone) invoiceText += `📞 Số điện thoại: ${phone}\n`;
+      if (address) invoiceText += `📍 Địa chỉ: ${address}\n`;
+      invoiceText += `-----------------------------\n`;
+      invoiceText += `📦 Chi tiết sản phẩm:\n`;
+      cart.forEach(item => {
+        invoiceText += `- ${item.product.name} x${item.quantity} : ${(item.product.price * item.quantity).toLocaleString('vi-VN')}đ\n`;
+      });
+      invoiceText += `-----------------------------\n`;
+      invoiceText += `💵 Tạm tính: ${subtotal.toLocaleString('vi-VN')}đ\n`;
+      if (discount > 0) invoiceText += `🎁 Giảm giá: -${discount.toLocaleString('vi-VN')}đ\n`;
+      invoiceText += `🚚 Phí vận chuyển: ${shipping.toLocaleString('vi-VN')}đ\n`;
+      invoiceText += `👉 TỔNG TIỀN: ${total.toLocaleString('vi-VN')}đ\n`;
+      if (note) invoiceText += `📝 Ghi chú: ${note}\n`;
+      invoiceText += `-----------------------------\n`;
+      invoiceText += `💖 Cảm ơn chị đã mua hàng! Hệ thống đang xử lý chuẩn bị đóng gói sản phẩm hàng ngày cho mình ạ.`;
+
+      const newMessage = {
+        id: `m_${Date.now()}`,
+        sender: 'shop',
+        text: invoiceText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const updatedTags = activeChat.tags && activeChat.tags.includes('Đã chốt đơn') ? activeChat.tags : [...(activeChat.tags || []), 'Đã chốt đơn'];
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, {
+          replied: true,
+          unread: false,
+          phone: phone || activeChat.phone,
+          address: address || activeChat.address,
+          tags: updatedTags,
+          messages: [...(activeChat.messages || []), newMessage]
+        });
+
+        // Clear cart
+        cart = [];
+        document.getElementById('order-notes-input').value = '';
+        renderCartItems();
+        
+        // Switch tab to Customer View
+        switchRightTab('customer');
+        showToast('Đã lên đơn thành công & Hoá đơn được gửi tự động vào chat! 🎉');
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    document.getElementById('btn-create-order').onclick = createAndSendOrder;
+
+
+    // ==========================================
+    // AUTO-REPLY AI ENGINE WITH GEMINI INTEGATION
+    // ==========================================
+
+    // Auto trigger AI auto-response if enabled
+    const runAiAutoReplyIfEnabled = async (lastCustomerMessageText) => {
+      if (!autoReplyEnabled) return;
+      if (!apiKey) {
+        console.warn("AI Auto reply enabled but API Key is missing!");
+        return;
+      }
+      
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user) return;
+
+      // Play sound notification
+      playNotificationSound();
+
+      try {
+        // Construct Knowledgebase
+        const productsKnowledgeText = products.map(p => 
+          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Từ khóa: ${p.keywords}\n  Mô tả/Size: ${p.desc}`
+        ).join('\n\n');
+
+        const systemInstruction = `
+          Bạn là Trợ lý AI tư vấn và chốt đơn tự động của shop "Thời Trang Chốt Đơn AI". 
+          Bạn phải DỰA VÀO danh sách sản phẩm thực tế ĐANG CÓ TRONG KHO dưới đây để trả lời khách hàng:
+          
+          ${productsKnowledgeText}
+
+          Quy tắc ứng xử và phản hồi:
+          1. CHỈ tư vấn và xác nhận đơn cho các sản phẩm ĐANG CÓ TRÊN KHO hiển thị ở trên.
+          2. Nếu khách hàng hỏi các sản phẩm khác không có (ví dụ: tủ lạnh, mỹ phẩm, đồ gia dụng,...), hãy khéo léo và cực kỳ lịch sự xin lỗi rằng shop không có, sau đó đề xuất các sản phẩm thời trang (váy, đầm, áo sơ mi, quần jean) đang có sẵn.
+          3. Văn phong: Ngọt ngào, dễ thương, thân thiện, mang tính bán hàng cao. Sử dụng các đại từ xưng hô thân mật: "dạ", "dạ shop em chào chị yêu ạ", "shop bên em", "chị yêu ơi"...
+          4. Cố gắng hỏi khách hàng "Số điện thoại" và "Địa chỉ giao hàng" để hỗ trợ lên đơn nhanh chóng.
+          5. Kết quả phản hồi của bạn CHỈ chứa nội dung tin nhắn sẽ gửi đi, không chứa bất kỳ lời giải thích, ghi chú hay ký tự bổ sung nào khác. Chứa thêm emoji sinh động phù hợp.
+        `;
+
+        const userPrompt = `
+          Lịch sử chat gần đây:
+          Khách hàng: ${lastCustomerMessageText}
+
+          Hãy viết câu trả lời xuất sắc nhất để gửi trực tiếp cho khách hàng.
+        `;
+
+        const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemInstruction }] }
+        };
+
+        // Call Gemini
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        if (aiResponseText.trim()) {
+          // Send automatic reply message
+          const newMessage = {
+            id: `m_ai_${Date.now()}`,
+            sender: 'shop',
+            text: aiResponseText.trim(),
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+
+          const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+          await updateDoc(docRef, {
+            replied: true,
+            unread: false,
+            messages: [...(activeChat.messages || []), newMessage]
+          });
+          
+          showToast("AI đã tự động trả lời thành công! 🤖⚡");
+        }
+      } catch (err) {
+        console.error("AI Auto-reply error:", err);
+      }
+    };
+
+    // Manual Suggest AI Response Trigger
+    const triggerAiSuggestion = async () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat) return;
+
+      const barOutput = document.getElementById('ai-suggestion-output-container');
+      const textOutput = document.getElementById('ai-suggestion-text');
+      const btnTrigger = document.getElementById('btn-trigger-ai');
+
+      btnTrigger.disabled = true;
+      btnTrigger.innerHTML = `<span>Đang suy nghĩ...</span>`;
+
+      try {
+        const lastMessages = activeChat.messages ? activeChat.messages.slice(-5) : [];
+        const conversationHistoryText = lastMessages.map(m => 
+          `${m.sender === 'customer' ? 'Khách hàng' : 'Cửa hàng'}: ${m.text || '[Hình ảnh]'}`
+        ).join('\n');
+
+        const productsKnowledgeText = products.map(p => 
+          `- Tên sản phẩm: ${p.name}\n  SKU: ${p.sku}\n  Giá bán: ${Number(p.price).toLocaleString()}đ\n  Mô tả: ${p.desc}`
+        ).join('\n\n');
+
+        const systemPrompt = `Bạn là Trợ lý AI chốt đơn chuyên nghiệp của shop. Đọc hội thoại và gợi ý câu trả lời theo đúng kho hàng:
+        ${productsKnowledgeText}
+        Trả lời tiếng Việt thân thiện, xin SĐT và Địa chỉ của khách để lên đơn. CHỈ trả về tin nhắn gửi đi, không dài dòng.`;
+
+        const userPrompt = `Lịch sử chat gần nhất:\n${conversationHistoryText}\n\nHãy viết gợi ý trả lời tiếp theo.`;
+
+        const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        if (generatedText.trim()) {
+          textOutput.innerText = generatedText.trim();
+          barOutput.classList.remove('hidden');
+        } else {
+          textOutput.innerText = "Không thể tạo gợi ý từ AI lúc này. Vui lòng cấu hình Gemini Key chính xác!";
+          barOutput.classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error(err);
+        textOutput.innerText = "Chào chị yêu! Shop em nhận được tin nhắn rồi ạ. Chị cần tư vấn size nào báo em nha. 🥰 (Lỗi gọi Gemini API, vui lòng cấu hình Key)";
+        barOutput.classList.remove('hidden');
+      } finally {
+        btnTrigger.disabled = false;
+        btnTrigger.innerHTML = `
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span>Gợi ý trả lời</span>
+        `;
+      }
+    };
+    document.getElementById('btn-trigger-ai').onclick = triggerAiSuggestion;
+
+    // Use or Send AI Suggestion shortcuts
+    document.getElementById('btn-use-ai-suggestion').onclick = () => {
+      const text = document.getElementById('ai-suggestion-text').innerText;
+      document.getElementById('message-textarea').value = text;
+      document.getElementById('ai-suggestion-output-container').classList.add('hidden');
+    };
+
+    document.getElementById('btn-send-ai-suggestion').onclick = () => {
+      const text = document.getElementById('ai-suggestion-text').innerText;
+      handleSendMessage(text);
+      document.getElementById('ai-suggestion-output-container').classList.add('hidden');
+    };
+
+
+    // ==========================================
+    // SIMULATOR & INTERACTIVE CHAT ACTIONS
+    // ==========================================
+
+    // Play a friendly beep when a new simulated message arrives
+    const playNotificationSound = () => {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 note
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {
+        console.warn("Web Audio bíp lỗi:", e);
+      }
+    };
+
+    // Human/Shop sending chat messages
+    const handleSendMessage = async (textInput = null, isImage = false, imageUrl = null) => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user) return;
+
+      const text = textInput || document.getElementById('message-textarea').value.trim();
+      if (!text && !imageUrl) return;
+
+      const newMessage = {
+        id: `m_${Date.now()}`,
+        sender: 'shop',
+        text: isImage ? '' : text,
+        image: imageUrl || null,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, {
+          replied: true,
+          unread: false,
+          messages: [...(activeChat.messages || []), newMessage]
+        });
+
+        if (!textInput) {
+          document.getElementById('message-textarea').value = '';
+          selectedAttachment = null;
+          document.getElementById('attachment-preview-container').classList.add('hidden');
+        }
+      } catch (e) { console.error(e); }
+    };
+
+    document.getElementById('btn-send-message').onclick = () => {
+      if (selectedAttachment) {
+        handleSendMessage('', true, selectedAttachment);
+      } else {
+        handleSendMessage();
+      }
+    };
+
+    document.getElementById('message-textarea').onkeydown = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('btn-send-message').click();
+      }
+    };
+
+    // Simulate Customer Messages
+    const simulateCustomerMessage = async (msgText) => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (!activeChat || !user || !msgText.trim()) return;
+
+      const newMessage = {
+        id: `m_sim_${Date.now()}`,
+        sender: 'customer',
+        text: msgText.trim(),
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', activeChat.id);
+        await updateDoc(docRef, {
+          replied: false,
+          unread: true,
+          messages: [...(activeChat.messages || []), newMessage]
+        });
+
+        showToast("Khách hàng đã gửi tin nhắn giả lập!");
+
+        // Trigger AI Auto-reply sequence
+        setTimeout(() => {
+          runAiAutoReplyIfEnabled(msgText.trim());
+        }, 1200);
+
+      } catch (e) { console.error(e); }
+    };
+
+    // Bind simulated pill button clicks
+    document.querySelectorAll('.sim-pill').forEach(pill => {
+      pill.onclick = () => {
+        simulateCustomerMessage(pill.getAttribute('data-msg'));
+      };
+    });
+
+    document.getElementById('btn-simulate-send').onclick = () => {
+      const input = document.getElementById('simulator-custom-input');
+      const text = input.value.trim();
+      if (text) {
+        simulateCustomerMessage(text);
+        input.value = '';
+      }
+    };
+
+    // Attach fake demo images
+    document.getElementById('btn-attach-image').onclick = () => {
+      const sampleImages = [
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400',
+        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400',
+        'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=400'
+      ];
+      selectedAttachment = sampleImages[Math.floor(Math.random() * sampleImages.length)];
+      document.getElementById('attachment-preview-img').src = selectedAttachment;
+      document.getElementById('attachment-preview-container').classList.remove('hidden');
+      showToast('Đã đính kèm ảnh mẫu từ kho hàng!');
+    };
+
+    document.getElementById('btn-remove-attachment').onclick = () => {
+      selectedAttachment = null;
+      document.getElementById('attachment-preview-container').classList.add('hidden');
+    };
+
+    // Emojis
+    document.getElementById('btn-emoji-heart').onclick = () => {
+      document.getElementById('message-textarea').value += ' 🥰';
+    };
+    document.getElementById('btn-emoji-like').onclick = () => {
+      document.getElementById('message-textarea').value += ' 👍';
+    };
+
+
+    // ==========================================
+    // TAB MANAGEMENT & CONTROL ROUTINGS
+    // ==========================================
+
+    const switchRightTab = (tabId) => {
+      activeRightTab = tabId;
+      const tabs = ['customer', 'order', 'admin-ai'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const pane = document.getElementById(`pane-${t}`);
+        if (t === tabId) {
+          btn.className = "flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400 bg-indigo-950/10";
+          pane.classList.remove('hidden');
+        } else {
+          btn.className = "flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200";
+          pane.classList.add('hidden');
+        }
+      });
+    };
+
+    document.getElementById('tab-btn-customer').onclick = () => switchRightTab('customer');
+    document.getElementById('tab-btn-order').onclick = () => {
+      switchRightTab('order');
+      renderOrderProductSelect();
+      renderCartItems();
+    };
+    document.getElementById('tab-btn-admin-ai').onclick = () => switchRightTab('admin-ai');
+
+    // Filter Switchers inside list conversations
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.onclick = () => {
+        // Remove class active from all
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.className = "filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 relative transition";
+        });
+        // Add active style to selected
+        tab.className = "filter-tab px-2.5 py-1 text-[11px] rounded-full bg-indigo-600 text-white font-medium transition";
+        activeFilter = tab.getAttribute('data-filter');
+        renderConversations();
+      };
+    });
+
+    document.getElementById('tag-filter-select').onchange = (e) => {
+      selectedTagFilter = e.target.value;
+      renderConversations();
+    };
+
+    document.getElementById('search-input').oninput = (e) => {
+      searchQuery = e.target.value;
+      renderConversations();
+    };
+
+
+    // ==========================================
+    // META SIMULATOR & PAGE MANAGER LOGIC
+    // ==========================================
+
+    const showModal = (isVisible) => {
+      const modal = document.getElementById('page-manager-modal');
+      if (isVisible) {
+        modal.classList.remove('hidden');
+        renderPagesManagerList();
+      } else {
+        modal.classList.add('hidden');
+      }
+    };
+
+    document.getElementById('btn-manage-pages').onclick = () => showModal(true);
+    document.getElementById('btn-close-page-modal').onclick = () => showModal(false);
+    document.getElementById('btn-modal-close-footer').onclick = () => showModal(false);
+
+    // Modal sub-tab routes
+    const switchModalTab = (tabKey) => {
+      const keys = ['list', 'meta', 'manual'];
+      keys.forEach(k => {
+        const btn = document.getElementById(`modal-tab-${k}`);
+        const pane = document.getElementById(`modal-pane-${k}`);
+        if (k === tabKey) {
+          btn.className = "flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400";
+          pane.classList.remove('hidden');
+        } else {
+          btn.className = "flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200";
+          pane.classList.add('hidden');
+        }
+      });
+    };
+
+    document.getElementById('modal-tab-list').onclick = () => switchModalTab('list');
+    document.getElementById('modal-tab-meta').onclick = () => switchModalTab('meta');
+    document.getElementById('modal-tab-manual').onclick = () => switchModalTab('manual');
+
+    // Manual add fanpage
+    document.getElementById('btn-manual-page-save').onclick = async () => {
+      if (!user) return;
+      const name = document.getElementById('manual-page-name').value.trim();
+      const id = document.getElementById('manual-page-id').value.trim();
+      const image = document.getElementById('manual-page-image').value.trim();
+
+      if (!name || !id) {
+        showToast('Vui lòng nhập Tên và ID Trang!');
+        return;
+      }
+
+      if (pages.some(p => p.id === id)) {
+        showToast('Fanpage này đã được liên kết rồi!');
+        return;
+      }
+
+      const pObj = { id, name, active: false, image };
+
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', id), pObj);
+        
+        // Sinh tin nhắn ảo
+        const sampleChats = generateConversationsForNewPage(id, name);
+        for (const chat of sampleChats) {
+          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+        }
+
+        document.getElementById('manual-page-name').value = '';
+        document.getElementById('manual-page-id').value = '';
+        switchModalTab('list');
+        showToast(`Đã kết nối Fanpage: ${name}! 🎉`);
+      } catch(e) { console.error(e); }
+    };
+
+    // Simulated Meta API Auth scanner
+    let discoveredPages = [];
+    document.getElementById('btn-meta-oauth-scan').onclick = () => {
+      const loader = document.getElementById('meta-scanning-loader');
+      const list = document.getElementById('meta-discovered-list');
+      
+      loader.classList.remove('hidden');
+      list.classList.add('hidden');
+
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        list.classList.remove('hidden');
+
+        discoveredPages = [
+          { id: '222444666', name: 'Đồ Lam Đi Chùa & Quà Tặng Phong Thủy', image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=80' },
+          { id: '777333111', name: 'Váy Đầm Thiết Kế - Luxury Boutique', image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=80' },
+          { id: '555111999', name: 'Thế Giới Giày Sneaker & Phụ Kiện', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=80' }
+        ];
+
+        list.innerHTML = `<label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đã phát hiện (${discoveredPages.length})</label>`;
+        const divBox = document.createElement('div');
+        divBox.className = "divide-y divide-slate-800 bg-slate-950 rounded-lg overflow-hidden border border-slate-800";
+        
+        discoveredPages.forEach(dp => {
+          const row = document.createElement('div');
+          row.className = "flex items-center justify-between p-3 hover:bg-slate-900/60 transition text-xs";
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <img src="${dp.image}" class="w-8 h-8 rounded-lg object-cover" />
+              <div>
+                <p class="font-bold text-white">${dp.name}</p>
+                <p class="text-[10px] text-slate-500">Page ID: ${dp.id}</p>
+              </div>
+            </div>
+            <button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-bold text-xs transition">Liên kết</button>
+          `;
+          row.querySelector('button').onclick = () => linkMetaPage(dp);
+          divBox.appendChild(row);
+        });
+
+        list.appendChild(divBox);
+        showToast('Kết nối tài khoản Meta thành công!');
+      }, 1800);
+    };
+
+    const linkMetaPage = async (dp) => {
+      if (!user) return;
+      if (pages.some(p => p.id === dp.id)) {
+        showToast('Trang này đã được liên kết rồi!');
+        return;
+      }
+
+      const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
+
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', dp.id), pObj);
+        
+        const sampleChats = generateConversationsForNewPage(dp.id, dp.name);
+        for (const chat of sampleChats) {
+          await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', chat.id), chat);
+        }
+
+        showToast(`Đã đồng bộ hóa trang: ${dp.name}! ⚡`);
+        // Filter out of discovered list
+        discoveredPages = discoveredPages.filter(p => p.id !== dp.id);
+        document.getElementById('btn-meta-oauth-scan').click(); // refresh list
+      } catch(e) { console.error(e); }
+    };
+
+    const deletePage = async (id) => {
+      if (!user) return;
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'pages', id));
+        // Xóa hội thoại của trang đó
+        conversations.forEach(async (c) => {
+          if (c.pageId === id) {
+            await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'conversations', c.id));
+          }
+        });
+        showToast('Đã hủy liên kết Fanpage thành công.');
+      } catch(e) { console.error(e); }
+    };
+
+    // Copy phone to clipboard
+    document.getElementById('quick-btn-copy').onclick = () => {
+      const activeChat = conversations.find(c => c.id === activeThreadId) || conversations[0] || null;
+      if (activeChat && activeChat.phone) {
+        const input = document.createElement('input');
+        input.value = activeChat.phone;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        showToast(`Đã sao chép SĐT: ${activeChat.phone}`);
+      } else {
+        showToast('Khách hàng chưa có SĐT để sao chép!');
+      }
+    };
+
+    document.getElementById('quick-btn-thanks').onclick = () => {
+      handleSendMessage("Dạ shop cám ơn sự phản hồi của chị rất nhiều ạ! Chúc chị một ngày tốt lành! 🥰");
+    };
+
+
+    // ==========================================
+    // LOCAL STORAGE CONFIGURATION BINDINGS
+    // ==========================================
+
+    // Gemini API show/hide settings panel
+    const toggleAiConfigDrawer = () => {
+      const drawer = document.getElementById('ai-config-drawer');
+      drawer.classList.toggle('hidden');
+    };
+    document.getElementById('btn-toggle-ai-config').onclick = toggleAiConfigDrawer;
+    document.getElementById('btn-close-ai-config').onclick = toggleAiConfigDrawer;
+
+    document.getElementById('gemini-api-key').value = apiKey;
+    document.getElementById('btn-save-ai-config').onclick = () => {
+      const keyVal = document.getElementById('gemini-api-key').value.trim();
+      apiKey = keyVal;
+      localStorage.setItem('chotdon_gemini_key', keyVal);
+      toggleAiConfigDrawer();
+      showToast('Đã lưu cấu hình API Key của bạn!');
+    };
+
+    // Auto-Reply Switcher toggle button
+    const autoReplyToggle = document.getElementById('toggle-auto-reply');
+    autoReplyToggle.checked = autoReplyEnabled;
+    autoReplyToggle.onchange = (e) => {
+      autoReplyEnabled = e.target.checked;
+      localStorage.setItem('chotdon_auto_reply', autoReplyEnabled);
+      showToast(autoReplyEnabled ? 'Đã bật chế độ Auto-Reply AI tự động!' : 'Đã tắt chế độ Auto-Reply tự động.');
+    };
+
+  </script>
+</body>
+</html>
