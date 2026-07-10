@@ -52,18 +52,32 @@
 
   <!-- TOP HEADER -->
   <header class="flex items-center justify-between px-6 py-4 bg-slate-950 border-b border-slate-800 shrink-0">
-    <div class="flex items-center gap-3">
-      <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
-        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-3">
+        <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+          <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Chốt Đơn AI - Omni Inbox Pro
+          </h1>
+          <p class="text-xs text-slate-400">Trình quản lý Fanpage & AI Chatbot tự động trả lời theo kho hàng thực tế</p>
+        </div>
       </div>
-      <div>
-        <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-          Chốt Đơn AI - Omni Inbox Pro
-        </h1>
-        <p class="text-xs text-slate-400">Trình quản lý Fanpage & AI Chatbot tự động trả lời theo kho hàng thực tế</p>
-      </div>
+
+      <!-- VIEW SELECTOR TABS (Dashboard / Select Page UI) -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <button id="nav-btn-inbox" class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow">
+          <span>💬</span>
+          <span>Omni Inbox Chat</span>
+        </button>
+        <button id="nav-btn-select-page" class="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition hover:text-white text-slate-400">
+          <span>📊</span>
+          <span>Quản lý Fanpage (/select-page)</span>
+        </button>
+      </nav>
     </div>
 
     <!-- Sync status & Configuration controls -->
@@ -120,651 +134,664 @@
     </p>
   </div>
 
-  <!-- MAIN CONTAINER (THREE COLUMN LAYOUT) -->
-  <div class="flex flex-1 overflow-hidden">
+  <!-- WORKSPACE WRAPPER -->
+  <div class="flex-1 flex overflow-hidden relative">
 
-    <!-- COLUMN 1: PAGE SWITCHER & CHAT CONVERSATIONS LIST -->
-    <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-r border-slate-800 shrink-0">
+    <!-- ========================================== -->
+    <!-- VIEW A: THE OMNI CHAT WORKSPACE (3-COLUMN) -->
+    <!-- ========================================== -->
+    <div id="view-inbox-workspace" class="flex flex-1 overflow-hidden transition-all duration-300">
       
-      <!-- Fanpage Connection Selector -->
-      <div class="p-3 border-b border-slate-800">
-        <div class="flex items-center justify-between mb-2">
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Facebook Pages liên kết</label>
-          <button id="btn-manage-pages" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 bg-indigo-600/10 border border-indigo-500/20 px-2.5 py-1 rounded">
-            ⚙️ Quản lý Trang
-          </button>
-        </div>
-        <!-- Scrollable Page List -->
-        <div id="pages-list" class="space-y-1.5 max-h-[150px] overflow-y-auto pr-0.5">
-          <!-- Dynamically Rendered Pages -->
-        </div>
-      </div>
-
-      <!-- Search & Multi-filter tools -->
-      <div class="p-3 space-y-3 bg-slate-950/60 shrink-0">
-        <!-- Search bar -->
-        <div class="relative">
-          <input
-            id="search-input"
-            type="text"
-            placeholder="Tìm tên khách hàng hoặc SĐT..."
-            class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
-          />
-          <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-
-        <!-- Filter tabs -->
-        <div class="flex flex-wrap gap-1 border-b border-slate-800/60 pb-2">
-          <button data-filter="all" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-indigo-600 text-white font-medium transition">
-            Tất cả
-          </button>
-          <button data-filter="unread" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 relative transition">
-            Chưa đọc
-          </button>
-          <button data-filter="unreplied" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
-            Chưa trả lời
-          </button>
-          <button data-filter="hasPhone" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
-            Có SĐT
-          </button>
-        </div>
-
-        <!-- Dropdown Filter Tag -->
-        <div class="flex items-center gap-1.5">
-          <span class="text-[10px] text-slate-400 font-bold uppercase shrink-0">Lọc tag:</span>
-          <select id="tag-filter-select" class="bg-slate-900 text-slate-300 border border-slate-800 text-[11px] rounded px-2 py-1 w-full focus:outline-none focus:border-indigo-500">
-            <option value="all">-- Tất cả thẻ tag --</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Conversations Scroll List -->
-      <div id="conversations-list" class="flex-1 overflow-y-auto divide-y divide-slate-900/60">
-        <!-- Dynamically Rendered Conversations -->
-      </div>
-    </section>
-
-    <!-- COLUMN 2: ACTIVE CHAT LOG -->
-    <section class="flex-1 flex flex-col bg-slate-900">
-      
-      <!-- Active Conversation Profile Header -->
-      <div class="px-5 py-3 bg-slate-950 border-b border-slate-800/80 flex items-center justify-between shrink-0">
-        <div id="active-chat-header-profile" class="flex items-center gap-3">
-          <!-- Rendered Profile Info -->
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="quick-btn-thanks" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
-            Cảm ơn 👍
-          </button>
-          <button id="quick-btn-copy" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
-            Copy SĐT
-          </button>
-        </div>
-      </div>
-
-      <!-- AI ASSISTANT SUGGESTION BAR -->
-      <div id="ai-suggestion-bar" class="bg-indigo-950/20 border-b border-indigo-900/30 p-3 shrink-0 flex flex-col gap-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-1.5">
-            <span class="bg-indigo-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded tracking-wide animate-pulse">
-              AI CHỐT ĐƠN
-            </span>
-            <p class="text-[11px] text-indigo-200">Gợi ý trả lời (Sử dụng kho sản phẩm bạn đã cấu hình bên cột cài đặt)</p>
-          </div>
-          <button id="btn-trigger-ai" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded font-semibold transition">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span>Gợi ý trả lời</span>
-          </button>
-        </div>
-        <div id="ai-suggestion-output-container" class="hidden bg-slate-950/80 border border-indigo-500/30 p-2.5 rounded-lg flex items-start gap-2.5">
-          <div class="bg-indigo-600/30 p-1 rounded">💡</div>
-          <div class="flex-1">
-            <p id="ai-suggestion-text" class="text-xs text-slate-200 leading-relaxed italic"></p>
-            <div class="flex justify-end gap-2 mt-2">
-              <button id="btn-use-ai-suggestion" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold uppercase">Dùng mẫu này</button>
-              <button id="btn-send-ai-suggestion" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-semibold uppercase">Gửi ngay 🚀</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Chat Messages Window Log -->
-      <div id="chat-messages-log" class="flex-1 overflow-y-auto p-4 space-y-3">
-        <!-- Messages Dynamically Appended -->
-      </div>
-
-      <!-- Shortcut keyboard replies -->
-      <div class="px-4 py-2 bg-slate-950/40 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto whitespace-nowrap shrink-0">
-        <span class="text-[10px] text-slate-500 font-bold tracking-wide shrink-0">Trả lời nhanh:</span>
-        <div id="quick-replies-shortcuts" class="flex gap-2">
-          <!-- Rendered Quick Replies Buttons -->
-        </div>
-      </div>
-
-      <!-- Shop Text Input Form -->
-      <div class="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
-        <div id="attachment-preview-container" class="hidden mb-2">
-          <div class="relative inline-block bg-slate-800 p-1.5 rounded-lg border border-indigo-500/40">
-            <img id="attachment-preview-img" src="" alt="Sample Attachment" class="h-10 w-10 object-cover rounded" />
-            <button id="btn-remove-attachment" class="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full p-0.5 text-white hover:bg-red-600">
-              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-end gap-2">
-          <div class="flex items-center gap-1 shrink-0 pb-1">
-            <button id="btn-attach-image" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition" title="Đính kèm ảnh mẫu sản phẩm">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2v12a2 2 0 002 2z" />
-              </svg>
-            </button>
-            <button id="btn-emoji-heart" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">🥰</button>
-            <button id="btn-emoji-like" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">👍</button>
-          </div>
-
-          <div class="flex-1">
-            <textarea
-              id="message-textarea"
-              rows="1"
-              placeholder="Nhập tin nhắn phản hồi cho khách hàng..."
-              class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none max-h-24"
-            ></textarea>
-          </div>
-
-          <button id="btn-send-message" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white font-semibold transition shrink-0 pb-2.5">
-            <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- COLUMN 3: CUSTOMER CRM & PRODUCT ADMIN INVENTORY -->
-    <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-l border-slate-800 shrink-0">
-      
-      <!-- Right Side Tabs Switcher -->
-      <div class="flex border-b border-slate-800 shrink-0">
-        <button id="tab-btn-customer" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400 bg-indigo-950/10">
-          👤 Khách hàng
-        </button>
-        <button id="tab-btn-order" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
-          🛍️ Tạo đơn hàng
-        </button>
-        <button id="tab-btn-admin-ai" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
-          ⚙️ Kho & AI Bot
-        </button>
-      </div>
-
-      <!-- Tab Content Area -->
-      <div id="tab-content-container" class="flex-1 overflow-y-auto">
+      <!-- COLUMN 1: PAGE SWITCHER & CHAT CONVERSATIONS LIST -->
+      <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-r border-slate-800 shrink-0">
         
-        <!-- SUB-TAB 1: CUSTOMER METADATA CRM -->
-        <div id="pane-customer" class="p-4 space-y-4">
-          <!-- Profile Badge -->
-          <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/80 text-center">
-            <img id="crm-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-indigo-500 mb-2" />
-            <h4 id="crm-name" class="text-sm font-bold text-white">-</h4>
-            <p id="crm-uid" class="text-[10px] text-slate-400">UID: -</p>
+        <!-- Fanpage Connection Selector -->
+        <div class="p-3 border-b border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Facebook Pages liên kết</label>
+            <button id="btn-manage-pages-shortcut" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 bg-indigo-600/10 border border-indigo-500/20 px-2.5 py-1 rounded">
+              ⚙️ Cấu hình Trang
+            </button>
+          </div>
+          <!-- Scrollable Page List -->
+          <div id="pages-list" class="space-y-1.5 max-h-[150px] overflow-y-auto pr-0.5">
+            <!-- Dynamically Rendered Pages -->
+          </div>
+        </div>
+
+        <!-- Search & Multi-filter tools -->
+        <div class="p-3 space-y-3 bg-slate-950/60 shrink-0">
+          <!-- Search bar -->
+          <div class="relative">
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Tìm tên khách hàng hoặc SĐT..."
+              class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            />
+            <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
 
-          <!-- Fields -->
-          <div class="space-y-3.5">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Số điện thoại</label>
-              <input id="crm-phone-input" type="text" placeholder="Nhập số điện thoại chốt đơn..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" />
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Địa chỉ giao hàng</label>
-              <textarea id="crm-address-input" rows="2" placeholder="Nhập địa chỉ nhận hàng chi tiết..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-            </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ghi chú nội bộ</label>
-              <textarea id="crm-notes-input" rows="2" placeholder="Ghi chú về khách hàng..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-            </div>
-
-            <!-- Tags Section -->
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Phân loại thẻ Tag</label>
-              <div id="crm-tags-list" class="flex flex-wrap gap-1.5 mb-2">
-                <!-- Rendered Tags -->
-              </div>
-              <div class="flex gap-1.5">
-                <input id="crm-new-tag-input" type="text" placeholder="Thêm tag mới..." class="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-                <button id="btn-add-tag" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1 rounded font-bold transition">+</button>
-              </div>
-            </div>
-
-            <button id="btn-save-crm" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded-lg transition mt-4">
-              Lưu thông tin CRM khách hàng
+          <!-- Filter tabs -->
+          <div class="flex flex-wrap gap-1 border-b border-slate-800/60 pb-2">
+            <button data-filter="all" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-indigo-600 text-white font-medium transition">
+              Tất cả
+            </button>
+            <button data-filter="unread" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 relative transition">
+              Chưa đọc
+            </button>
+            <button data-filter="unreplied" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
+              Chưa trả lời
+            </button>
+            <button data-filter="hasPhone" class="filter-tab px-2.5 py-1 text-[11px] rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 transition">
+              Có SĐT
             </button>
           </div>
 
-          <!-- Order History -->
-          <div class="pt-4 border-t border-slate-800/80">
-            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Lịch sử giao dịch</h4>
-            <div id="crm-history-box" class="space-y-2">
-              <!-- Dynamically generated status -->
+          <!-- Dropdown Filter Tag -->
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] text-slate-400 font-bold uppercase shrink-0">Lọc tag:</span>
+            <select id="tag-filter-select" class="bg-slate-900 text-slate-300 border border-slate-800 text-[11px] rounded px-2 py-1 w-full focus:outline-none focus:border-indigo-500">
+              <option value="all">-- Tất cả thẻ tag --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Conversations Scroll List -->
+        <div id="conversations-list" class="flex-1 overflow-y-auto divide-y divide-slate-900/60">
+          <!-- Dynamically Rendered Conversations -->
+        </div>
+      </section>
+
+      <!-- COLUMN 2: ACTIVE CHAT LOG -->
+      <section class="flex-1 flex flex-col bg-slate-900">
+        
+        <!-- Active Conversation Profile Header -->
+        <div class="px-5 py-3 bg-slate-950 border-b border-slate-800/80 flex items-center justify-between shrink-0">
+          <div id="active-chat-header-profile" class="flex items-center gap-3">
+            <!-- Rendered Profile Info -->
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="quick-btn-thanks" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
+              Cảm ơn 👍
+            </button>
+            <button id="quick-btn-copy" class="text-xs px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition">
+              Copy SĐT
+            </button>
+          </div>
+        </div>
+
+        <!-- AI ASSISTANT SUGGESTION BAR -->
+        <div id="ai-suggestion-bar" class="bg-indigo-950/20 border-b border-indigo-900/30 p-3 shrink-0 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="bg-indigo-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded tracking-wide animate-pulse">
+                AI CHỐT ĐƠN
+              </span>
+              <p class="text-[11px] text-indigo-200">Gợi ý trả lời (Sử dụng kho sản phẩm bạn đã cấu hình bên cột cài đặt)</p>
+            </div>
+            <button id="btn-trigger-ai" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded font-semibold transition">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Gợi ý trả lời</span>
+            </button>
+          </div>
+          <div id="ai-suggestion-output-container" class="hidden bg-slate-950/80 border border-indigo-500/30 p-2.5 rounded-lg flex items-start gap-2.5">
+            <div class="bg-indigo-600/30 p-1 rounded">💡</div>
+            <div class="flex-1">
+              <p id="ai-suggestion-text" class="text-xs text-slate-200 leading-relaxed italic"></p>
+              <div class="flex justify-end gap-2 mt-2">
+                <button id="btn-use-ai-suggestion" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold uppercase">Dùng mẫu này</button>
+                <button id="btn-send-ai-suggestion" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-semibold uppercase">Gửi ngay 🚀</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- SUB-TAB 2: ORDER GENERATION TOOL -->
-        <div id="pane-order" class="hidden p-4 space-y-4">
-          <!-- Catalog Select List -->
-          <div>
-            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Chọn sản phẩm từ kho hàng</h4>
-            <div id="order-product-select-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-              <!-- Rendered items from products catalog -->
-            </div>
-          </div>
-
-          <!-- Current Cart draft list -->
-          <div class="border-t border-slate-800/80 pt-4">
-            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm đã chọn</h4>
-            <div id="order-cart-items-list" class="space-y-2">
-              <!-- Cart items -->
-            </div>
-          </div>
-
-          <!-- Extra details -->
-          <div class="border-t border-slate-800/80 pt-4 space-y-2.5">
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Phí vận chuyển (đ)</label>
-                <input id="order-shipping-input" type="number" value="30000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giảm giá/Chiết khấu (đ)</label>
-                <input id="order-discount-input" type="number" value="0" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Ghi chú vận đơn</label>
-              <input id="order-notes-input" type="text" placeholder="Giao giờ hành chính, cho đồng kiểm..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white placeholder-slate-600" />
-            </div>
-          </div>
-
-          <!-- Calculations block -->
-          <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 space-y-1.5">
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-400">Tạm tính:</span>
-              <span id="order-subtotal" class="text-slate-200">0đ</span>
-            </div>
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-400">Phí giao hàng:</span>
-              <span id="order-shipping-fee" class="text-slate-200">+30.000đ</span>
-            </div>
-            <div class="flex justify-between text-xs">
-              <span class="text-slate-400">Giảm trừ:</span>
-              <span id="order-discount-fee" class="text-emerald-400">-0đ</span>
-            </div>
-            <div class="flex justify-between text-xs font-bold pt-1.5 border-t border-slate-800/60 text-white">
-              <span>Tổng hóa đơn:</span>
-              <span id="order-total" class="text-indigo-400 text-sm">0đ</span>
-            </div>
-          </div>
-
-          <button id="btn-create-order" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-lg transition shadow-lg">
-            Chốt đơn & Gửi hoá đơn vào chat 🛒
-          </button>
+        <!-- Chat Messages Window Log -->
+        <div id="chat-messages-log" class="flex-1 overflow-y-auto p-4 space-y-3">
+          <!-- Messages Dynamically Appended -->
         </div>
 
-        <!-- SUB-TAB 3: KHO SẢN PHẨM & TỰ ĐỘNG PHẢN HỒI AI BOT (ADMIN PRO) -->
-        <div id="pane-admin-ai" class="hidden p-4 space-y-4">
-          
-          <!-- AI Auto-Reply configuration -->
-          <div class="p-3.5 bg-indigo-950/10 border border-indigo-500/20 rounded-xl space-y-3">
-            <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center justify-between">
-              <span>Hệ thống Auto-Reply AI</span>
-              <span class="px-2 py-0.5 text-[8px] bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded font-bold animate-pulse">ADMIN PRO</span>
-            </h4>
-            <p class="text-[10px] text-slate-300 leading-relaxed">
-              Khi được bật, bot sẽ liên tục đọc tin nhắn mới nhất của khách hàng và tự động phân tích phản hồi dựa theo kho sản phẩm bên dưới.
-            </p>
-            <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-lg border border-slate-800">
-              <span class="text-xs font-semibold text-slate-200">Bật AI Tự động trả lời</span>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input id="toggle-auto-reply" type="checkbox" class="sr-only peer" />
-                <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
-              </label>
-            </div>
+        <!-- Shortcut keyboard replies -->
+        <div class="px-4 py-2 bg-slate-950/40 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto whitespace-nowrap shrink-0">
+          <span class="text-[10px] text-slate-500 font-bold tracking-wide shrink-0">Trả lời nhanh:</span>
+          <div id="quick-replies-shortcuts" class="flex gap-2">
+            <!-- Rendered Quick Replies Buttons -->
           </div>
+        </div>
 
-          <!-- Product inventory controller (Add new custom product) -->
-          <div class="border-t border-slate-800/80 pt-4 space-y-3">
-            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Thêm Sản phẩm vào Kho hàng AI</h4>
-            <div class="space-y-2.5">
-              <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Tên sản phẩm</label>
-                <input id="prod-name" type="text" placeholder="Ví dụ: Đầm Hoa Nhí dáng xòe" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giá tiền (đ)</label>
-                  <input id="prod-price" type="number" placeholder="Ví dụ: 290000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-                </div>
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mã SKU</label>
-                  <input id="prod-sku" type="text" placeholder="DHN-01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-                </div>
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa nhận diện của sản phẩm (Keywords)</label>
-                <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe, dam hoa" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
-              </div>
-              <div>
-                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mô tả đặc điểm / Tư vấn size</label>
-                <textarea id="prod-desc" rows="2" placeholder="Chất liệu lụa Hàn, có size S, M, L cho người từ 45-65kg..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-              </div>
-              <button id="btn-add-product" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded transition">
-                Cập nhật Kho hàng AI 📦
+        <!-- Shop Text Input Form -->
+        <div class="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
+          <div id="attachment-preview-container" class="hidden mb-2">
+            <div class="relative inline-block bg-slate-800 p-1.5 rounded-lg border border-indigo-500/40">
+              <img id="attachment-preview-img" src="" alt="Sample Attachment" class="h-10 w-10 object-cover rounded" />
+              <button id="btn-remove-attachment" class="absolute -top-1.5 -right-1.5 bg-red-500 rounded-full p-0.5 text-white hover:bg-red-600">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
 
-          <!-- Product list overview with delete option -->
-          <div class="border-t border-slate-800/80 pt-4 space-y-2">
-            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm trong Kho (<span id="products-count-badge">0</span>)</h4>
-            <div id="admin-inventory-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-              <!-- Dynamically rendered admin products list -->
+          <div class="flex items-end gap-2">
+            <div class="flex items-center gap-1 shrink-0 pb-1">
+              <button id="btn-attach-image" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition" title="Đính kèm ảnh mẫu sản phẩm">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2v12a2 2 0 002 2z" />
+                </svg>
+              </button>
+              <button id="btn-emoji-heart" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">🥰</button>
+              <button id="btn-emoji-like" type="button" class="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition">👍</button>
             </div>
+
+            <div class="flex-1">
+              <textarea
+                id="message-textarea"
+                rows="1"
+                placeholder="Nhập tin nhắn phản hồi cho khách hàng..."
+                class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none max-h-24"
+              ></textarea>
+            </div>
+
+            <button id="btn-send-message" class="p-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white font-semibold transition shrink-0 pb-2.5">
+              <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 3: CUSTOMER CRM & PRODUCT ADMIN INVENTORY -->
+      <section class="w-80 md:w-96 flex flex-col bg-slate-950 border-l border-slate-800 shrink-0">
+        
+        <!-- Right Side Tabs Switcher -->
+        <div class="flex border-b border-slate-800 shrink-0">
+          <button id="tab-btn-customer" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400 bg-indigo-950/10">
+            👤 Khách hàng
+          </button>
+          <button id="tab-btn-order" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+            🛍️ Tạo đơn hàng
+          </button>
+          <button id="tab-btn-admin-ai" class="flex-1 py-3 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
+            ⚙️ Kho & AI Bot
+          </button>
+        </div>
+
+        <!-- Tab Content Area -->
+        <div id="tab-content-container" class="flex-1 overflow-y-auto">
+          
+          <!-- SUB-TAB 1: CUSTOMER METADATA CRM -->
+          <div id="pane-customer" class="p-4 space-y-4">
+            <!-- Profile Badge -->
+            <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/80 text-center">
+              <img id="crm-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-indigo-500 mb-2" />
+              <h4 id="crm-name" class="text-sm font-bold text-white">-</h4>
+              <p id="crm-uid" class="text-[10px] text-slate-400">UID: -</p>
+            </div>
+
+            <!-- Fields -->
+            <div class="space-y-3.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Số điện thoại</label>
+                <input id="crm-phone-input" type="text" placeholder="Nhập số điện thoại chốt đơn..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Địa chỉ giao hàng</label>
+                <textarea id="crm-address-input" rows="2" placeholder="Nhập địa chỉ nhận hàng chi tiết..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ghi chú nội bộ</label>
+                <textarea id="crm-notes-input" rows="2" placeholder="Ghi chú về khách hàng..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+              </div>
+
+              <!-- Tags Section -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Phân loại thẻ Tag</label>
+                <div id="crm-tags-list" class="flex flex-wrap gap-1.5 mb-2">
+                  <!-- Rendered Tags -->
+                </div>
+                <div class="flex gap-1.5">
+                  <input id="crm-new-tag-input" type="text" placeholder="Thêm tag mới..." class="flex-1 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                  <button id="btn-add-tag" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-2.5 py-1 rounded font-bold transition">+</button>
+                </div>
+              </div>
+
+              <button id="btn-save-crm" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded-lg transition mt-4">
+                Lưu thông tin CRM khách hàng
+              </button>
+            </div>
+
+            <!-- Order History -->
+            <div class="pt-4 border-t border-slate-800/80">
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Lịch sử giao dịch</h4>
+              <div id="crm-history-box" class="space-y-2">
+                <!-- Dynamically generated status -->
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: ORDER GENERATION TOOL -->
+          <div id="pane-order" class="hidden p-4 space-y-4">
+            <!-- Catalog Select List -->
+            <div>
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Chọn sản phẩm từ kho hàng</h4>
+              <div id="order-product-select-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                <!-- Rendered items from products catalog -->
+              </div>
+            </div>
+
+            <!-- Current Cart draft list -->
+            <div class="border-t border-slate-800/80 pt-4">
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm đã chọn</h4>
+              <div id="order-cart-items-list" class="space-y-2">
+                <!-- Cart items -->
+              </div>
+            </div>
+
+            <!-- Extra details -->
+            <div class="border-t border-slate-800/80 pt-4 space-y-2.5">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Phí vận chuyển (đ)</label>
+                  <input id="order-shipping-input" type="number" value="30000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giảm giá/Chiết khấu (đ)</label>
+                  <input id="order-discount-input" type="number" value="0" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Ghi chú vận đơn</label>
+                <input id="order-notes-input" type="text" placeholder="Giao giờ hành chính, cho đồng kiểm..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white placeholder-slate-600" />
+              </div>
+            </div>
+
+            <!-- Calculations block -->
+            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 space-y-1.5">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">Tạm tính:</span>
+                <span id="order-subtotal" class="text-slate-200">0đ</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">Phí giao hàng:</span>
+                <span id="order-shipping-fee" class="text-slate-200">+30.000đ</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400">Giảm trừ:</span>
+                <span id="order-discount-fee" class="text-emerald-400">-0đ</span>
+              </div>
+              <div class="flex justify-between text-xs font-bold pt-1.5 border-t border-slate-800/60 text-white">
+                <span>Tổng hóa đơn:</span>
+                <span id="order-total" class="text-indigo-400 text-sm">0đ</span>
+              </div>
+            </div>
+
+            <button id="btn-create-order" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 rounded-lg transition shadow-lg">
+              Chốt đơn & Gửi hoá đơn vào chat 🛒
+            </button>
+          </div>
+
+          <!-- SUB-TAB 3: KHO SẢN PHẨM & TỰ ĐỘNG PHẢN HỒI AI BOT (ADMIN PRO) -->
+          <div id="pane-admin-ai" class="hidden p-4 space-y-4">
+            
+            <!-- AI Auto-Reply configuration -->
+            <div class="p-3.5 bg-indigo-950/10 border border-indigo-500/20 rounded-xl space-y-3">
+              <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Hệ thống Auto-Reply AI</span>
+                <span class="px-2 py-0.5 text-[8px] bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 rounded font-bold animate-pulse">ADMIN PRO</span>
+              </h4>
+              <p class="text-[10px] text-slate-300 leading-relaxed">
+                Khi được bật, bot sẽ liên tục đọc tin nhắn mới nhất của khách hàng và tự động phân tích phản hồi dựa theo kho sản phẩm bên dưới.
+              </p>
+              <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <span class="text-xs font-semibold text-slate-200">Bật AI Tự động trả lời</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="toggle-auto-reply" type="checkbox" class="sr-only peer" />
+                  <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Product inventory controller (Add new custom product) -->
+            <div class="border-t border-slate-800/80 pt-4 space-y-3">
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Thêm Sản phẩm vào Kho hàng AI</h4>
+              <div class="space-y-2.5">
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Tên sản phẩm</label>
+                  <input id="prod-name" type="text" placeholder="Ví dụ: Đầm Hoa Nhí dáng xòe" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Giá tiền (đ)</label>
+                    <input id="prod-price" type="number" placeholder="Ví dụ: 290000" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mã SKU</label>
+                    <input id="prod-sku" type="text" placeholder="DHN-01" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Từ khóa nhận diện của sản phẩm (Keywords)</label>
+                  <input id="prod-keywords" type="text" placeholder="đầm hoa nhí, váy hoa xòe, dam hoa" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Mô tả đặc điểm / Tư vấn size</label>
+                  <textarea id="prod-desc" rows="2" placeholder="Chất liệu lụa Hàn, có size S, M, L cho người từ 45-65kg..." class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+                <button id="btn-add-product" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 rounded transition">
+                  Cập nhật Kho hàng AI 📦
+                </button>
+              </div>
+            </div>
+
+            <!-- Product list overview with delete option -->
+            <div class="border-t border-slate-800/80 pt-4 space-y-2">
+              <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sản phẩm trong Kho (<span id="products-count-badge">0</span>)</h4>
+              <div id="admin-inventory-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <!-- Dynamically rendered admin products list -->
+              </div>
+            </div>
+
           </div>
 
         </div>
 
-      </div>
-
-      <!-- Footer stats inside right panel -->
-      <div class="p-3 bg-slate-950 border-t border-slate-800 text-center shrink-0">
-        <p class="text-[10px] text-slate-400">
-          Đồng bộ hóa thực tế hai chiều bởi <span class="text-indigo-400 font-semibold">ChotDon.ai Hub</span>
-        </p>
-      </div>
-
-    </section>
-
-  </div>
-
-  <!-- PAGE MANAGER MODAL OVERLAY -->
-  <div id="page-manager-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 animate-fadeIn">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-      
-      <!-- Modal Header -->
-      <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
-        <div>
-          <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <span class="p-1 bg-indigo-600 rounded">
-              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
-            </span>
-            Quản lý và Liên kết Fanpage
-          </h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Kết nối và phân loại luồng tin nhắn đa kênh</p>
-        </div>
-        <button id="btn-close-page-modal" class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
-      </div>
-
-      <!-- Modal Tab Switcher -->
-      <div class="flex border-b border-slate-800 bg-slate-950/30">
-        <button id="modal-tab-list" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400">
-          Trang đã liên kết
-        </button>
-        <button id="modal-tab-meta" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
-          Đăng nhập Meta Sync ⚡
-        </button>
-        <button id="modal-tab-manual" class="flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200">
-          Nhập tay ID Trang
-        </button>
-      </div>
-
-      <!-- Modal Scrollable Body -->
-      <div id="modal-body-content" class="flex-1 overflow-y-auto p-5 space-y-4">
-        
-        <!-- SANDBOX ENVIRONMENT WARNING -->
-        <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-300 space-y-1.5">
-          <p class="font-bold flex items-center gap-1.5">⚡ HỆ THỐNG ĐỒNG BỘ HYBRID ENGINE ĐÃ KÍCH HOẠT:</p>
-          <p class="text-[11px] leading-relaxed text-slate-300">
-            Để chống lỗi chặn do khung bảo mật (Iframe Sandbox), ứng dụng của bạn hiện đã được trang bị <strong>Chế độ Ngoại tuyến dự phòng</strong>. 
-            Nếu không lưu được vào Cloud, mọi thay đổi, Fanpage và Chat của bạn vẫn sẽ hoạt động mượt mà và lưu lại trong bộ nhớ tạm!
+        <!-- Footer stats inside right panel -->
+        <div class="p-3 bg-slate-950 border-t border-slate-800 text-center shrink-0">
+          <p class="text-[10px] text-slate-400">
+            Đồng bộ hóa thực tế hai chiều bởi <span class="text-indigo-400 font-semibold">ChotDon.ai Hub</span>
           </p>
         </div>
 
-        <!-- PANE A: Linked list pages -->
-        <div id="modal-pane-list" class="space-y-2">
-          <!-- Dynamically populated in JS -->
+      </section>
+
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- VIEW B: THE SELECT PAGE & MANAGEMENT DASHBOARD WORKSPACE -->
+    <!-- ======================================================= -->
+    <div id="view-select-page-workspace" class="hidden flex-1 flex flex-col bg-slate-900 overflow-y-auto p-6 transition-all duration-300">
+      
+      <!-- HEADER STATUS OVERVIEW ROW -->
+      <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">Đã liên kết Fanpage</p>
+            <h4 id="dash-stat-linked-count" class="text-2xl font-black text-white mt-1">1</h4>
+          </div>
+          <div class="p-3 rounded-xl bg-indigo-600/10 text-indigo-400 text-xl font-bold">📢</div>
+        </div>
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">AI Bot đang chạy</p>
+            <h4 id="dash-stat-active-ai" class="text-2xl font-black text-emerald-400 mt-1">1</h4>
+          </div>
+          <div class="p-3 rounded-xl bg-emerald-600/10 text-emerald-400 text-xl font-bold">🤖</div>
+        </div>
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">Hóa đơn Chốt đơn</p>
+            <h4 class="text-2xl font-black text-purple-400 mt-1">156 đơn</h4>
+          </div>
+          <div class="p-3 rounded-xl bg-purple-600/10 text-purple-400 text-xl font-bold">🛍️</div>
+        </div>
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-xs text-slate-400 font-semibold">Tỷ lệ phản hồi AI</p>
+            <h4 class="text-2xl font-black text-indigo-400 mt-1">99.8%</h4>
+          </div>
+          <div class="p-3 rounded-xl bg-indigo-600/10 text-indigo-400 text-xl font-bold">⚡</div>
+        </div>
+      </section>
+
+      <!-- SEARCH, FILTERS & META CONNECT ACTIONS BAR -->
+      <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-6 flex flex-col lg:flex-row gap-4 items-center justify-between">
+        
+        <!-- Search & Quick filter status options -->
+        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto flex-1">
+          <div class="relative flex-1 max-w-md">
+            <input
+              id="dash-search-input"
+              type="text"
+              placeholder="Tìm nhanh tên Trang hoặc ID Page..."
+              class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            />
+            <svg class="w-4 h-4 text-slate-500 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          
+          <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shrink-0">
+            <button class="dash-filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition" data-status="all">Tất cả</button>
+            <button class="dash-filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 transition" data-status="active">Đang kết nối</button>
+            <button class="dash-filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 transition" data-status="expired">Lỗi Token</button>
+          </div>
         </div>
 
-        <!-- PANE B: Meta OAuth Integration -->
-        <div id="modal-pane-meta" class="hidden space-y-4">
-          <!-- UPGRADED: Setup choice and wizard layout -->
-          <div class="bg-indigo-950/20 border border-indigo-500/20 p-3.5 rounded-xl space-y-3">
-            <h4 class="text-xs font-bold text-indigo-300 flex items-center gap-1.5 uppercase tracking-wider">
-              <span>Đồng bộ mượt mà qua API Meta</span>
-              <span class="bg-indigo-600 text-white text-[8px] font-bold px-1.5 py-0.2 rounded">PRO</span>
+        <!-- Sync actions and trigger connection wizard buttons -->
+        <div class="flex gap-2.5 w-full lg:w-auto justify-end">
+          <button id="btn-dash-open-connector" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-950/40">
+            <span>🔌</span>
+            <span>Kết nối Fanpage Mới</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- PAGE SELECTION CARDS GRID -->
+      <section class="mb-6">
+        <h3 class="text-sm font-extrabold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>Danh sách trang Fanpage</span>
+          <span id="dash-page-count-badge" class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">1</span>
+        </h3>
+        
+        <div id="dash-pages-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically populated page cards -->
+        </div>
+      </section>
+
+      <!-- INTEGRATION WIZARD PANEL (OAUTH / TOKEN / COOKIE CONSOLE) -->
+      <div id="dash-connector-panel" class="hidden bg-slate-950 rounded-2xl border border-indigo-900/30 p-6 mb-6">
+        <div class="flex justify-between items-start border-b border-slate-800 pb-4 mb-4">
+          <div>
+            <h4 class="text-sm font-extrabold text-white flex items-center gap-2">
+              <span class="p-1.5 bg-indigo-600 rounded">🔌</span>
+              Bảng điều khiển kết nối Fanpage Meta
             </h4>
-            <p class="text-[11px] text-slate-300 leading-relaxed">
-              Tránh lỗi chặn popup và cookie của trình duyệt bằng cách sử dụng một trong ba cách thức đồng bộ hóa thông minh dưới đây.
-            </p>
+            <p class="text-xs text-slate-400 mt-1">Đồng bộ tự động thông qua 3 phương thức nâng cấp chống lỗi Sandbox</p>
+          </div>
+          <button id="btn-dash-close-connector" class="text-slate-500 hover:text-white text-xl font-bold">&times;</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- LEFT: Select methods -->
+          <div class="space-y-2 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+            <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Chọn phương thức đồng bộ</h5>
+            <button id="dash-method-btn-sdk" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition bg-indigo-600 text-white font-semibold text-xs">
+              <span>Cách 1: SDK OAuth Đăng nhập</span>
+              <span class="px-1.5 py-0.2 bg-white/20 text-[8px] rounded">PRO</span>
+            </button>
+            <button id="dash-method-btn-token" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs">
+              <span>Cách 2: Sử dụng Page Token</span>
+              <span class="px-1.5 py-0.2 bg-slate-700 text-[8px] rounded">BỀN BỈ</span>
+            </button>
+            <button id="dash-method-btn-cookie" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs">
+              <span>Cách 3: Cookie Facebook</span>
+              <span class="px-1.5 py-0.2 bg-slate-700 text-[8px] rounded">NHANH</span>
+            </button>
+            <button id="dash-method-btn-manual" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs">
+              <span>Cách 4: Nhập tay ID trang</span>
+              <span class="px-1.5 py-0.2 bg-slate-700 text-[8px] rounded">SANDBOX</span>
+            </button>
+          </div>
+
+          <!-- RIGHT: Render selected console inputs -->
+          <div class="lg:col-span-2 space-y-4">
             
-            <!-- Connection Methods Switcher - Upgraded with 3 Columns -->
-            <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-              <button id="btn-method-sdk" class="py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition">C1: SDK OAuth</button>
-              <button id="btn-method-token" class="py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">C2: Page Token</button>
-              <button id="btn-method-cookie" class="py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition">C3: APT Cookie ⚡</button>
-            </div>
-          </div>
-
-          <!-- CONTAINER METHOD 1: FB JS SDK -->
-          <div id="meta-method-sdk-content" class="space-y-4">
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <div class="flex items-center justify-between">
-                <h5 class="text-xs font-semibold text-slate-200">Cấu hình API Facebook Client App</h5>
-                <!-- Diagnostics trigger -->
-                <button id="btn-run-diagnostics" class="text-[10px] text-indigo-400 hover:underline">🔍 Chẩn đoán lỗi App ID</button>
-              </div>
-              <p class="text-[10px] text-slate-400 leading-relaxed">
-                Nhập <strong>Facebook App ID</strong> được khởi tạo từ cổng phát triển <a href="https://developers.facebook.com" target="_blank" class="text-indigo-400 underline hover:text-indigo-300">Meta Developers</a>.
-              </p>
-              
-              <!-- OAuth Redirect URI Copy Box -->
-              <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-3 space-y-2">
+            <!-- CONSOLE 1: META JS SDK -->
+            <div id="dash-console-sdk" class="space-y-4">
+              <div class="p-4 bg-slate-900/30 border border-slate-800 rounded-xl space-y-3">
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-extrabold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
-                    OAuth Redirect URI (Cần khai báo trên Meta)
-                  </span>
-                  <button id="btn-copy-redirect-uri" class="text-[9px] bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-2 py-0.5 rounded transition">
-                    Copy 📋
-                  </button>
+                  <h6 class="text-xs font-bold text-white">Cấu hình Đăng nhập App ID Facebook Client</h6>
+                  <button id="btn-dash-run-diag" class="text-[10px] text-indigo-400 hover:underline">🔍 Chẩn đoán kết nối</button>
                 </div>
-                <div class="bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-[11px] font-mono text-slate-200 break-all select-all select-none" id="oauth-redirect-uri-text">https://chot-don-ai.firebaseapp.com/__/auth/handler</div>
-                <p class="text-[9px] text-slate-500 leading-relaxed">
-                  * Hãy sao chép link trên và dán chính xác vào trường <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ) trong phần cài đặt Đăng nhập Facebook (Facebook Login) của Meta App.
-                </p>
-              </div>
+                
+                <div class="space-y-2">
+                  <div class="flex gap-2">
+                    <input 
+                      id="dash-fb-appid-input" 
+                      type="text" 
+                      placeholder="Nhập App ID (Ví dụ: 10427...)" 
+                      class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                    />
+                    <button id="btn-dash-init-sdk" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded-lg transition shrink-0">
+                      Khởi tạo SDK
+                    </button>
+                  </div>
+                  <p id="dash-sdk-status-label" class="text-[10px] text-slate-500 italic">Cấu hình SDK: Chưa được nạp</p>
+                </div>
 
-              <div class="space-y-2">
-                <div class="flex gap-2">
-                  <input 
-                    id="fb-app-id-input" 
-                    type="text" 
-                    placeholder="Nhập Facebook App ID (Ví dụ: 10427...)" 
-                    class="flex-1 bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                  />
-                  <button id="btn-init-fb-sdk" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded transition shrink-0">
-                    Khởi tạo SDK
-                  </button>
+                <!-- DIAGNOSTICS LOG BOX -->
+                <div id="dash-diag-box" class="hidden bg-slate-950 p-3 rounded-lg border border-red-500/20 text-xs space-y-2">
+                  <h6 class="font-bold text-red-400">🛡️ Báo cáo chẩn đoán lỗi Meta Connect:</h6>
+                  <div class="space-y-1 text-[11px] text-slate-300 font-mono">
+                    <p id="dash-diag-https">Giao thức HTTPS: <span class="text-amber-500">Đang quét...</span></p>
+                    <p id="dash-diag-adblock">Trình chặn quảng cáo: <span class="text-amber-500">Đang quét...</span></p>
+                    <p id="dash-diag-loaded">Tệp SDK Meta: <span class="text-amber-500">Đang quét...</span></p>
+                  </div>
                 </div>
-                <p id="fb-sdk-status-label" class="text-[10px] text-slate-500 italic">Trạng thái SDK: Chưa được cấu hình</p>
-              </div>
 
-              <!-- DIAGNOSTICS LOG WINDOW (Hidden by default) -->
-              <div id="diagnostics-log-box" class="hidden bg-slate-900 p-3 rounded-lg border border-red-500/30 text-xs space-y-2">
-                <h6 class="font-bold text-red-400 flex items-center gap-1.5">
-                  🛡️ Báo cáo chẩn đoán lỗi & Hướng dẫn sửa đổi kết nối Meta:
-                </h6>
-                <div class="space-y-1 text-[11px] text-slate-300 font-mono">
-                  <p id="diag-item-https" class="flex justify-between"><span>- Giao thức HTTPS:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-adblock" class="flex justify-between"><span>- Trình chặn quảng cáo:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-appid" class="flex justify-between"><span>- Độ dài App ID:</span> <span class="text-amber-500">Đang quét...</span></p>
-                  <p id="diag-item-loaded" class="flex justify-between"><span>- Tệp SDK Meta:</span> <span class="text-amber-500">Đang quét...</span></p>
+                <div class="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3.5 space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold text-indigo-300 uppercase tracking-wider flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+                      OAuth Redirect URI (Khai báo trên cổng Meta)
+                    </span>
+                    <button id="btn-dash-copy-uri" class="text-[9px] bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-2.5 py-0.5 rounded transition">
+                      Copy 📋
+                    </button>
+                  </div>
+                  <div class="bg-slate-950 border border-slate-800 rounded px-2.5 py-1.5 text-[11px] font-mono text-slate-300 break-all select-all select-none" id="dash-oauth-redirect-uri-text">https://chot-don-ai.firebaseapp.com/__/auth/handler</div>
                 </div>
-                <div id="diag-remedy-text" class="text-[10px] text-slate-400 border-t border-slate-800 pt-1.5 mt-1 leading-relaxed">
-                  * Mẹo: Hầu hết lỗi không cấu hình được là do trình duyệt của bạn chặn Popup hoặc tài khoản FB của bạn chưa được thêm vào "Vai trò" (Roles) của App ID ở chế độ nhà phát triển.
-                </div>
+
+                <button id="btn-dash-oauth-scan" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-1.5">
+                  🔑 Đồng bộ qua Facebook OAuth Login
+                </button>
               </div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-3">
-              <p class="text-[11px] text-slate-400 leading-relaxed">
-                Mở luồng đăng nhập nhanh bằng tài khoản Meta để cấp quyền liên kết tự động.
-              </p>
-              <button id="btn-meta-oauth-scan" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition shadow-lg shadow-blue-950/40 w-full justify-center">
-                <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
-                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-                </svg>
-                <span>Đồng bộ trang qua Meta OAuth</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- CONTAINER METHOD 2: DIRECT PAGE TOKEN -->
-          <div id="meta-method-token-content" class="space-y-4 hidden animate-fadeIn">
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <h5 class="text-xs font-semibold text-slate-200">Đồng bộ bằng Page Access Token (Mượt mà, Bỏ qua lỗi App ID)</h5>
-              <p class="text-[10px] text-slate-400 leading-relaxed">
-                Nếu bạn không muốn tự tạo App ID phức tạp, cách tốt nhất là sử dụng mã <strong>Access Token</strong> (sinh ra từ cổng API Explorer) để đồng bộ trực tiếp mượt mà mà không sợ lỗi chặn popup.
-              </p>
-              <div class="space-y-3">
+            <!-- CONSOLE 2: PAGE ACCESS TOKEN -->
+            <div id="dash-console-token" class="hidden space-y-4">
+              <div class="p-4 bg-slate-900/30 border border-slate-800 rounded-xl space-y-3">
+                <h6 class="text-xs font-bold text-white">Đồng bộ bằng Page Access Token trực tiếp</h6>
+                <p class="text-[10px] text-slate-400">Tránh lỗi popup bằng cách dán Token Fanpage được cấu hình từ Meta API Explorer.</p>
                 <textarea 
-                  id="fb-direct-token-input" 
+                  id="dash-token-input" 
                   rows="3" 
-                  placeholder="Dán mã Token (Thường bắt đầu bằng EAAC...)" 
-                  class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
+                  placeholder="Dán mã Token (Bắt đầu bằng EAAC...)" 
+                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
                 ></textarea>
-                <button id="btn-sync-by-token" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded text-xs transition">
+                <button id="btn-dash-sync-token" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition">
                   Xác nhận & Đồng bộ hoá ngay ⚡
                 </button>
               </div>
             </div>
 
-            <!-- Helpful Guide Toggle -->
-            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
-              <details class="group">
-                <summary class="text-xs font-bold text-slate-300 cursor-pointer flex justify-between items-center outline-none select-none">
-                  <span>💡 Hướng dẫn lấy Page Access Token nhanh nhất?</span>
-                  <span class="transition-transform duration-200 group-open:rotate-180 text-[10px]">▼</span>
-                </summary>
-                <div class="text-[10px] text-slate-400 mt-2 space-y-1.5 leading-relaxed pl-1 border-l border-indigo-500/40">
-                  <p>1. Truy cập trang <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-indigo-400 underline">Meta Graph API Explorer</a>.</p>
-                  <p>2. Tại cột bên phải, chọn <strong>Meta App</strong> mặc định hoặc App của riêng bạn.</p>
-                  <p>3. Trong ô quyền (Permissions), nhấn thêm <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>pages_messaging</code>.</p>
-                  <p>4. Chọn Token đại diện là Fanpage của bạn, nhấp **Generate Access Token** và copy chuỗi mã dài dán lên ô trên.</p>
+            <!-- CONSOLE 3: FB COOKIES -->
+            <div id="dash-console-cookie" class="hidden space-y-4">
+              <div class="p-4 bg-slate-900/30 border border-slate-800 rounded-xl space-y-3">
+                <h6 class="text-xs font-bold text-white">Đồng bộ qua Cookies Facebook và User Agent</h6>
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Dán chuỗi Cookie Facebook (c_user=...; xs=...)</label>
+                    <textarea 
+                      id="dash-cookie-input" 
+                      rows="3" 
+                      placeholder="Dán chuỗi Cookie tại đây..." 
+                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
+                    ></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">User Agent</label>
+                    <input 
+                      id="dash-ua-input" 
+                      type="text" 
+                      placeholder="Mozilla/5.0..." 
+                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
+                    />
+                  </div>
+                  <button id="btn-dash-sync-cookie" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">
+                    Đồng bộ & Quét Fanpage qua Cookie 🚀
+                  </button>
                 </div>
-              </details>
-            </div>
-          </div>
-
-          <!-- CONTAINER METHOD 3: Facebook Cookie / APT Cookie (MỚI ⚡) -->
-          <div id="meta-method-cookie-content" class="space-y-4 hidden animate-fadeIn">
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <h5 class="text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
-                <span>Đồng bộ bằng Facebook Cookie & User Agent</span>
-                <span class="bg-indigo-600 text-white text-[8px] px-1.5 py-0.5 rounded font-extrabold">SIÊU TỐC</span>
-              </h5>
-              <p class="text-[10px] text-slate-400 leading-relaxed">
-                Phương thức bóc tách trực tiếp thông qua API cookie người dùng. Hệ thống sẽ trích xuất mã UID, phiên đăng nhập an toàn mà không cần tạo App ID.
-              </p>
-              
-              <div class="space-y-3">
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Dán chuỗi Cookie Facebook (datr=...; sb=...; c_user=...; xs=...)</label>
-                  <textarea 
-                    id="fb-cookie-input" 
-                    rows="3" 
-                    placeholder="Dán chuỗi Cookie tại đây..." 
-                    class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
-                  ></textarea>
-                </div>
-                
-                <div>
-                  <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">User Agent (Khuyên dùng để tránh Checkpoint)</label>
-                  <input 
-                    id="fb-ua-input" 
-                    type="text" 
-                    placeholder="Ví dụ: Mozilla/5.0 (Windows NT 10.0; Win64; x64)..." 
-                    class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
-                  />
-                </div>
-
-                <button id="btn-sync-by-cookie" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-xs transition">
-                  Đồng bộ & Quét Fanpage qua Cookie 🚀
-                </button>
               </div>
             </div>
-          </div>
 
-          <!-- Scanning status loader -->
-          <div id="meta-scanning-loader" class="hidden text-center py-6 bg-slate-950 rounded-xl border border-slate-800">
-            <div class="relative w-12 h-12 mx-auto mb-3 flex items-center justify-center">
-              <span class="absolute inline-flex h-full w-full rounded-full meta-glow-pulse opacity-75 animate-ping"></span>
-              <span class="relative inline-flex rounded-full h-8 w-8 bg-slate-900 border border-indigo-500/30"></span>
+            <!-- CONSOLE 4: MANUAL CONNECT -->
+            <div id="dash-console-manual" class="hidden space-y-4">
+              <div class="p-4 bg-slate-900/30 border border-slate-800 rounded-xl space-y-3">
+                <h6 class="text-xs font-bold text-white">Đồng bộ & Nhập thông tin trang thủ công</h6>
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tên hiển thị Fanpage</label>
+                    <input id="dash-manual-name" type="text" placeholder="Ví dụ: Shop Giày Xuất Khẩu" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Facebook Page ID (UID)</label>
+                    <input id="dash-manual-id" type="text" placeholder="Ví dụ: 888444222111" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình ảnh đại diện (Đường dẫn Url)</label>
+                    <input id="dash-manual-image" type="text" value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
+                  </div>
+                  <button id="btn-dash-manual-save" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition">Thêm & Liên kết thủ công ngay</button>
+                </div>
+              </div>
             </div>
-            <p id="scanning-status-text" class="text-xs text-slate-300 font-semibold">Đang liên hệ với máy chủ Facebook...</p>
-            <p class="text-[10px] text-slate-500 mt-1">Vui lòng chờ trong giây lát</p>
+
+            <!-- LOADER STATUS inside dashboard connectors -->
+            <div id="dash-scanning-loader" class="hidden text-center py-6 bg-slate-900/30 border border-slate-800 rounded-xl">
+              <div class="relative w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+                <span class="absolute inline-flex h-full w-full rounded-full meta-glow-pulse opacity-75 animate-ping"></span>
+                <span class="relative inline-flex rounded-full h-8 w-8 bg-slate-900 border border-indigo-500/30"></span>
+              </div>
+              <p id="dash-scanning-status-text" class="text-xs text-slate-300 font-semibold">Đang đồng bộ với Facebook Meta...</p>
+            </div>
+
+            <!-- DISCOVERED LIST FROM OAUTH/TOKEN inside dashboard -->
+            <div id="dash-discovered-box" class="hidden bg-slate-900/40 p-4 border border-slate-800 rounded-xl space-y-3 animate-fadeIn">
+              <!-- Dynamically rendered detected pages from Meta -->
+            </div>
+
           </div>
 
-          <!-- Discovered Pages List from Meta -->
-          <div id="meta-discovered-list" class="space-y-2 hidden">
-            <!-- Rendered discovered list -->
-          </div>
-        </div>
-
-        <!-- PANE C: Manual integration form -->
-        <div id="modal-pane-manual" class="hidden space-y-4">
-          <!-- PRO-TIP: Guide how to get page ID without Meta SDK -->
-          <div class="bg-indigo-950/10 border border-indigo-500/20 p-3 rounded-lg text-xs space-y-1.5">
-            <p class="font-semibold text-indigo-300">💡 Hướng dẫn lấy ID Fanpage thực tế cực nhanh:</p>
-            <p class="text-[10px] text-slate-400 leading-relaxed">
-              Bạn không cần tài khoản Meta Developer! Hãy copy đường link Fanpage của bạn (Ví dụ: <code>facebook.com/shopcuaban</code>), dán vào trang web <a href="https://id.atpsoftware.vn/" target="_blank" class="text-indigo-400 underline">id.atpsoftware.vn</a> để lấy dãy số ID Trang gồm 15 chữ số nhanh chóng và dán vào ô dưới đây.
-            </p>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tên hiển thị Fanpage</label>
-            <input id="manual-page-name" type="text" placeholder="Ví dụ: Shop Giày Xuất Khẩu" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Facebook Page ID (UID)</label>
-            <input id="manual-page-id" type="text" placeholder="Ví dụ: 888444222111" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình ảnh đại diện (Đường dẫn Url)</label>
-            <input id="manual-page-image" type="text" value="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none" />
-          </div>
-          <button id="btn-manual-page-save" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition">Thêm & Liên kết ngay</button>
         </div>
 
       </div>
 
-      <!-- Modal Footer -->
-      <div class="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
-        <button id="btn-modal-close-footer" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg transition text-slate-300">Đóng</button>
-      </div>
+      <!-- UPGRADE / PLANS PROMOTIONAL BANNER -->
+      <section class="bg-gradient-to-r from-slate-950 via-indigo-950/20 to-slate-950 p-6 rounded-3xl border border-indigo-900/30 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0">
+        <div class="flex items-center gap-4">
+          <div class="p-3 bg-indigo-600 rounded-2xl text-2xl">🔥</div>
+          <div>
+            <h4 class="text-sm font-extrabold text-white">Nâng cấp ChotDon AI Premium để mở khóa không giới hạn Automation</h4>
+            <p class="text-xs text-slate-400 mt-1">Đồng bộ tự động bình luận, ẩn số điện thoại khách hàng, kết nối tối đa 50 Fanpage và miễn phí hoàn toàn dịch vụ AI Assistant.</p>
+          </div>
+        </div>
+        <button class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white rounded-xl transition shadow-lg shadow-indigo-950/50">Nâng cấp VIP ngay</button>
+      </section>
 
     </div>
+
   </div>
 
   <!-- FIREBASE MODULES LOAD & LOGIC IMPLEMENTATION -->
@@ -813,6 +840,11 @@
     let isFbSdkLoaded = false;
     let facebookAppId = localStorage.getItem('chotdon_fb_app_id') || '';
 
+    // Trạng thái hiển thị Dashboard / Inbox view
+    let currentWorkspaceView = 'select-page'; // 'inbox' | 'select-page'
+    let dashFilterStatus = 'all';
+    let dashSearchQuery = '';
+
     // DANH SÁCH MẪU TRẢ LỜI NHANH (QUICK REPLIES)
     const QUICK_REPLIES = [
       'Dạ bên em chào anh/chị ạ! Shop có thể hỗ trợ gì cho mình hôm nay ạ? 🥰',
@@ -833,7 +865,8 @@
 
     // Thiết lập dữ liệu khởi tạo mặc định khi ở chế độ Offline/Sandbox
     const DEFAULT_SANDBOX_PAGES = [
-      { id: '215151365', name: 'Thời Trang Chốt Đơn (Mặc định)', active: true, image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80' }
+      { id: '215151365', name: 'Thời Trang Chốt Đơn (Mặc định)', active: true, image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=80', plan: 'VIP', ai_reply: true, auto_inbox: true, hide_phone: false, auto_order: true },
+      { id: '111222333', name: 'Mỹ Phẩm Xách Tay Korea', active: true, image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=80', plan: 'PRO', ai_reply: false, auto_inbox: false, hide_phone: true, auto_order: false }
     ];
 
     const DEFAULT_SANDBOX_CONVERSATIONS = [
@@ -903,13 +936,7 @@
         activeThreadId = pageConversations[0].id;
       }
 
-      renderPages();
-      renderPagesManagerList();
-      renderConversations();
-      renderChatMessagesLog();
-      renderCrmPanel();
-      renderAdminInventory();
-      renderOrderProductSelect();
+      refreshAllViews();
     };
 
     const initAuth = async () => {
@@ -961,12 +988,20 @@
       pageUnsub = onSnapshot(pagesColRef, (snap) => {
         if (!snap.empty) {
           pages = [];
-          snap.forEach(doc => pages.push(doc.data()));
+          snap.forEach(doc => {
+            const data = doc.data();
+            // Đảm bảo có các cờ tính năng tự động của Dashboard chọn trang
+            if (data.plan === undefined) data.plan = 'VIP';
+            if (data.ai_reply === undefined) data.ai_reply = true;
+            if (data.auto_inbox === undefined) data.auto_inbox = false;
+            if (data.hide_phone === undefined) data.hide_phone = false;
+            if (data.auto_order === undefined) data.auto_order = false;
+            pages.push(data);
+          });
           if (pages.length > 0 && !selectedPageId) {
             selectedPageId = pages[0].id;
           }
-          renderPages();
-          renderPagesManagerList();
+          refreshAllViews();
         } else {
           // Gieo dữ liệu mặc định lên cloud nếu trống
           pages = [...DEFAULT_SANDBOX_PAGES];
@@ -1034,8 +1069,7 @@
         const idx = pages.findIndex(p => p.id === docId);
         if (idx !== -1) pages[idx] = dataObject;
         else pages.push(dataObject);
-        renderPages();
-        renderPagesManagerList();
+        refreshAllViews();
       } else if (collectionName === 'conversations') {
         const idx = conversations.findIndex(c => c.id === docId);
         if (idx !== -1) conversations[idx] = dataObject;
@@ -1072,8 +1106,7 @@
       // Offline Delete
       if (collectionName === 'pages') {
         pages = pages.filter(p => p.id !== docId);
-        renderPages();
-        renderPagesManagerList();
+        refreshAllViews();
       } else if (collectionName === 'conversations') {
         conversations = conversations.filter(c => c.id !== docId);
         renderConversations();
@@ -1093,6 +1126,274 @@
     };
 
     // ==========================================
+    // VIEW CONTROLLER SWITCHES (Dashboard vs Inbox)
+    // ==========================================
+    const switchWorkspaceView = (viewKey) => {
+      currentWorkspaceView = viewKey;
+      const navInbox = document.getElementById('nav-btn-inbox');
+      const navSelectPage = document.getElementById('nav-btn-select-page');
+      const workspaceInbox = document.getElementById('view-inbox-workspace');
+      const workspaceSelectPage = document.getElementById('view-select-page-workspace');
+
+      if (viewKey === 'inbox') {
+        navInbox.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow";
+        navSelectPage.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition hover:text-white text-slate-400";
+        workspaceInbox.classList.remove('hidden');
+        workspaceSelectPage.classList.add('hidden');
+        renderPages();
+        renderConversations();
+      } else {
+        navSelectPage.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow";
+        navInbox.className = "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition hover:text-white text-slate-400";
+        workspaceSelectPage.classList.remove('hidden');
+        workspaceInbox.classList.add('hidden');
+        renderDashboardPages();
+      }
+    };
+
+    document.getElementById('nav-btn-inbox').onclick = () => switchWorkspaceView('inbox');
+    document.getElementById('nav-btn-select-page').onclick = () => switchWorkspaceView('select-page');
+    document.getElementById('btn-manage-pages-shortcut').onclick = () => switchWorkspaceView('select-page');
+
+    const refreshAllViews = () => {
+      renderPages();
+      renderDashboardPages();
+    };
+
+    // ==========================================
+    // UPGRADED VIEW: SELECT-PAGE DASHBOARD RENDERER
+    // ==========================================
+    const renderDashboardPages = () => {
+      const grid = document.getElementById('dash-pages-grid');
+      grid.innerHTML = '';
+
+      // Update counters
+      document.getElementById('dash-page-count-badge').innerText = pages.length;
+      document.getElementById('dash-stat-linked-count').innerText = pages.length;
+      document.getElementById('dash-stat-active-ai').innerText = pages.filter(p => p.ai_reply).length;
+
+      // In-memory Filter for dashboard cards
+      const filtered = pages.filter(p => {
+        if (!dashSearchQuery.trim()) return true;
+        const q = dashSearchQuery.toLowerCase();
+        return p.name.toLowerCase().includes(q) || p.id.includes(q);
+      }).filter(p => {
+        if (dashFilterStatus === 'all') return true;
+        if (dashFilterStatus === 'active') return p.ai_reply || p.active;
+        if (dashFilterStatus === 'expired') return !p.active && !p.ai_reply;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-slate-950 rounded-2xl border border-dashed border-slate-800">
+            <span class="text-3xl">📭</span>
+            <p class="text-xs text-slate-400 mt-2">Không tìm thấy Fanpage nào phù hợp.</p>
+            <button id="btn-dash-create-first" class="mt-3 text-xs bg-indigo-600 px-4 py-1.5 rounded-lg text-white font-bold hover:bg-indigo-500 transition">🔌 Liên kết trang ngay</button>
+          </div>
+        `;
+        const btn = document.getElementById('btn-dash-create-first');
+        if (btn) {
+          btn.onclick = () => document.getElementById('btn-dash-open-connector').click();
+        }
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = `bg-slate-950 p-5 rounded-3xl border transition duration-300 relative overflow-hidden group hover:shadow-xl ${
+          p.id === selectedPageId ? 'border-indigo-500/60 shadow-lg shadow-indigo-950/20' : 'border-slate-800 hover:border-slate-700'
+        }`;
+
+        // Get count of unread chats
+        const pageConvs = conversations.filter(c => c.pageId === p.id);
+        const unreadCount = pageConvs.filter(c => c.unread).length;
+        const totalConvs = pageConvs.length;
+
+        card.innerHTML = `
+          <!-- CARD GLOW ACCENT -->
+          <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-600/5 blur-2xl group-hover:bg-indigo-600/10 transition-all rounded-full"></div>
+          
+          <!-- TOP ROW: AVATAR & PAGE INFO -->
+          <div class="flex items-start justify-between relative mb-4">
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <img src="${p.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'}" class="w-12 h-12 rounded-2xl object-cover border border-slate-800 shrink-0" />
+                <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-950 flex items-center justify-center text-[8px] text-white">✓</span>
+              </div>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-white truncate max-w-[150px]" title="${p.name}">${p.name}</h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">ID: ${p.id}</p>
+              </div>
+            </div>
+            
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[9px] font-black">${p.plan || 'FREE'}</span>
+              <span class="text-[9px] ${unreadCount > 0 ? 'text-red-400 animate-pulse' : 'text-slate-400'} font-semibold">${unreadCount} Chưa đọc / ${totalConvs} Chat</span>
+            </div>
+          </div>
+
+          <!-- AUTOMATION PER-PAGE FEATURES SECTION -->
+          <div class="border-t border-b border-slate-900 py-3.5 my-3.5 space-y-2.5 relative">
+            
+            <!-- AI REPLY SWITCH -->
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5">
+                <span>🤖</span>
+                <span class="font-medium text-slate-300">Bật AI Chatbot</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer feature-toggle-ai" ${p.ai_reply ? 'checked' : ''} />
+                <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+              </label>
+            </div>
+
+            <!-- AUTO INBOX SWITCH -->
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5">
+                <span>✉️</span>
+                <span class="font-medium text-slate-300">Tự động Inbox bình luận</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer feature-toggle-inbox" ${p.auto_inbox ? 'checked' : ''} />
+                <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+              </label>
+            </div>
+
+            <!-- HIDE PHONE COMMENTS SWITCH -->
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5">
+                <span>🛡️</span>
+                <span class="font-medium text-slate-300">Ẩn SĐT bình luận khách</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer feature-toggle-phone" ${p.hide_phone ? 'checked' : ''} />
+                <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+              </label>
+            </div>
+
+            <!-- AUTO ORDER SWITCH -->
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5">
+                <span>🛒</span>
+                <span class="font-medium text-slate-300">Tự động tạo đơn hàng</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" class="sr-only peer feature-toggle-order" ${p.auto_order ? 'checked' : ''} />
+                <div class="w-8 h-4.5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+              </label>
+            </div>
+
+          </div>
+
+          <!-- BOTTOM ACTION FOOTER -->
+          <div class="flex items-center gap-2 relative mt-4">
+            <button class="btn-card-enter flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl transition shadow flex items-center justify-center gap-1">
+              <span>👉</span>
+              <span>Vào Chốt Đơn Chat</span>
+            </button>
+            <button class="btn-card-delete p-2 bg-slate-900 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-xl transition border border-slate-800 hover:border-red-500/20 text-xs" title="Hủy kết nối">❌</button>
+          </div>
+        `;
+
+        // Card bindings
+        card.querySelector('.btn-card-enter').onclick = () => {
+          selectedPageId = p.id;
+          const firstChat = conversations.find(c => c.pageId === p.id);
+          activeThreadId = firstChat ? firstChat.id : '';
+          switchWorkspaceView('inbox');
+        };
+
+        card.querySelector('.btn-card-delete').onclick = () => {
+          if (confirm(`Bạn chắc chắn muốn hủy liên kết Fanpage "${p.name}" chứ?`)) {
+            deletePage(p.id);
+          }
+        };
+
+        // Toggles change triggers
+        card.querySelector('.feature-toggle-ai').onchange = (e) => {
+          p.ai_reply = e.target.checked;
+          writeData('pages', p.id, p);
+          showToast(`Đã ${p.ai_reply ? 'bật' : 'tắt'} Chatbot AI cho trang ${p.name}`);
+        };
+
+        card.querySelector('.feature-toggle-inbox').onchange = (e) => {
+          p.auto_inbox = e.target.checked;
+          writeData('pages', p.id, p);
+          showToast(`Đã ${p.auto_inbox ? 'bật' : 'tắt'} tự động nhắn tin khi có bình luận cho trang ${p.name}`);
+        };
+
+        card.querySelector('.feature-toggle-phone').onchange = (e) => {
+          p.hide_phone = e.target.checked;
+          writeData('pages', p.id, p);
+          showToast(`Đã ${p.hide_phone ? 'bật' : 'tắt'} chế độ ẩn SĐT khách hàng tự động trên ${p.name}`);
+        };
+
+        card.querySelector('.feature-toggle-order').onchange = (e) => {
+          p.auto_order = e.target.checked;
+          writeData('pages', p.id, p);
+          showToast(`Đã ${p.auto_order ? 'bật' : 'tắt'} chế độ tự động phân tích và lên đơn trên ${p.name}`);
+        };
+
+        grid.appendChild(card);
+      });
+    };
+
+    // ==========================================
+    // INTEGRATION CONSOLE SWITCHES IN DASHBOARD
+    // ==========================================
+    const openConnectorPanel = (isOpen) => {
+      const panel = document.getElementById('dash-connector-panel');
+      if (isOpen) {
+        panel.classList.remove('hidden');
+        panel.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        panel.classList.add('hidden');
+      }
+    };
+
+    document.getElementById('btn-dash-open-connector').onclick = () => openConnectorPanel(true);
+    document.getElementById('btn-dash-close-connector').onclick = () => openConnectorPanel(false);
+
+    const switchConsoleTab = (consoleKey) => {
+      const keys = ['sdk', 'token', 'cookie', 'manual'];
+      keys.forEach(k => {
+        const btn = document.getElementById(`dash-method-btn-${k}`);
+        const consoleEl = document.getElementById(`dash-console-${k}`);
+        if (k === consoleKey) {
+          btn.className = "w-full flex items-center justify-between p-3 rounded-lg text-left transition bg-indigo-600 text-white font-semibold text-xs";
+          consoleEl.classList.remove('hidden');
+        } else {
+          btn.className = "w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs";
+          consoleEl.classList.add('hidden');
+        }
+      });
+    };
+
+    document.getElementById('dash-method-btn-sdk').onclick = () => switchConsoleTab('sdk');
+    document.getElementById('dash-method-btn-token').onclick = () => switchConsoleTab('token');
+    document.getElementById('dash-method-btn-cookie').onclick = () => switchConsoleTab('cookie');
+    document.getElementById('dash-method-btn-manual').onclick = () => switchConsoleTab('manual');
+
+    // Dashboard Search and filter inputs
+    document.getElementById('dash-search-input').oninput = (e) => {
+      dashSearchQuery = e.target.value;
+      renderDashboardPages();
+    };
+
+    document.querySelectorAll('.dash-filter-tab').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.dash-filter-tab').forEach(b => {
+          b.className = "dash-filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 transition";
+        });
+        btn.className = "dash-filter-tab px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white transition";
+        dashFilterStatus = btn.getAttribute('data-status');
+        renderDashboardPages();
+      };
+    });
+
+
+    // ==========================================
     // RENDER FUNCTIONS (HỆ THỐNG PHÁT THẢO DOM GIAO DIỆN)
     // ==========================================
 
@@ -1105,7 +1406,7 @@
         container.innerHTML = `
           <div class="p-3 text-center bg-slate-900/40 rounded-lg border border-dashed border-slate-800">
             <p class="text-[10px] text-slate-500">Chưa kết nối Fanpage nào</p>
-            <p class="text-[9px] text-indigo-400 cursor-pointer mt-1 hover:underline" onclick="document.getElementById('btn-manage-pages').click()">+ Liên kết ngay</p>
+            <p class="text-[9px] text-indigo-400 cursor-pointer mt-1 hover:underline" onclick="switchWorkspaceView('select-page')">+ Liên kết ngay</p>
           </div>
         `;
         return;
@@ -1452,7 +1753,7 @@
         itemDiv.innerHTML = `
           <div class="max-w-[180px]">
             <p class="text-xs font-semibold text-slate-200 truncate">${item.product.name}</p>
-            <p class="text-[10px] text-slate-500">${(item.product.price * item.quantity).toLocaleString()}đ</p>
+            <p class="text-[10px] text-slate-400">${(item.product.price * item.quantity).toLocaleString()}đ</p>
           </div>
           <div class="flex items-center gap-1.5">
             <button class="btn-dec-qty w-5 h-5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold flex items-center justify-center">-</button>
@@ -1481,36 +1782,6 @@
       document.getElementById('order-shipping-fee').innerText = '+' + shipping.toLocaleString('vi-VN') + 'đ';
       document.getElementById('order-discount-fee').innerText = '-' + discount.toLocaleString('vi-VN') + 'đ';
       document.getElementById('order-total').innerText = total.toLocaleString('vi-VN') + 'đ';
-    };
-
-    // 8. Render Page lists manager inside connected modal list
-    const renderPagesManagerList = () => {
-      const listContainer = document.getElementById('modal-pane-list');
-      listContainer.innerHTML = '';
-
-      if (pages.length === 0) {
-        listContainer.innerHTML = `
-          <p class="text-xs text-slate-500 text-center py-5">Chưa có Fanpage nào được liên kết.</p>
-        `;
-        return;
-      }
-
-      pages.forEach(p => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs";
-        item.innerHTML = `
-          <div class="flex items-center gap-3">
-            <img src="${p.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'}" class="w-8 h-8 rounded-lg object-cover" />
-            <div>
-              <p class="font-bold text-white flex items-center gap-1.5">${p.name}</p>
-              <p class="text-[10px] text-slate-500">ID: ${p.id}</p>
-            </div>
-          </div>
-          <button class="text-red-400 hover:text-red-300 font-semibold">Hủy kết nối</button>
-        `;
-        item.querySelector('button').onclick = () => deletePage(p.id);
-        listContainer.appendChild(item);
-      });
     };
 
     // Render Quick Keyboard replies shortcuts
@@ -2002,47 +2273,11 @@
     // META LOGIN & PAGE MANAGER LOGIC
     // ==========================================
 
-    const showModal = (isVisible) => {
-      const modal = document.getElementById('page-manager-modal');
-      if (isVisible) {
-        modal.classList.remove('hidden');
-        renderPagesManagerList();
-      } else {
-        modal.classList.add('hidden');
-        // Hide diagnostics on close
-        document.getElementById('diagnostics-log-box').classList.add('hidden');
-      }
-    };
-
-    document.getElementById('btn-manage-pages').onclick = () => showModal(true);
-    document.getElementById('btn-close-page-modal').onclick = () => showModal(false);
-    document.getElementById('btn-modal-close-footer').onclick = () => showModal(false);
-
-    // Modal sub-tab routes
-    const switchModalTab = (tabKey) => {
-      const keys = ['list', 'meta', 'manual'];
-      keys.forEach(k => {
-        const btn = document.getElementById(`modal-tab-${k}`);
-        const pane = document.getElementById(`modal-pane-${k}`);
-        if (k === tabKey) {
-          btn.className = "flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-indigo-500 text-indigo-400";
-          pane.classList.remove('hidden');
-        } else {
-          btn.className = "flex-1 py-2.5 text-xs font-semibold border-b-2 text-center transition border-transparent text-slate-400 hover:text-slate-200";
-          pane.classList.add('hidden');
-        }
-      });
-    };
-
-    document.getElementById('modal-tab-list').onclick = () => switchModalTab('list');
-    document.getElementById('modal-tab-meta').onclick = () => switchModalTab('meta');
-    document.getElementById('modal-tab-manual').onclick = () => switchModalTab('manual');
-
-    // Manual add fanpage
-    document.getElementById('btn-manual-page-save').onclick = async () => {
-      const name = document.getElementById('manual-page-name').value.trim();
-      const id = document.getElementById('manual-page-id').value.trim();
-      const image = document.getElementById('manual-page-image').value.trim();
+    // Manual add fanpage (Dashboard)
+    document.getElementById('btn-dash-manual-save').onclick = async () => {
+      const name = document.getElementById('dash-manual-name').value.trim();
+      const id = document.getElementById('dash-manual-id').value.trim();
+      const image = document.getElementById('dash-manual-image').value.trim();
 
       if (!name || !id) {
         showToast('Vui lòng nhập Tên và ID Trang!');
@@ -2054,7 +2289,7 @@
         return;
       }
 
-      const pObj = { id, name, active: false, image };
+      const pObj = { id, name, active: true, image, plan: 'PRO', ai_reply: true, auto_inbox: false, hide_phone: false, auto_order: false };
 
       const success = await writeData('pages', id, pObj);
       if (success) {
@@ -2064,9 +2299,9 @@
           await writeData('conversations', chat.id, chat);
         }
 
-        document.getElementById('manual-page-name').value = '';
-        document.getElementById('manual-page-id').value = '';
-        switchModalTab('list');
+        document.getElementById('dash-manual-name').value = '';
+        document.getElementById('dash-manual-id').value = '';
+        openConnectorPanel(false);
         showToast(`Đã kết nối Fanpage: ${name}! 🎉`);
       }
     };
@@ -2095,43 +2330,8 @@
 
 
     // ==========================================
-    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK & DIRECT TOKEN SYNC & COOKIE METHOD
+    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK & DIRECT TOKEN SYNC & COOKIE METHOD (DASHBOARD CONSOLE)
     // ==========================================
-
-    // Method Switcher within UI Modal (Upgraded to 3 columns)
-    const btnMethodSdk = document.getElementById('btn-method-sdk');
-    const btnMethodToken = document.getElementById('btn-method-token');
-    const btnMethodCookie = document.getElementById('btn-method-cookie');
-    const sdkContent = document.getElementById('meta-method-sdk-content');
-    const tokenContent = document.getElementById('meta-method-token-content');
-    const cookieContent = document.getElementById('meta-method-cookie-content');
-
-    btnMethodSdk.onclick = () => {
-      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
-      btnMethodToken.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      sdkContent.classList.remove('hidden');
-      tokenContent.classList.add('hidden');
-      cookieContent.classList.add('hidden');
-    };
-
-    btnMethodToken.onclick = () => {
-      btnMethodToken.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
-      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      tokenContent.classList.remove('hidden');
-      sdkContent.classList.add('hidden');
-      cookieContent.classList.add('hidden');
-    };
-
-    btnMethodCookie.onclick = () => {
-      btnMethodCookie.className = "py-1 text-[9px] font-bold rounded bg-indigo-600 text-white transition";
-      btnMethodSdk.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      btnMethodToken.className = "py-1 text-[9px] font-bold rounded text-slate-400 hover:text-white transition";
-      cookieContent.classList.remove('hidden');
-      sdkContent.classList.add('hidden');
-      tokenContent.classList.add('hidden');
-    };
 
     // Hàm gọi tải SDK Javascript từ Meta CDN
     const runMetaFacebookSDKLoader = (appIdValue) => {
@@ -2150,13 +2350,13 @@
           });
           
           isFbSdkLoaded = true;
-          document.getElementById('fb-sdk-status-label').innerHTML = `
+          document.getElementById('dash-sdk-status-label').innerHTML = `
             <span class="text-emerald-400 font-semibold">● Facebook SDK Sẵn sàng (App ID: ${appIdValue})</span>
           `;
           showToast('Khởi tạo Facebook SDK của Meta thành công!');
         } catch (err) {
           console.error("FB.init error: ", err);
-          document.getElementById('fb-sdk-status-label').innerHTML = `
+          document.getElementById('dash-sdk-status-label').innerHTML = `
             <span class="text-red-400 font-semibold">● Lỗi cấu hình SDK Facebook</span>
           `;
         }
@@ -2172,8 +2372,8 @@
     };
 
     // Bind hành động nút Khởi tạo SDK thủ công
-    document.getElementById('btn-init-fb-sdk').onclick = () => {
-      const appIdInputVal = document.getElementById('fb-app-id-input').value.trim();
+    document.getElementById('btn-dash-init-sdk').onclick = () => {
+      const appIdInputVal = document.getElementById('dash-fb-appid-input').value.trim();
       if (!appIdInputVal) {
         showToast('Vui lòng điền Facebook App ID của bạn!');
         return;
@@ -2192,68 +2392,41 @@
 
     // Khi khởi động ứng dụng, nạp lại App ID cũ nếu có trong LocalStorage
     if (facebookAppId) {
-      document.getElementById('fb-app-id-input').value = facebookAppId;
+      document.getElementById('dash-fb-appid-input').value = facebookAppId;
       runMetaFacebookSDKLoader(facebookAppId);
     }
 
     // RUN METADATA SYSTEM DIAGNOSTICS & PROVIDE TROUBLESHOOTING HELP
-    document.getElementById('btn-run-diagnostics').onclick = () => {
-      const logBox = document.getElementById('diagnostics-log-box');
+    document.getElementById('btn-dash-run-diag').onclick = () => {
+      const logBox = document.getElementById('dash-diag-box');
       logBox.classList.remove('hidden');
 
-      const diagHttps = document.getElementById('diag-item-https');
-      const diagAdblock = document.getElementById('diag-item-adblock');
-      const diagAppid = document.getElementById('diag-item-appid');
-      const diagLoaded = document.getElementById('diag-item-loaded');
+      const diagHttps = document.getElementById('dash-diag-https');
+      const diagAdblock = document.getElementById('dash-diag-adblock');
+      const diagLoaded = document.getElementById('dash-diag-loaded');
 
       // 1. Check HTTPS
       const isHttps = window.location.protocol === 'https:';
-      diagHttps.innerHTML = `<span>- Giao thức HTTPS:</span> <span class="${isHttps ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isHttps ? 'Hợp lệ (HTTPS)' : 'Không đạt (Cần chạy link HTTPS)'}</span>`;
+      diagHttps.innerHTML = `Giao thức HTTPS: <span class="${isHttps ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isHttps ? 'Hợp lệ (HTTPS)' : 'Không đạt (Cần chạy link HTTPS)'}</span>`;
 
       // 2. Check Adblocker by verifying if social network script element might be blocked
       const testImg = new Image();
       testImg.src = 'https://www.facebook.com/tr/'; // Facebook pixel endpoint
       testImg.onload = () => {
-        diagAdblock.innerHTML = `<span>- Trình chặn quảng cáo:</span> <span class="text-emerald-400 font-bold">Không phát hiện</span>`;
+        diagAdblock.innerHTML = `Trình chặn quảng cáo: <span class="text-emerald-400 font-bold">Không phát hiện</span>`;
       };
       testImg.onerror = () => {
-        diagAdblock.innerHTML = `<span>- Trình chặn quảng cáo:</span> <span class="text-amber-400 font-bold">Có thể đang bật (Hãy tạm tắt)</span>`;
+        diagAdblock.innerHTML = `Trình chặn quảng cáo: <span class="text-amber-400 font-bold">Có thể đang bật (Hãy tạm tắt)</span>`;
       };
 
-      // 3. Check entered App ID length/format
-      const inputVal = document.getElementById('fb-app-id-input').value.trim();
-      if (!inputVal) {
-        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-red-400 font-bold">Trống</span>`;
-      } else if (!/^\d+$/.test(inputVal)) {
-        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-red-400 font-bold">Sai định dạng (Không phải là số)</span>`;
-      } else {
-        diagAppid.innerHTML = `<span>- Độ dài App ID:</span> <span class="text-emerald-400 font-bold">Hợp lệ (${inputVal.length} kí tự)</span>`;
-      }
-
-      // 4. Check loaded SDK
+      // 3. Check loaded SDK
       const isSdkPresent = typeof window.FB !== 'undefined';
-      diagLoaded.innerHTML = `<span>- Tệp SDK Meta:</span> <span class="${isSdkPresent ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isSdkPresent ? 'Đã liên kết thành công' : 'Chưa tải được'}</span>`;
-
-      // Diagnostic Remedy Recommendation text
-      const remedyText = document.getElementById('diag-remedy-text');
-      if (!isHttps) {
-        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Meta SDK bắt buộc ứng dụng phải chạy trên giao thức <code>https://</code> bảo mật. Vui lòng đổi đường dẫn trình duyệt của bạn sang https:// để tiếp tục cấu hình SDK.`;
-      } else if (!isSdkPresent) {
-        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> File SDK của Facebook không thể tải về trình duyệt của bạn. Hãy thử tắt các tiện ích chặn quảng cáo (AdBlock, uBlock, Brave Shield) rồi nhấn "Khởi tạo SDK" lại nhé.`;
-      } else if (!inputVal) {
-        remedyText.innerHTML = `<strong>⚠️ Giải pháp khắc phục:</strong> Bạn chưa nhập App ID. Hãy truy cập <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>, tạo một App loại <strong>"Khác" -> "Người tiêu dùng"</strong> để nhận dãy mã App ID của bạn.`;
-      } else {
-        remedyText.innerHTML = `<strong>💡 Hướng dẫn cấu hình Meta Developers:</strong><br/>
-        1. Vào App của bạn trên <a href="https://developers.facebook.com" class="underline text-indigo-400" target="_blank">developers.facebook.com</a>.<br/>
-        2. Thêm sản phẩm <strong>"Đăng nhập Facebook" (Facebook Login)</strong> -> <strong>Cài đặt</strong>.<br/>
-        3. Copy link Redirect URI ở khung bên trên (<code>https://chot-don-ai.firebaseapp.com/__/auth/handler</code>) dán vào mục <strong>"Valid OAuth Redirect URIs"</strong> (URI chuyển hướng OAuth hợp lệ).<br/>
-        4. Chuyển trạng thái App từ <strong>Bản nháp (Development)</strong> sang <strong>Kích hoạt (Live)</strong> ở thanh menu phía trên đầu trang.`;
-      }
+      diagLoaded.innerHTML = `Tệp SDK Meta: <span class="${isSdkPresent ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isSdkPresent ? 'Đã liên kết' : 'Chưa tải được'}</span>`;
     };
 
     // Copy Redirect URI Action
-    document.getElementById('btn-copy-redirect-uri').onclick = () => {
-      const text = document.getElementById('oauth-redirect-uri-text').innerText;
+    document.getElementById('btn-dash-copy-uri').onclick = () => {
+      const text = document.getElementById('dash-oauth-redirect-uri-text').innerText;
       const input = document.createElement('input');
       input.value = text;
       document.body.appendChild(input);
@@ -2264,12 +2437,12 @@
     };
 
     // Nút kích hoạt đồng bộ đăng nhập qua Meta API
-    document.getElementById('btn-meta-oauth-scan').onclick = () => {
-      const loader = document.getElementById('meta-scanning-loader');
-      const list = document.getElementById('meta-discovered-list');
+    document.getElementById('btn-dash-oauth-scan').onclick = () => {
+      const loader = document.getElementById('dash-scanning-loader');
+      const box = document.getElementById('dash-discovered-box');
       
       loader.classList.remove('hidden');
-      list.classList.add('hidden');
+      box.classList.add('hidden');
 
       if (facebookAppId && isFbSdkLoaded) {
         try {
@@ -2307,15 +2480,15 @@
 
       } else {
         loader.classList.add('hidden');
-        showToast('Vui lòng nhập Facebook App ID và nhấp "Khởi tạo SDK" trước hoặc chuyển sang Cách 2 nhập Page Token!');
+        showToast('Vui lòng nhập Facebook App ID và nhấp "Khởi tạo SDK" trước hoặc chuyển sang Cách 2!');
       }
     };
 
     // METHOD 2: Direct Page Access Token Integration
-    document.getElementById('btn-sync-by-token').onclick = async () => {
-      const tokenInput = document.getElementById('fb-direct-token-input').value.trim();
-      const loader = document.getElementById('meta-scanning-loader');
-      const list = document.getElementById('meta-discovered-list');
+    document.getElementById('btn-dash-sync-token').onclick = async () => {
+      const tokenInput = document.getElementById('dash-token-input').value.trim();
+      const loader = document.getElementById('dash-scanning-loader');
+      const box = document.getElementById('dash-discovered-box');
 
       if (!tokenInput) {
         showToast('Vui lòng dán mã Access Token vào ô nhập!');
@@ -2328,7 +2501,7 @@
       }
 
       loader.classList.remove('hidden');
-      list.classList.add('hidden');
+      box.classList.add('hidden');
 
       try {
         let accounts = [];
@@ -2377,11 +2550,11 @@
     };
 
     // UPGRADED METHOD 3: SYNCHRONIZATION BY FACEBOOK COOKIES (APT Cookie)
-    document.getElementById('btn-sync-by-cookie').onclick = () => {
-      const cookieInput = document.getElementById('fb-cookie-input').value.trim();
-      const loader = document.getElementById('meta-scanning-loader');
-      const statusText = document.getElementById('scanning-status-text');
-      const list = document.getElementById('meta-discovered-list');
+    document.getElementById('btn-dash-sync-cookie').onclick = () => {
+      const cookieInput = document.getElementById('dash-cookie-input').value.trim();
+      const loader = document.getElementById('dash-scanning-loader');
+      const statusText = document.getElementById('dash-scanning-status-text');
+      const box = document.getElementById('dash-discovered-box');
 
       if (!cookieInput) {
         showToast('Vui lòng dán chuỗi Cookie Facebook để tiến hành đồng bộ!');
@@ -2393,7 +2566,7 @@
       const cUser = cUserMatch ? cUserMatch[1] : null;
 
       loader.classList.remove('hidden');
-      list.classList.add('hidden');
+      box.classList.add('hidden');
       statusText.innerText = "Đang kiểm định tính hợp lệ của Cookie...";
 
       setTimeout(() => {
@@ -2427,22 +2600,21 @@
             ];
 
             displayDiscoveredPages(discoveredFromCookie);
-          }, 1500);
-        }, 1500);
-      }, 1500);
+          }, 1000);
+        }, 1000);
+      }, 1000);
     };
 
     // Hàm render danh sách Fanpage quét được ra giao diện Modal
     const displayDiscoveredPages = (discoveredList) => {
-      const listContainer = document.getElementById('meta-discovered-list');
-      listContainer.classList.remove('hidden');
+      const box = document.getElementById('dash-discovered-box');
+      box.classList.remove('hidden');
       
-      // Thêm nút "Liên kết tất cả các trang" nếu có từ 2 trang trở lên
-      listContainer.innerHTML = `
+      box.innerHTML = `
         <div class="flex items-center justify-between mb-2">
           <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Trang phát hiện được (${discoveredList.length})</label>
           ${discoveredList.length > 1 ? `
-            <button id="btn-link-all-pages" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded transition flex items-center gap-1 shadow-lg shadow-emerald-950/20">
+            <button id="btn-dash-link-all" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded transition flex items-center gap-1">
               ⚡ Liên kết tất cả các trang (${discoveredList.length})
             </button>
           ` : ''}
@@ -2461,7 +2633,7 @@
             <img src="${dp.image}" class="w-8 h-8 rounded-lg object-cover" />
             <div>
               <p class="font-bold text-white">${dp.name}</p>
-              <p class="text-[10px] text-slate-500">Page ID: ${dp.id}</p>
+              <p class="text-[10px] text-slate-500 font-mono">Page ID: ${dp.id}</p>
             </div>
           </div>
           ${isLinked ? `
@@ -2478,10 +2650,10 @@
         divBox.appendChild(row);
       });
 
-      listContainer.appendChild(divBox);
+      box.appendChild(divBox);
 
       // Gán sự kiện cho nút liên kết tất cả các trang
-      const btnLinkAll = document.getElementById('btn-link-all-pages');
+      const btnLinkAll = document.getElementById('btn-dash-link-all');
       if (btnLinkAll) {
         btnLinkAll.onclick = () => linkAllMetaPages(discoveredList);
       }
@@ -2500,7 +2672,7 @@
 
       try {
         const promises = newPages.map(async (dp) => {
-          const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
+          const pObj = { id: dp.id, name: dp.name, active: true, image: dp.image, plan: 'PRO', ai_reply: true, auto_inbox: false, hide_phone: false, auto_order: false };
           await writeData('pages', dp.id, pObj);
           
           // Tạo hội thoại mẫu khởi tạo tự động cho từng trang
@@ -2512,8 +2684,8 @@
 
         await Promise.all(promises);
         showToast(`Liên kết toàn bộ ${newPages.length} Fanpage thành công! 🎉`);
-        document.getElementById('meta-discovered-list').classList.add('hidden');
-        showModal(false);
+        document.getElementById('dash-discovered-box').classList.add('hidden');
+        openConnectorPanel(false);
       } catch(e) {
         console.error("Lỗi đồng bộ liên kết hàng loạt:", e);
         showToast('Có lỗi xảy ra trong quá trình đồng bộ.');
@@ -2526,7 +2698,7 @@
         return;
       }
 
-      const pObj = { id: dp.id, name: dp.name, active: false, image: dp.image };
+      const pObj = { id: dp.id, name: dp.name, active: true, image: dp.image, plan: 'PRO', ai_reply: true, auto_inbox: false, hide_phone: false, auto_order: false };
 
       const success = await writeData('pages', dp.id, pObj);
       if (success) {
@@ -2536,8 +2708,8 @@
         }
 
         showToast(`Đã đồng bộ hóa & liên kết Fanpage: ${dp.name}! ⚡`);
-        document.getElementById('meta-discovered-list').classList.add('hidden');
-        showModal(false);
+        document.getElementById('dash-discovered-box').classList.add('hidden');
+        openConnectorPanel(false);
       }
     };
 
@@ -2591,6 +2763,9 @@
       localStorage.setItem('chotdon_auto_reply', autoReplyEnabled);
       showToast(autoReplyEnabled ? 'Đã bật chế độ Auto-Reply AI tự động!' : 'Đã tắt chế độ Auto-Reply tự động.');
     };
+
+    // Initialize View on Startup
+    switchWorkspaceView('select-page');
 
   </script>
 </body>
