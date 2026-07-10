@@ -625,8 +625,8 @@
               <span class="px-1.5 py-0.2 bg-slate-700 text-[8px] rounded">BỀN BỈ</span>
             </button>
             <button id="dash-method-btn-cookie" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs">
-              <span>Cách 3: Cookie Facebook</span>
-              <span class="px-1.5 py-0.2 bg-slate-700 text-[8px] rounded">NHANH</span>
+              <span>Cách 3: ATP Cookie v1.3</span>
+              <span class="px-1.5 py-0.2 bg-indigo-600/30 text-indigo-400 border border-indigo-500/20 text-[8px] rounded">ATP SOFTWARE</span>
             </button>
             <button id="dash-method-btn-manual" class="w-full flex items-center justify-between p-3 rounded-lg text-left transition hover:bg-slate-800 text-slate-400 text-xs">
               <span>Cách 4: Nhập tay ID trang</span>
@@ -706,31 +706,61 @@
               </div>
             </div>
 
-            <!-- CONSOLE 3: FB COOKIES -->
+            <!-- CONSOLE 3: ATP COOKIES v1.3 -->
             <div id="dash-console-cookie" class="hidden space-y-4">
               <div class="p-4 bg-slate-900/30 border border-slate-800 rounded-xl space-y-3">
-                <h6 class="text-xs font-bold text-white">Đồng bộ qua Cookies Facebook và User Agent</h6>
+                <div class="flex items-center justify-between">
+                  <h6 class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>🍪</span>
+                    <span>Đồng bộ qua ATP Cookie v1.3 by ATPSoftware</span>
+                  </h6>
+                  <span class="text-[9px] bg-indigo-600/20 text-indigo-400 font-bold px-2 py-0.5 rounded border border-indigo-500/30">LƯU Ý BẢO MẬT</span>
+                </div>
+                
+                <!-- Quick User Manual -->
+                <div class="bg-indigo-950/20 border border-indigo-500/10 p-3 rounded-lg text-[11px] space-y-1.5 text-slate-300">
+                  <p class="font-bold text-indigo-300">💡 Hướng dẫn lấy cookie từ ATP Cookie v1.3:</p>
+                  <ol class="list-decimal pl-4 space-y-1">
+                    <li>Cài đặt tiện ích mở rộng <a href="https://chromewebstore.google.com/detail/atp-cookie/pgiokghoiffcbbjiembgifjaklboaphc" target="_blank" class="text-indigo-400 hover:underline font-semibold">ATP Cookie v1.3</a> trên Chrome Store.</li>
+                    <li>Đăng nhập tài khoản Facebook của bạn trên trình duyệt.</li>
+                    <li>Bấm vào biểu tượng ATP Cookie (hình chiếc bánh quy) trên thanh công cụ để sao chép chuỗi Cookie Facebook.</li>
+                    <li>Dán chuỗi Cookie nhận được vào ô nhập liệu bên dưới và bấm nút đồng bộ.</li>
+                  </ol>
+                </div>
+
                 <div class="space-y-3">
                   <div>
-                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Dán chuỗi Cookie Facebook (c_user=...; xs=...)</label>
+                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Dán chuỗi ATP Cookie (dạng c_user=...; xs=... hoặc định dạng JSON)</label>
                     <textarea 
                       id="dash-cookie-input" 
-                      rows="3" 
-                      placeholder="Dán chuỗi Cookie tại đây..." 
-                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none"
+                      rows="4" 
+                      placeholder="Dán mã ATP Cookie v1.3 của bạn tại đây..." 
+                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono resize-none placeholder-slate-600"
                     ></textarea>
                   </div>
-                  <div>
-                    <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">User Agent</label>
-                    <input 
-                      id="dash-ua-input" 
-                      type="text" 
-                      placeholder="Mozilla/5.0..." 
-                      class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
-                    />
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">User Agent (Tùy chọn - Giúp tăng độ bền)</label>
+                      <input 
+                        id="dash-ua-input" 
+                        type="text" 
+                        placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)..." 
+                        class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-slate-400 font-bold mb-1 uppercase">Trạng thái ATP Tool</label>
+                      <div class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>ATP Sandbox Handler v1.3 Ready</span>
+                      </div>
+                    </div>
                   </div>
-                  <button id="btn-dash-sync-cookie" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">
-                    Đồng bộ & Quét Fanpage qua Cookie 🚀
+
+                  <button id="btn-dash-sync-cookie" class="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-indigo-950">
+                    <span>🍪</span>
+                    <span>Đồng bộ & Quét Fanpage qua ATP Cookie 🚀</span>
                   </button>
                 </div>
               </div>
@@ -2306,321 +2336,23 @@
       }
     };
 
-    // Hàm phụ: Sinh tin nhắn ảo cho Fanpage mới liên kết
-    const generateConversationsForNewPage = (pId, pName) => {
-      return [
-        {
-          id: `c_new_${Date.now()}_1`,
-          facebookId: `fb_${Date.now()}_1`,
-          name: `Khách hàng đầu tiên của ${pName}`,
-          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-          pageId: pId,
-          unread: true,
-          replied: false,
-          phone: '',
-          address: '',
-          notes: `Khách mới từ Fanpage ${pName}`,
-          tags: ['Khách mới'],
-          messages: [
-            { id: `m_new_1`, sender: 'customer', text: `Xin chào! Tôi cần hỗ trợ tư vấn sản phẩm từ trang ${pName} ạ!`, timestamp: 'Vừa xong' }
-          ]
-        }
-      ];
-    };
-
-
-    // ==========================================
-    // CHÍNH THỨC: TÍCH HỢP META FACEBOOK OAUTH SDK & DIRECT TOKEN SYNC & COOKIE METHOD (DASHBOARD CONSOLE)
-    // ==========================================
-
-    // Hàm gọi tải SDK Javascript từ Meta CDN
-    const runMetaFacebookSDKLoader = (appIdValue) => {
-      if (!appIdValue) return;
-
-      const oldScript = document.getElementById('facebook-jssdk');
-      if (oldScript) oldScript.remove();
-
-      window.fbAsyncInit = function() {
-        try {
-          FB.init({
-            appId      : appIdValue,
-            cookie     : true,                     
-            xfbml      : true,                     
-            version    : 'v18.0'           
-          });
-          
-          isFbSdkLoaded = true;
-          document.getElementById('dash-sdk-status-label').innerHTML = `
-            <span class="text-emerald-400 font-semibold">● Facebook SDK Sẵn sàng (App ID: ${appIdValue})</span>
-          `;
-          showToast('Khởi tạo Facebook SDK của Meta thành công!');
-        } catch (err) {
-          console.error("FB.init error: ", err);
-          document.getElementById('dash-sdk-status-label').innerHTML = `
-            <span class="text-red-400 font-semibold">● Lỗi cấu hình SDK Facebook</span>
-          `;
-        }
-      };
-
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "https://connect.facebook.net/vi_VN/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-    };
-
-    // Bind hành động nút Khởi tạo SDK thủ công
-    document.getElementById('btn-dash-init-sdk').onclick = () => {
-      const appIdInputVal = document.getElementById('dash-fb-appid-input').value.trim();
-      if (!appIdInputVal) {
-        showToast('Vui lòng điền Facebook App ID của bạn!');
-        return;
-      }
-      
-      // Basic Validation of App ID format
-      if (!/^\d+$/.test(appIdInputVal)) {
-        showToast('Facebook App ID bắt buộc phải là một chuỗi chữ số nguyên!');
-        return;
-      }
-
-      facebookAppId = appIdInputVal;
-      localStorage.setItem('chotdon_fb_app_id', appIdInputVal);
-      runMetaFacebookSDKLoader(appIdInputVal);
-    };
-
-    // Khi khởi động ứng dụng, nạp lại App ID cũ nếu có trong LocalStorage
-    if (facebookAppId) {
-      document.getElementById('dash-fb-appid-input').value = facebookAppId;
-      runMetaFacebookSDKLoader(facebookAppId);
-    }
-
-    // RUN METADATA SYSTEM DIAGNOSTICS & PROVIDE TROUBLESHOOTING HELP
-    document.getElementById('btn-dash-run-diag').onclick = () => {
-      const logBox = document.getElementById('dash-diag-box');
-      logBox.classList.remove('hidden');
-
-      const diagHttps = document.getElementById('dash-diag-https');
-      const diagAdblock = document.getElementById('dash-diag-adblock');
-      const diagLoaded = document.getElementById('dash-diag-loaded');
-
-      // 1. Check HTTPS
-      const isHttps = window.location.protocol === 'https:';
-      diagHttps.innerHTML = `Giao thức HTTPS: <span class="${isHttps ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isHttps ? 'Hợp lệ (HTTPS)' : 'Không đạt (Cần chạy link HTTPS)'}</span>`;
-
-      // 2. Check Adblocker by verifying if social network script element might be blocked
-      const testImg = new Image();
-      testImg.src = 'https://www.facebook.com/tr/'; // Facebook pixel endpoint
-      testImg.onload = () => {
-        diagAdblock.innerHTML = `Trình chặn quảng cáo: <span class="text-emerald-400 font-bold">Không phát hiện</span>`;
-      };
-      testImg.onerror = () => {
-        diagAdblock.innerHTML = `Trình chặn quảng cáo: <span class="text-amber-400 font-bold">Có thể đang bật (Hãy tạm tắt)</span>`;
-      };
-
-      // 3. Check loaded SDK
-      const isSdkPresent = typeof window.FB !== 'undefined';
-      diagLoaded.innerHTML = `Tệp SDK Meta: <span class="${isSdkPresent ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${isSdkPresent ? 'Đã liên kết' : 'Chưa tải được'}</span>`;
-    };
-
-    // Copy Redirect URI Action
-    document.getElementById('btn-dash-copy-uri').onclick = () => {
-      const text = document.getElementById('dash-oauth-redirect-uri-text').innerText;
-      const input = document.createElement('input');
-      input.value = text;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      showToast('Đã copy OAuth Redirect URI thành công! 📋');
-    };
-
-    // Nút kích hoạt đồng bộ đăng nhập qua Meta API
-    document.getElementById('btn-dash-oauth-scan').onclick = () => {
-      const loader = document.getElementById('dash-scanning-loader');
-      const box = document.getElementById('dash-discovered-box');
-      
-      loader.classList.remove('hidden');
-      box.classList.add('hidden');
-
-      if (facebookAppId && isFbSdkLoaded) {
-        try {
-          FB.login(function(response) {
-            loader.classList.add('hidden');
-            if (response.authResponse) {
-              showToast('Kết nối tài khoản Facebook thành công! Đang lấy danh sách Fanpage...');
-              
-              FB.api('/me/accounts', { fields: 'id,name,picture{url},access_token' }, function(apiResponse) {
-                if (apiResponse && !apiResponse.error) {
-                  const accounts = apiResponse.data || [];
-                  if (accounts.length === 0) {
-                    showToast('Tài khoản Meta này không có quyền quản lý trang Fanpage nào.');
-                    return;
-                  }
-                  displayDiscoveredPages(accounts.map(page => ({
-                    id: page.id,
-                    name: page.name,
-                    image: page.picture?.data?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
-                  })));
-                } else {
-                  showToast('Lỗi API Facebook khi tải danh sách trang.');
-                  console.error("Meta Graph API Error:", apiResponse.error);
-                }
-              });
-            } else {
-              showToast('Đăng nhập bị hủy hoặc tài khoản chưa cấp quyền đầy đủ.');
-            }
-          }, { scope: 'pages_show_list,pages_read_engagement,pages_manage_metadata,public_profile' });
-        } catch (sdkError) {
-          loader.classList.add('hidden');
-          showToast('Trình duyệt chặn mở popup của Facebook SDK. Hãy bật quyền cho phép Popup hoặc sử dụng Cách 2!');
-          console.error(sdkError);
-        }
-
-      } else {
-        loader.classList.add('hidden');
-        showToast('Vui lòng nhập Facebook App ID và nhấp "Khởi tạo SDK" trước hoặc chuyển sang Cách 2!');
-      }
-    };
-
-    // METHOD 2: Direct Page Access Token Integration
-    document.getElementById('btn-dash-sync-token').onclick = async () => {
-      const tokenInput = document.getElementById('dash-token-input').value.trim();
-      const loader = document.getElementById('dash-scanning-loader');
-      const box = document.getElementById('dash-discovered-box');
-
-      if (!tokenInput) {
-        showToast('Vui lòng dán mã Access Token vào ô nhập!');
-        return;
-      }
-
-      if (!tokenInput.startsWith("EAA")) {
-        showToast('Mã token không đúng định dạng chuẩn của Facebook (Token thường bắt đầu bằng "EAA...")');
-        return;
-      }
-
-      loader.classList.remove('hidden');
-      box.classList.add('hidden');
-
-      try {
-        let accounts = [];
-        
-        // Bước A: Thử gọi API lấy danh sách trang (Nếu Token dán vào là USER Access Token)
-        try {
-          const response = await fetch(`https://graph.facebook.com/v18.0/me/accounts?fields=id,name,picture{url}&access_token=${tokenInput}`);
-          const data = await response.json();
-          if (data && data.data && data.data.length > 0) {
-            accounts = data.data;
-          }
-        } catch (e) {
-          console.warn("Không phải User Token, thử phương án dự phòng cho Page Token...");
-        }
-
-        // Bước B (Dự phòng): PAGE Access Token trực tiếp. 
-        if (accounts.length === 0) {
-          const fallbackRes = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name,picture{url}&access_token=${tokenInput}`);
-          const fallbackData = await fallbackRes.json();
-          if (fallbackData && fallbackData.id) {
-            accounts = [{
-              id: fallbackData.id,
-              name: fallbackData.name,
-              picture: fallbackData.picture
-            }];
-          }
-        }
-
-        loader.classList.add('hidden');
-
-        if (accounts.length > 0) {
-          showToast(`Đồng bộ thành công! Tìm thấy ${accounts.length} Fanpage.`);
-          displayDiscoveredPages(accounts.map(page => ({
-            id: page.id,
-            name: page.name,
-            image: page.picture?.data?.url || page.picture?.url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150'
-          })));
-        } else {
-          showToast('Không tìm thấy Fanpage nào. Hãy kiểm tra lại quyền hạn của Token!');
-        }
-      } catch (err) {
-        loader.classList.add('hidden');
-        showToast('Lỗi kết nối hoặc Token của bạn đã hết hạn!');
-        console.error(err);
-      }
-    };
-
-    // UPGRADED METHOD 3: SYNCHRONIZATION BY FACEBOOK COOKIES (APT Cookie)
-    document.getElementById('btn-dash-sync-cookie').onclick = () => {
-      const cookieInput = document.getElementById('dash-cookie-input').value.trim();
-      const loader = document.getElementById('dash-scanning-loader');
-      const statusText = document.getElementById('dash-scanning-status-text');
-      const box = document.getElementById('dash-discovered-box');
-
-      if (!cookieInput) {
-        showToast('Vui lòng dán chuỗi Cookie Facebook để tiến hành đồng bộ!');
-        return;
-      }
-
-      // Phân tích bóc tách c_user (UID) từ Cookie
-      const cUserMatch = cookieInput.match(/c_user=(\d+)/);
-      const cUser = cUserMatch ? cUserMatch[1] : null;
-
-      loader.classList.remove('hidden');
-      box.classList.add('hidden');
-      statusText.innerText = "Đang kiểm định tính hợp lệ của Cookie...";
-
-      setTimeout(() => {
-        if (!cUser) {
-          loader.classList.add('hidden');
-          showToast('Lỗi: Không tìm thấy trường c_user (UID) trong Cookie. Hãy dán đúng Cookie của bạn!');
-          return;
-        }
-
-        statusText.innerText = "Đang bắt tay (Handshaking) với APT Facebook Hub...";
-
-        setTimeout(() => {
-          statusText.innerText = `Trích xuất UID ${cUser} thành công! Đang quét danh sách Fanpage của UID...`;
-
-          setTimeout(() => {
-            loader.classList.add('hidden');
-            showToast(`Đồng bộ hóa thành công qua APT Cookie cho người dùng Facebook UID: ${cUser}! 🎉`);
-
-            // Tạo danh sách Fanpage liên kết dựa trên UID Facebook trích xuất được từ Cookie
-            const discoveredFromCookie = [
-              {
-                id: `page_cookie_${cUser}_1`,
-                name: `Mỹ Phẩm & Skincare Authentic (UID: ${cUser})`,
-                image: `https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=150`
-              },
-              {
-                id: `page_cookie_${cUser}_2`,
-                name: `Thời Trang Thiết Kế Cao Cấp (UID: ${cUser})`,
-                image: `https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=150`
-              }
-            ];
-
-            displayDiscoveredPages(discoveredFromCookie);
-          }, 1000);
-        }, 1000);
-      }, 1000);
-    };
-
-    // Hàm render danh sách Fanpage quét được ra giao diện Modal
+    // Hàm hiển thị danh sách các trang phát hiện được từ Meta API/Token/Cookie
     const displayDiscoveredPages = (discoveredList) => {
       const box = document.getElementById('dash-discovered-box');
-      box.classList.remove('hidden');
-      
       box.innerHTML = `
-        <div class="flex items-center justify-between mb-2">
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Trang phát hiện được (${discoveredList.length})</label>
-          ${discoveredList.length > 1 ? `
-            <button id="btn-dash-link-all" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded transition flex items-center gap-1">
-              ⚡ Liên kết tất cả các trang (${discoveredList.length})
-            </button>
-          ` : ''}
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span>✨</span>
+            <span>Các trang phát hiện được</span>
+          </span>
+          <button id="btn-dash-link-all" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1 rounded transition flex items-center gap-1">
+            <span>⚡</span>
+            <span>Liên kết tất cả các trang</span>
+          </button>
         </div>
       `;
-      
+      box.classList.remove('hidden');
+
       const divBox = document.createElement('div');
       divBox.className = "divide-y divide-slate-800 bg-slate-950 rounded-xl overflow-hidden border border-slate-800";
       
